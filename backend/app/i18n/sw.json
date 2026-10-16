@@ -18,7 +18,8 @@
     "ACCOUNT_SUSPENDED": "Akaunti yako imesimamishwa.",
     "INTERNAL_ERROR": "Hitilafu imetokea. Jaribu tena.",
     "EMAIL_TAKEN": "Barua pepe hii tayari inatumiwa na akaunti nyingine.",
-    "OWNER_NOT_VERIFIED": "Akaunti yako ya mmiliki bado haijathibitishwa."
+    "OWNER_NOT_VERIFIED": "Akaunti yako ya mmiliki bado haijathibitishwa.",
+    "METHOD_NOT_ALLOWED": "Njia hii haikubali ombi la aina hii."
   },
   "sms": {
     "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."

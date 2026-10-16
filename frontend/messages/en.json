@@ -1,0 +1,45 @@
+{
+  "common": {
+    "appName": "E-House & Guest",
+    "tagline": "Rent anything, anywhere in Tanzania",
+    "loading": "Loading…",
+    "close": "Close",
+    "back": "Back",
+    "continue": "Continue",
+    "retry": "Try again",
+    "imageUnavailable": "Image unavailable",
+    "skipToContent": "Skip to content"
+  },
+  "nav": {
+    "home": "Home",
+    "signIn": "Sign in",
+    "account": "My account",
+    "language": "Language",
+    "switchTo": "Kiswahili",
+    "switchToLabel": "Switch language to Swahili"
+  },
+  "home": {
+    "title": "Rent rooms, cars, halls and equipment",
+    "subtitle": "Accommodation, offices, warehouses, vehicles and event gear from verified owners. Pay with M-Pesa, Mixx, Airtel Money or HaloPesa.",
+    "comingSoon": "Search is coming soon."
+  },
+  "signIn": {
+    "title": "Sign in",
+    "phoneLabel": "Phone number",
+    "phoneHint": "We will text you a code. Example: 0712 345 678",
+    "sendCode": "Send code",
+    "codeLabel": "SMS code",
+    "codeHint": "We sent it to {phone}. It expires in 5 minutes.",
+    "verify": "Verify",
+    "changePhone": "Change number",
+    "resend": "Resend code",
+    "nameTitle": "Welcome! What is your name?",
+    "nameLabel": "Full name",
+    "save": "Save",
+    "signedIn": "You are signed in."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "No connection. Check your network and try again."
+  }
+}

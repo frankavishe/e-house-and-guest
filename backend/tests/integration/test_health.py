@@ -18,3 +18,10 @@ async def test_unknown_route_uses_error_shape(client: httpx.AsyncClient) -> None
 async def test_error_message_defaults_to_swahili(client: httpx.AsyncClient) -> None:
     res = await client.get("/api/v1/nope")
     assert res.json()["error"]["message"] == "Hakijapatikana."
+
+
+async def test_method_not_allowed_lists_every_method(client: httpx.AsyncClient) -> None:
+    res = await client.delete("/api/v1/me")
+    assert res.status_code == 405
+    assert res.json()["error"]["code"] == "METHOD_NOT_ALLOWED"
+    assert set(res.headers["allow"].split(", ")) == {"GET", "PATCH"}

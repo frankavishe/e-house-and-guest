@@ -1,0 +1,45 @@
+{
+  "common": {
+    "appName": "E-House & Guest",
+    "tagline": "Kodisha chochote, popote Tanzania",
+    "loading": "Inapakia…",
+    "close": "Funga",
+    "back": "Rudi",
+    "continue": "Endelea",
+    "retry": "Jaribu tena",
+    "imageUnavailable": "Picha haipatikani",
+    "skipToContent": "Ruka hadi maudhui"
+  },
+  "nav": {
+    "home": "Mwanzo",
+    "signIn": "Ingia",
+    "account": "Akaunti yangu",
+    "language": "Lugha",
+    "switchTo": "English",
+    "switchToLabel": "Badili lugha kuwa Kiingereza"
+  },
+  "home": {
+    "title": "Kodisha vyumba, magari, kumbi na vifaa",
+    "subtitle": "Malazi, ofisi, maghala, magari na vifaa vya sherehe kutoka kwa wamiliki waliothibitishwa. Lipa kwa M-Pesa, Mixx, Airtel Money au HaloPesa.",
+    "comingSoon": "Utafutaji unakuja hivi karibuni."
+  },
+  "signIn": {
+    "title": "Ingia",
+    "phoneLabel": "Namba ya simu",
+    "phoneHint": "Tutakutumia msimbo kwa SMS. Mfano: 0712 345 678",
+    "sendCode": "Tuma msimbo",
+    "codeLabel": "Msimbo wa SMS",
+    "codeHint": "Tumeutuma kwa {phone}. Unaisha baada ya dakika 5.",
+    "verify": "Thibitisha",
+    "changePhone": "Badili namba",
+    "resend": "Tuma msimbo upya",
+    "nameTitle": "Karibu! Tukujue jina lako",
+    "nameLabel": "Jina kamili",
+    "save": "Hifadhi",
+    "signedIn": "Umeingia."
+  },
+  "errors": {
+    "generic": "Hitilafu imetokea. Jaribu tena.",
+    "network": "Hakuna mtandao. Angalia muunganisho wako na ujaribu tena."
+  }
+}

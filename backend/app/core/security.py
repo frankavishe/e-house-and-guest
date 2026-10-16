@@ -18,8 +18,9 @@ from app.core.errors import AppError
 
 ACCESS_COOKIE = "access_token"
 REFRESH_COOKIE = "refresh_token"
-# The refresh cookie is only sent to the auth endpoints.
-REFRESH_COOKIE_PATH = "/api/v1/auth"
+# Site-wide so the web app's middleware can renew an expired session on page loads
+# (httpOnly + SameSite=Lax; it is only ever accepted by POST /auth/refresh).
+REFRESH_COOKIE_PATH = "/"
 JWT_ALGORITHM = "HS256"
 
 OTP_TTL = timedelta(minutes=5)
@@ -30,8 +31,12 @@ OTP_RATE_WINDOW = timedelta(minutes=15)
 
 # --- phones ------------------------------------------------------------------------------
 
-_PHONE_NOISE = re.compile(r"[\s\-().]")
-_LOCAL = re.compile(r"^[67]\d{8}$")
+_PHONE_NOISE = re.compile(r"[ \-().]")
+# ASCII digits only (`\d` would also match other scripts' digits).
+_LOCAL = re.compile(r"^[67][0-9]{8}$")
+# The accepted input forms, published in the OpenAPI schema: +255 / 255 / 0 / bare, with
+# optional single spaces or dashes between digits.
+PHONE_INPUT_PATTERN = r"^(\+?255|0)?[ -]?[67]([ -]?[0-9]){8}$"
 
 
 class InvalidPhone(AppError):

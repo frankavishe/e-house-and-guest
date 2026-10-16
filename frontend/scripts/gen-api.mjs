@@ -1,5 +1,7 @@
 // Generates src/lib/api/schema.d.ts from the backend OpenAPI document.
 // `npm run gen:api -- --check` fails if the committed file is out of date (CI gate).
+// OPENAPI_URL may be a URL or a local JSON file, e.g. one dumped with
+//   cd backend && uv run python -c "import json; from app.main import app; print(json.dumps(app.openapi()))" > openapi.json
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";

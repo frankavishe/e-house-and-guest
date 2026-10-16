@@ -51,9 +51,8 @@ jobs:
       - name: Migrations on an empty DB
         if: hashFiles('backend/alembic.ini') != ''
         run: uv run alembic upgrade head
-      - name: Pytest
-        # Exit code 5 = no tests collected (Phase 1 only); any other failure fails the job.
-        run: uv run pytest || [ $? -eq 5 ]
+      - name: Pytest (unit, integration, contract incl. schemathesis)
+        run: uv run pytest
 
   frontend:
     runs-on: ubuntu-latest
@@ -113,8 +112,8 @@ jobs:
         working-directory: backend
         env:
           ENV: test
-          JWT_SECRET: ci
-          OTP_HMAC_KEY: ci
+          JWT_SECRET: ci-only-jwt-secret-at-least-32-bytes-long
+          OTP_HMAC_KEY: ci-otp-hmac-key
           FERNET_KEY: ZGV2LW9ubHktY2hhbmdlLW1lLWZlcm5ldC1rZXktMzI=
         run: |
           uv run uvicorn app.main:app --port 8000 &

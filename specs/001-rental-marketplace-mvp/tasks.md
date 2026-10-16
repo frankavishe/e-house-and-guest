@@ -114,14 +114,14 @@ on its own.
 
 ### Frontend foundation
 
-- [ ] T042 Configure next-intl locale routing (`/sw` default, `/en`) in `frontend/src/middleware.ts`, `frontend/src/i18n/request.ts`, `frontend/messages/sw.json`, `frontend/messages/en.json`, and the root layout with language switcher that keeps the current path in `frontend/src/app/[locale]/layout.tsx`
-- [ ] T043 [P] Configure `/api/*` → FastAPI rewrite and image domains in `frontend/next.config.ts`
-- [ ] T044 Generate the typed API client (`npm run gen:api` → `frontend/src/lib/api/schema.d.ts`) and wrappers that forward cookies on the server in `frontend/src/lib/api/client.ts` and `frontend/src/lib/api/server.ts`
-- [ ] T045 [P] Implement formatting helpers in `frontend/src/lib/format.ts` (TZS `TSh 1,250,000`, EAT dates/times, localized fields fallback) with tests in `frontend/tests/unit/format.test.ts`
-- [ ] T046 [P] Write i18n key-parity tests in `frontend/tests/unit/i18n-parity.test.ts` and `backend/tests/unit/test_i18n_parity.py` (SC-007)
-- [ ] T047 [P] Build UI primitives in `frontend/src/components/ui/` (Button, Input, Select, Sheet, Badge, Skeleton) and `ImageWithFallback` + `Money` in `frontend/src/components/` (layout must hold when images fail, Principle VI)
-- [ ] T048 Implement OTP sign-in pages (phone entry, code entry, name on first login) in `frontend/src/app/[locale]/account/sign-in/page.tsx` with a `returnTo` redirect
-- [ ] T049 Add the whole-schema schemathesis test in `backend/tests/contract/test_openapi_schemathesis.py` (every public endpoint in `/api/v1/openapi.json`, excluding `/webhooks` and `/dev`; runs against the seeded test DB; CI-blocking; picks up new endpoints automatically as stories add them)
+- [X] T042 Configure next-intl locale routing (`/sw` default, `/en`) in `frontend/src/middleware.ts`, `frontend/src/i18n/request.ts`, `frontend/messages/sw.json`, `frontend/messages/en.json`, and the root layout with language switcher that keeps the current path in `frontend/src/app/[locale]/layout.tsx`
+- [X] T043 [P] Configure `/api/*` → FastAPI rewrite and image domains in `frontend/next.config.ts`
+- [X] T044 Generate the typed API client (`npm run gen:api` → `frontend/src/lib/api/schema.d.ts`) and wrappers that forward cookies on the server in `frontend/src/lib/api/client.ts` and `frontend/src/lib/api/server.ts`
+- [X] T045 [P] Implement formatting helpers in `frontend/src/lib/format.ts` (TZS `TSh 1,250,000`, EAT dates/times, localized fields fallback) with tests in `frontend/tests/unit/format.test.ts`
+- [X] T046 [P] Write i18n key-parity tests in `frontend/tests/unit/i18n-parity.test.ts` and `backend/tests/unit/test_i18n_parity.py` (SC-007)
+- [X] T047 [P] Build UI primitives in `frontend/src/components/ui/` (Button, Input, Select, Sheet, Badge, Skeleton) and `ImageWithFallback` + `Money` in `frontend/src/components/` (layout must hold when images fail, Principle VI)
+- [X] T048 Implement OTP sign-in pages (phone entry, code entry, name on first login) in `frontend/src/app/[locale]/account/sign-in/page.tsx` with a `returnTo` redirect
+- [X] T049 Add the whole-schema schemathesis test in `backend/tests/contract/test_openapi_schemathesis.py` (every public endpoint in `/api/v1/openapi.json`, excluding `/webhooks` and `/dev`; runs against the seeded test DB; CI-blocking; picks up new endpoints automatically as stories add them)
 
 **Checkpoint**: `docker compose up` runs. Migrations apply on an empty DB, seed loads, sign-in works with the console OTP, `/sw` and `/en` render, and CI is green.
 

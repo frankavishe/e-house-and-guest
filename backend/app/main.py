@@ -14,7 +14,7 @@ from app import models as _models  # noqa: F401  (registers every table)
 from app.accounts.router import router as accounts_router
 from app.catalog.router import router as catalog_router
 from app.core.db import dispose_engine, get_session
-from app.core.errors import install_error_handlers
+from app.core.errors import install_error_handlers, install_error_openapi
 from app.core.logging import configure_logging
 
 API_PREFIX = "/api/v1"
@@ -63,6 +63,7 @@ def create_app() -> FastAPI:
     )
     install_error_handlers(app)
     app.include_router(api_router())
+    install_error_openapi(app)
     return app
 
 

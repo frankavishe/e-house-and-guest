@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.pool import NullPool
 
 from app.core import clock
 from app.core.config import get_settings
@@ -78,7 +79,12 @@ _sessionmaker: async_sessionmaker[AsyncSession] | None = None
 def get_engine() -> AsyncEngine:
     global _engine
     if _engine is None:
-        _engine = create_async_engine(database_url(), pool_pre_ping=True)
+        if get_settings().env == "test":
+            # Test clients may drive the app from different event loops; never share
+            # pooled asyncpg connections between them.
+            _engine = create_async_engine(database_url(), poolclass=NullPool)
+        else:
+            _engine = create_async_engine(database_url(), pool_pre_ping=True)
     return _engine
 
 

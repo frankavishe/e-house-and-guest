@@ -189,11 +189,11 @@ async def test_refresh_reuse_revokes_family(client: httpx.AsyncClient, db: Async
 
     # Attacker replays the old token → whole family revoked.
     attacker = httpx.AsyncClient(transport=client._transport, base_url="http://test")
-    attacker.cookies.set(security.REFRESH_COOKIE, stolen, path="/api/v1/auth")
+    attacker.cookies.set(security.REFRESH_COOKIE, stolen)
     assert (await attacker.post("/api/v1/auth/refresh")).status_code == 401
     await attacker.aclose()
 
-    client.cookies.set(security.REFRESH_COOKIE, current or "", path="/api/v1/auth")
+    client.cookies.set(security.REFRESH_COOKIE, current or "")
     assert (await client.post("/api/v1/auth/refresh")).status_code == 401
     tokens = (await db.execute(select(RefreshToken))).scalars().all()
     assert all(t.revoked_at is not None for t in tokens)
@@ -214,7 +214,7 @@ async def test_logout_revokes_family_and_clears_cookies(
     tokens = (await db.execute(select(RefreshToken))).scalars().all()
     assert tokens and all(t.revoked_at is not None for t in tokens)
     assert (await client.get("/api/v1/me")).status_code == 401
-    client.cookies.set(security.REFRESH_COOKIE, refresh or "", path="/api/v1/auth")
+    client.cookies.set(security.REFRESH_COOKIE, refresh or "")
     assert (await client.post("/api/v1/auth/refresh")).status_code == 401
 
 
