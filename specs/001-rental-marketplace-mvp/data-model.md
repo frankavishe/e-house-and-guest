@@ -135,6 +135,8 @@ have values for it.
 | base_price_tzs | bigint | denormalised default-unit price for sorting and filtering |
 | status | enum below | |
 | rejection_reason | text NULL | |
+| pending_changes | jsonb NULL | material edits awaiting review on an `active`/`paused` listing |
+| review_state | enum `none`,`pending`,`rejected` | review of `pending_changes`; default `none` |
 | search_tsv | tsvector GENERATED | from titles |
 | rating_avg / rating_count | | |
 
@@ -146,8 +148,11 @@ draft → pending_review → active ⇄ paused
 active/paused → suspended (admin) → active (admin)
 any → deleted (soft; refused if future confirmed bookings exist)
 ```
-A **material edit** of an `active` listing moves it back to `pending_review` and keeps it
-bookable under its last approved version until a decision. Material edits are changes to
+A **material edit** of an `active` or `paused` listing does not change its live columns.
+The edit is stored in `pending_changes` with `review_state = pending`, so the listing stays
+searchable and bookable with its approved values. Admin approval applies `pending_changes`
+to the columns and resets `review_state = none`. Rejection clears `pending_changes`, sets
+`review_state = rejected` and stores `rejection_reason`. Material edits are changes to
 title, description, category, attributes, photos or location. Price-only edits do not
 need review. Suspending a listing with future confirmed bookings is allowed: those bookings
 are flagged for admin follow-up and not auto-cancelled (edge case).
@@ -318,6 +323,11 @@ status (queued|sent|failed), sent_at, provider_ref`. Templates are keyed by `eve
 `id bigserial, kind, payload jsonb, run_at, attempts, max_attempts, locked_at, locked_by,
 last_error, done_at, dedupe_key UNIQUE NULL`. Workers claim with
 `FOR UPDATE SKIP LOCKED` and use exponential backoff.
+
+### idempotency_keys
+`user_id + key (PK), method, path, request_hash, response_status, response_body jsonb,
+created_at`. A replay within 24 h returns the stored response. The same key with a different
+`request_hash` → 422 `IDEMPOTENCY_KEY_REUSED`. A worker job purges rows older than 24 h.
 
 ### admin_audit_log
 `id, admin_id, action, target_kind, target_id, before jsonb, after jsonb, created_at` for every

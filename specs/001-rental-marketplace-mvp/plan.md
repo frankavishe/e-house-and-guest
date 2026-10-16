@@ -56,7 +56,7 @@ sw + en for every string (SC-007); PDPA 2022
 |---|---|---|---|
 | I. One generic listing engine | Category tree + 4 modes + JSONB attribute schema; no per-type tables or slug branches | ✅ | ✅ `categories.attribute_schema`, `listings.attributes`; night/day counting is category data (`default_unit`), not code; the seed table covers all 20 types with zero special tables |
 | II. Tanzania-first | sw default/en; TZS integers; phone+OTP; regions→districts→wards; NIDA/TIN/BRELA | ✅ | ✅ R10, R13, R16; `*_tzs bigint`; `owner_profiles` fields; i18n parity tests |
-| III. Mobile-money payments safely | `PaymentProvider` + mock; verified, idempotent webhooks; confirm only on verified success; append-only ledger | ✅ | ✅ [contracts/providers.md](contracts/providers.md); `payment_events` unique key; status re-query; guarded updates; `ledger_entries` trigger forbids UPDATE/DELETE |
+| III. Mobile-money payments safely (v1.0.1) | `PaymentProvider` + mock; webhooks authenticated, confirmed through the provider status API, idempotent; confirm only on verified success; append-only ledger | ✅ | ✅ [contracts/providers.md](contracts/providers.md); `payment_events` unique key; status re-query; guarded updates; `ledger_entries` trigger forbids UPDATE/DELETE |
 | IV. No double booking | Check + insert in one transaction with constraint/locks; concurrent tests per mode | ✅ | ✅ exclusion constraint on `availability_blocks`; `FOR UPDATE` on listing for stock; V6 concurrency suite |
 | V. Test-first core logic | pytest first for availability, pricing, state machine, payments, authz; contract tests; UI smoke | ✅ | ✅ R15; quickstart gates |
 | VI. Mobile-first low-bandwidth | SSR, optimised images, ≤ 300 KB JS, works without images | ✅ | ✅ server components by default; WebP variants + srcset; Leaflet lazy-loaded; bundle size check in CI |
@@ -152,9 +152,10 @@ The Next.js app proxies `/api/*` to FastAPI (rewrite) so auth cookies are same-o
 2. **US1 Search** (P1): listings read model, schema-driven filters, availability-aware search,
    listing page, sw/en.
 3. **US2 Book & pay** (P1): availability engine + concurrency tests, pricing, booking state
-   machine, mock + AzamPay providers, webhooks, reconciliation, expiry sweeper, SMS. *MVP cut.*
+   machine, request accept/decline, lease billing, mock + AzamPay providers, webhooks,
+   reconciliation, expiry sweeper, SMS + in-app notifications. *MVP cut.*
 4. **US3 Owner listings** (P2): owner onboarding/verification, listing wizard, photos, prices,
-   blocks, requests, calendar, admin moderation (minimal).
+   blocks, requests inbox UI, calendar, admin moderation (minimal).
 5. **US4 Earnings & payouts** (P2): ledger views, payout batching, manual mark-paid.
 6. **US5 Cancellations & deposits** (P2): policies, refunds, claims, deposit auto-release.
 7. **US6 Reviews & messaging** (P3).

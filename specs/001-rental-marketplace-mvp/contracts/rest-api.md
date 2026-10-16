@@ -19,7 +19,8 @@ contract tests (schemathesis + per-endpoint tests) enforce it.
   `INVALID_TRANSITION` 409, `OTP_INVALID` 400, `RATE_LIMITED` 429, `OWN_LISTING` 422,
   `OUTSIDE_DELIVERY_AREA` 422.
 - **Idempotency**: `POST /bookings` and `POST /bookings/{id}/payments` accept an
-  `Idempotency-Key` header. A replay within 24 h returns the original response.
+  `Idempotency-Key` header. A replay within 24 h returns the original response. Reusing a
+  key with a different request body → 422 `IDEMPOTENCY_KEY_REUSED`.
 
 ## Common schemas
 
