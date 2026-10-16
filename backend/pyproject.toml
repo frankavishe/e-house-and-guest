@@ -17,6 +17,7 @@ dependencies = [
     "pyjwt>=2.15.1",
     "pyyaml>=6.0.3",
     "sqlalchemy[asyncio]>=2.1.4",
+    "tzdata>=2026.5",
     "uvicorn[standard]>=0.54.0",
 ]
 
@@ -43,8 +44,13 @@ extend-exclude = ["alembic/versions"]
 select = ["E", "F", "W", "I", "B", "UP", "ASYNC", "S", "SIM", "RUF"]
 ignore = ["S101"]  # assert is fine in tests
 
+[tool.ruff.lint.isort]
+# The local `alembic/` migrations dir is not a package; the library is third-party.
+known-third-party = ["alembic"]
+
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S105", "S106"]
+"app/core/config.py" = ["S105"]  # dev-only defaults; real secrets come from env
 
 [tool.mypy]
 python_version = "3.12"

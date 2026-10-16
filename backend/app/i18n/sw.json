@@ -1,0 +1,24 @@
+{
+  "errors": {
+    "VALIDATION_ERROR": "Taarifa ulizoweka si sahihi.",
+    "UNAUTHENTICATED": "Tafadhali ingia kwanza.",
+    "FORBIDDEN": "Huna ruhusa ya kufanya hivi.",
+    "NOT_FOUND": "Hakijapatikana.",
+    "CONFLICT": "Ombi linakinzana na hali ya sasa.",
+    "SLOT_TAKEN": "Muda huu tayari umeshachukuliwa.",
+    "INSUFFICIENT_STOCK": "Idadi iliyopo haitoshi. Zilizopo: {available}.",
+    "INVALID_TRANSITION": "Hatua hii hairuhusiwi kwa sasa.",
+    "OTP_INVALID": "Msimbo si sahihi au umeisha muda wake.",
+    "OTP_TOO_MANY_ATTEMPTS": "Umejaribu mara nyingi mno. Omba msimbo mpya.",
+    "INVALID_PHONE": "Namba ya simu si sahihi. Tumia namba ya Tanzania, mfano 0712 345 678.",
+    "RATE_LIMITED": "Maombi ni mengi mno. Jaribu tena baadaye.",
+    "OWN_LISTING": "Huwezi kukodisha tangazo lako mwenyewe.",
+    "OUTSIDE_DELIVERY_AREA": "Eneo hili haliko kwenye eneo la usafirishaji.",
+    "IDEMPOTENCY_KEY_REUSED": "Ufunguo huu umeshatumika kwa ombi tofauti.",
+    "ACCOUNT_SUSPENDED": "Akaunti yako imesimamishwa.",
+    "INTERNAL_ERROR": "Hitilafu imetokea. Jaribu tena."
+  },
+  "sms": {
+    "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."
+  }
+}

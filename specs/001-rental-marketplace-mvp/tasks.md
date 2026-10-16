@@ -61,15 +61,15 @@ on its own.
 
 ### Backend core
 
-- [ ] T007 Implement settings in `backend/app/core/config.py` (pydantic-settings, reads `.env`, provider selectors)
-- [ ] T008 [P] Implement the injectable clock in `backend/app/core/clock.py` (`now()` UTC, `EAT` zone helpers, `to_eat_midnight(date)`, freezable in tests)
-- [ ] T009 [P] Implement the error model in `backend/app/core/errors.py` (`AppError(code, status, details)`, handlers producing `{"error": {code, message, details}}` with a localized message, mapping for 401/403/404/409/422/429) per contracts/rest-api.md
-- [ ] T010 [P] Implement backend i18n in `backend/app/core/i18n.py` + `backend/app/i18n/sw.json` + `backend/app/i18n/en.json` (`t(key, locale, **params)`, `Accept-Language` dependency, default `sw`)
-- [ ] T011 [P] Implement PII-masking log filter in `backend/app/core/logging.py` (masks `+255…` phones, NIDA/TIN patterns)
-- [ ] T012 Implement async DB engine/session and `Base` (uuid7 ids, `created_at`/`updated_at` mixins) in `backend/app/core/db.py`
-- [ ] T013 Initialize Alembic in `backend/alembic/` (async env, naming convention) and baseline migration enabling `btree_gist` and `pgcrypto` in `backend/alembic/versions/0001_extensions.py`
-- [ ] T014 Create FastAPI app in `backend/app/main.py` (`/api/v1` prefix, error handlers, `GET /health` checking DB, OpenAPI at `/api/v1/openapi.json`, router registration)
-- [ ] T015 Create pytest fixtures in `backend/tests/conftest.py` (test DB migrated once per session, per-test transaction rollback, `client` httpx AsyncClient, frozen clock fixture, factory helpers for users/categories/listings, separate-connection helper for concurrency tests)
+- [X] T007 Implement settings in `backend/app/core/config.py` (pydantic-settings, reads `.env`, provider selectors)
+- [X] T008 [P] Implement the injectable clock in `backend/app/core/clock.py` (`now()` UTC, `EAT` zone helpers, `to_eat_midnight(date)`, freezable in tests)
+- [X] T009 [P] Implement the error model in `backend/app/core/errors.py` (`AppError(code, status, details)`, handlers producing `{"error": {code, message, details}}` with a localized message, mapping for 401/403/404/409/422/429) per contracts/rest-api.md
+- [X] T010 [P] Implement backend i18n in `backend/app/core/i18n.py` + `backend/app/i18n/sw.json` + `backend/app/i18n/en.json` (`t(key, locale, **params)`, `Accept-Language` dependency, default `sw`)
+- [X] T011 [P] Implement PII-masking log filter in `backend/app/core/logging.py` (masks `+255…` phones, NIDA/TIN patterns)
+- [X] T012 Implement async DB engine/session and `Base` (uuid7 ids, `created_at`/`updated_at` mixins) in `backend/app/core/db.py`
+- [X] T013 Initialize Alembic in `backend/alembic/` (async env, naming convention) and baseline migration enabling `btree_gist` and `pgcrypto` in `backend/alembic/versions/0001_extensions.py`
+- [X] T014 Create FastAPI app in `backend/app/main.py` (`/api/v1` prefix, error handlers, `GET /health` checking DB, OpenAPI at `/api/v1/openapi.json`, router registration)
+- [X] T015 Create pytest fixtures in `backend/tests/conftest.py` (test DB migrated once per session, per-test transaction rollback, `client` httpx AsyncClient, frozen clock fixture, factory helpers for users/categories/listings, separate-connection helper for concurrency tests)
 
 ### Integrations (interfaces + local implementations)
 
