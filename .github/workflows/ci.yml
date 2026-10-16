@@ -1,0 +1,157 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: rental
+          POSTGRES_PASSWORD: rental
+          POSTGRES_DB: rental_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U rental -d rental_test"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      ENV: test
+      DATABASE_URL: postgresql+asyncpg://rental:rental@localhost:5432/rental_test
+      TEST_DATABASE_URL: postgresql+asyncpg://rental:rental@localhost:5432/rental_test
+      JWT_SECRET: ci-jwt-secret
+      OTP_HMAC_KEY: ci-otp-hmac-key
+      FERNET_KEY: ZGV2LW9ubHktY2hhbmdlLW1lLWZlcm5ldC1rZXktMzI=
+      PAYMENT_PROVIDER: mock
+      PAYMENT_CALLBACK_SECRET: ci-callback-secret
+      SMS_PROVIDER: console
+      STORAGE_PROVIDER: local
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.6"
+          enable-cache: true
+      - run: uv sync --frozen
+      - name: Ruff
+        run: uv run ruff check . && uv run ruff format --check .
+      - name: Mypy (strict on app/)
+        run: uv run mypy
+      - name: Migrations on an empty DB
+        if: hashFiles('backend/alembic.ini') != ''
+        run: uv run alembic upgrade head
+      - name: Pytest
+        # Exit code 5 = no tests collected (Phase 1 only); any other failure fails the job.
+        run: uv run pytest || [ $? -eq 5 ]
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm install -g npm@11.12.1
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test
+      - run: npm run build
+      - name: JS size budget (â‰¤ 300 KB gz per route)
+        run: npm run size
+
+
+  # Job-level `if:` cannot call hashFiles(), so a tiny job reports which gates apply yet.
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      api_client: ${{ steps.check.outputs.api_client }}
+      e2e: ${{ steps.check.outputs.e2e }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: check
+        run: |
+          # Generated client lands in T044; first Playwright smoke test lands with US1.
+          [ -f frontend/src/lib/api/schema.d.ts ] && echo "api_client=true" >> "$GITHUB_OUTPUT" || true
+          ls frontend/tests/e2e/*.spec.ts >/dev/null 2>&1 && echo "e2e=true" >> "$GITHUB_OUTPUT" || true
+
+  api-client:
+    # Regenerates the typed client from the live OpenAPI and fails if the committed copy is stale.
+    needs: detect
+    if: needs.detect.outputs.api_client == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.6"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install -g npm@11.12.1
+      - run: uv sync --frozen
+        working-directory: backend
+      - run: npm ci
+        working-directory: frontend
+      - name: Start API
+        working-directory: backend
+        env:
+          ENV: test
+          JWT_SECRET: ci
+          OTP_HMAC_KEY: ci
+          FERNET_KEY: ZGV2LW9ubHktY2hhbmdlLW1lLWZlcm5ldC1rZXktMzI=
+        run: |
+          uv run uvicorn app.main:app --port 8000 &
+          for i in $(seq 1 30); do curl -sf http://localhost:8000/api/v1/openapi.json >/dev/null && break; sleep 1; done
+      - run: npm run gen:api -- --check
+        working-directory: frontend
+
+  e2e:
+    needs: [detect, backend, frontend]
+    if: needs.detect.outputs.e2e == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: cp .env.example .env
+      - name: Start stack
+        run: |
+          docker compose up -d --build --wait db minio api worker web
+          docker compose exec -T api uv run alembic upgrade head
+          docker compose exec -T api uv run python -m app.seed --all
+      - run: npm install -g npm@11.12.1 && npm ci && npx playwright install --with-deps chromium
+        working-directory: frontend
+      - name: Playwright smoke @ 360x640
+        run: npm run e2e
+        working-directory: frontend
+        env:
+          CI: "true"
+          E2E_BASE_URL: http://localhost:3000
+      - if: failure()
+        run: docker compose logs --no-color > compose.log
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-debug
+          path: |
+            compose.log
+            frontend/playwright-report/
+            frontend/test-results/

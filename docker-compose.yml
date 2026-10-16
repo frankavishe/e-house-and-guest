@@ -1,0 +1,122 @@
+# Local stack: see specs/001-rental-marketplace-mvp/quickstart.md
+# Values come from .env (copy .env.example). Service-to-service URLs are overridden below
+# so the same .env also works for running the backend/frontend directly on the host.
+
+x-backend: &backend
+  build: ./backend
+  env_file: .env
+  environment:
+    DATABASE_URL: postgresql+asyncpg://rental:rental@db:5432/rental
+    TEST_DATABASE_URL: postgresql+asyncpg://rental:rental@db-test:5432/rental_test
+    S3_ENDPOINT_URL: http://minio:9000
+  volumes:
+    - ./backend:/app
+  depends_on:
+    db:
+      condition: service_healthy
+    minio-init:
+      condition: service_completed_successfully
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: rental
+      POSTGRES_PASSWORD: rental
+      POSTGRES_DB: rental
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rental -d rental"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  db-test:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: rental
+      POSTGRES_PASSWORD: rental
+      POSTGRES_DB: rental_test
+    command: ["postgres", "-c", "fsync=off", "-c", "synchronous_commit=off", "-c", "full_page_writes=off"]
+    ports:
+      - "${DB_TEST_PORT:-5433}:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rental -d rental_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  minio:
+    image: minio/minio:latest
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-minioadmin}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  # Creates the buckets once: `public` (listing photos, anonymous read) and
+  # `private` (verification documents, presigned access only).
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-minioadmin}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-minioadmin}
+      S3_BUCKET_PUBLIC: ${S3_BUCKET_PUBLIC:-public}
+      S3_BUCKET_PRIVATE: ${S3_BUCKET_PRIVATE:-private}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        mc alias set local http://minio:9000 "$$S3_ACCESS_KEY" "$$S3_SECRET_KEY"
+        mc mb --ignore-existing "local/$$S3_BUCKET_PUBLIC"
+        mc mb --ignore-existing "local/$$S3_BUCKET_PRIVATE"
+        mc anonymous set download "local/$$S3_BUCKET_PUBLIC"
+        mc anonymous set none "local/$$S3_BUCKET_PRIVATE"
+
+  api:
+    <<: *backend
+    command: ["uv", "run", "--frozen", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    ports:
+      - "${API_PORT:-8000}:8000"
+
+  worker:
+    <<: *backend
+    command: ["uv", "run", "--frozen", "python", "-m", "app.worker"]
+
+  web:
+    build:
+      context: ./frontend
+      target: dev
+    env_file: .env
+    environment:
+      API_INTERNAL_URL: http://api:8000
+      WATCHPACK_POLLING: "true"
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - api
+
+volumes:
+  db-data:
+  minio-data:

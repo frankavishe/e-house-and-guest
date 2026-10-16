@@ -44,12 +44,12 @@ on its own.
 
 **Purpose**: Repository skeleton, tooling and local environment
 
-- [ ] T001 Create the top-level layout from plan.md (`backend/`, `frontend/`, `docker-compose.yml`, `.env.example`, `.gitignore`, `.editorconfig`) and a root `README.md` linking to `specs/001-rental-marketplace-mvp/quickstart.md`
-- [ ] T002 Initialize the backend with uv in `backend/pyproject.toml` (Python 3.12; fastapi, uvicorn, sqlalchemy[asyncio], asyncpg, alembic, pydantic-settings, pyjwt, cryptography, httpx, pillow, pyyaml; dev: pytest, pytest-asyncio, schemathesis, ruff, mypy, freezegun) with ruff/mypy(strict on `app/`)/pytest config sections
-- [ ] T003 [P] Initialize the frontend in `frontend/` with Next.js 15 App Router + TypeScript + Tailwind CSS; add next-intl, openapi-fetch, openapi-typescript, leaflet, react-leaflet, vitest, @playwright/test, @next/bundle-analyzer; scripts `dev`, `build`, `test`, `e2e`, `gen:api`, `size`, `lint` in `frontend/package.json`
-- [ ] T004 Write `docker-compose.yml` with services `db` (postgres:16), `db-test` (postgres:16, tmpfs), `minio` + bucket bootstrap (`public`, `private`), `api` (uvicorn, port 8000), `worker` (`python -m app.worker`), `web` (next dev, port 3000), and `backend/Dockerfile`, `frontend/Dockerfile`
-- [ ] T005 [P] Write `.env.example` with every setting from research.md (DATABASE_URL, TEST_DATABASE_URL, JWT_SECRET, OTP_HMAC_KEY, FERNET_KEY, PAYMENT_PROVIDER=mock, AZAMPAY_*, PAYMENT_CALLBACK_SECRET, SMS_PROVIDER=console, BEEM_*, STORAGE_PROVIDER=s3, S3_*, NEXT_PUBLIC_TILE_URL, ENV=dev)
-- [ ] T006 [P] Add CI workflow `.github/workflows/ci.yml`: backend ruff + mypy + pytest (with Postgres service) + `alembic upgrade head` on an empty DB; frontend lint + tsc + vitest + build + size budget + `gen:api --check`; Playwright smoke against compose
+- [X] T001 Create the top-level layout from plan.md (`backend/`, `frontend/`, `docker-compose.yml`, `.env.example`, `.gitignore`, `.editorconfig`) and a root `README.md` linking to `specs/001-rental-marketplace-mvp/quickstart.md`
+- [X] T002 Initialize the backend with uv in `backend/pyproject.toml` (Python 3.12; fastapi, uvicorn, sqlalchemy[asyncio], asyncpg, alembic, pydantic-settings, pyjwt, cryptography, httpx, pillow, pyyaml; dev: pytest, pytest-asyncio, schemathesis, ruff, mypy, freezegun) with ruff/mypy(strict on `app/`)/pytest config sections
+- [X] T003 [P] Initialize the frontend in `frontend/` with Next.js 15 App Router + TypeScript + Tailwind CSS; add next-intl, openapi-fetch, openapi-typescript, leaflet, react-leaflet, vitest, @playwright/test, @next/bundle-analyzer; scripts `dev`, `build`, `test`, `e2e`, `gen:api`, `size`, `lint` in `frontend/package.json`
+- [X] T004 Write `docker-compose.yml` with services `db` (postgres:16), `db-test` (postgres:16, tmpfs), `minio` + bucket bootstrap (`public`, `private`), `api` (uvicorn, port 8000), `worker` (`python -m app.worker`), `web` (next dev, port 3000), and `backend/Dockerfile`, `frontend/Dockerfile`
+- [X] T005 [P] Write `.env.example` with every setting from research.md (DATABASE_URL, TEST_DATABASE_URL, JWT_SECRET, OTP_HMAC_KEY, FERNET_KEY, PAYMENT_PROVIDER=mock, AZAMPAY_*, PAYMENT_CALLBACK_SECRET, SMS_PROVIDER=console, BEEM_*, STORAGE_PROVIDER=s3, S3_*, NEXT_PUBLIC_TILE_URL, ENV=dev)
+- [X] T006 [P] Add CI workflow `.github/workflows/ci.yml`: backend ruff + mypy + pytest (with Postgres service) + `alembic upgrade head` on an empty DB; frontend lint + tsc + vitest + build + size budget + `gen:api --check`; Playwright smoke against compose
 
 ---
 
