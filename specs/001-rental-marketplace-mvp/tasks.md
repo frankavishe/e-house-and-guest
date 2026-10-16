@@ -73,17 +73,17 @@ on its own.
 
 ### Integrations (interfaces + local implementations)
 
-- [ ] T016 [P] Define provider protocols and DTOs in `backend/app/integrations/payments/base.py` (`PaymentProvider`, `PayoutProvider`, `Network`, `CheckoutStarted`, `PaymentStatus`, `CallbackEvent`, `RefundResult`, `PayoutResult`, `InvalidCallback`, `ProviderUnavailable`) per contracts/providers.md
-- [ ] T017 [P] Define `SmsProvider` in `backend/app/integrations/sms/base.py` and implement `ConsoleSmsProvider` (stdout in dev, in-memory outbox in test) in `backend/app/integrations/sms/console.py`
-- [ ] T018 [P] Define `StorageProvider` in `backend/app/integrations/storage/base.py` and implement S3/MinIO presign + put/get in `backend/app/integrations/storage/s3.py` and an in-memory/local version in `backend/app/integrations/storage/local.py`
-- [ ] T019 Implement provider selection/dependency injection in `backend/app/integrations/__init__.py` (env-driven factories, overridable in tests)
+- [X] T016 [P] Define provider protocols and DTOs in `backend/app/integrations/payments/base.py` (`PaymentProvider`, `PayoutProvider`, `Network`, `CheckoutStarted`, `PaymentStatus`, `CallbackEvent`, `RefundResult`, `PayoutResult`, `InvalidCallback`, `ProviderUnavailable`) per contracts/providers.md
+- [X] T017 [P] Define `SmsProvider` in `backend/app/integrations/sms/base.py` and implement `ConsoleSmsProvider` (stdout in dev, in-memory outbox in test) in `backend/app/integrations/sms/console.py`
+- [X] T018 [P] Define `StorageProvider` in `backend/app/integrations/storage/base.py` and implement S3/MinIO presign + put/get in `backend/app/integrations/storage/s3.py` and an in-memory/local version in `backend/app/integrations/storage/local.py`
+- [X] T019 Implement provider selection/dependency injection in `backend/app/integrations/__init__.py` (env-driven factories, overridable in tests)
 
 ### Jobs & notifications backbone
 
-- [ ] T020 Create `jobs` model + migration in `backend/app/jobs/models.py` and `backend/alembic/versions/0002_jobs.py` (per data-model.md, `dedupe_key` unique)
-- [ ] T021 Implement `enqueue(kind, payload, run_at, dedupe_key)` and `claim_batch()` with `FOR UPDATE SKIP LOCKED`, retry with exponential backoff in `backend/app/jobs/service.py`
-- [ ] T022 Implement the worker loop and periodic-sweep registry (`@periodic(every=…)`, `@handler(kind)`) in `backend/app/worker.py`
-- [ ] T023 [P] Write unit tests for job claim/retry/dedupe in `backend/tests/integration/test_jobs.py`
+- [X] T020 Create `jobs` model + migration in `backend/app/jobs/models.py` and `backend/alembic/versions/0002_jobs.py` (per data-model.md, `dedupe_key` unique)
+- [X] T021 Implement `enqueue(kind, payload, run_at, dedupe_key)` and `claim_batch()` with `FOR UPDATE SKIP LOCKED`, retry with exponential backoff in `backend/app/jobs/service.py`
+- [X] T022 Implement the worker loop and periodic-sweep registry (`@periodic(every=…)`, `@handler(kind)`) in `backend/app/worker.py`
+- [X] T023 [P] Write unit tests for job claim/retry/dedupe in `backend/tests/integration/test_jobs.py`
 - [ ] T024 Create `notifications` model + migration and `notify(user_id, event, payload, channels)` that renders sw/en templates and enqueues `sms.send` jobs, plus the `sms.send` handler in `backend/app/notifications/{models,service,handlers}.py`
 
 ### Accounts & auth (FR-001, FR-002, FR-004)

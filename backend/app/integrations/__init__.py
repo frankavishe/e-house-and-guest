@@ -1,0 +1,72 @@
+"""Provider selection (Principle VII). Factories read settings once and cache the instance;
+tests swap implementations with `override_*` or FastAPI `dependency_overrides`."""
+
+from app.core.config import get_settings
+from app.integrations.payments.base import PaymentProvider, PayoutProvider
+from app.integrations.sms.base import SmsProvider
+from app.integrations.storage.base import StorageProvider
+
+_sms: SmsProvider | None = None
+_storage: StorageProvider | None = None
+_payments: PaymentProvider | None = None
+_payouts: PayoutProvider | None = None
+
+
+def get_sms_provider() -> SmsProvider:
+    global _sms
+    if _sms is None:
+        settings = get_settings()
+        if settings.sms_provider == "console":
+            from app.integrations.sms.console import ConsoleSmsProvider
+
+            _sms = ConsoleSmsProvider(echo=settings.env != "test")
+        else:
+            raise NotImplementedError("BeemSmsProvider arrives in T142")
+    return _sms
+
+
+def get_storage() -> StorageProvider:
+    global _storage
+    if _storage is None:
+        settings = get_settings()
+        if settings.storage_provider == "local":
+            from app.integrations.storage.local import LocalStorage
+
+            _storage = LocalStorage()
+        else:
+            from app.integrations.storage.s3 import S3Storage
+
+            _storage = S3Storage(settings)
+    return _storage
+
+
+def get_payment_provider() -> PaymentProvider:
+    if _payments is None:
+        raise NotImplementedError("payment providers arrive in US2 (T081/T082)")
+    return _payments
+
+
+def get_payout_provider() -> PayoutProvider:
+    if _payouts is None:
+        raise NotImplementedError("payout providers arrive in US4 (T112)")
+    return _payouts
+
+
+def override_sms(provider: SmsProvider | None) -> None:
+    global _sms
+    _sms = provider
+
+
+def override_storage(provider: StorageProvider | None) -> None:
+    global _storage
+    _storage = provider
+
+
+def override_payments(provider: PaymentProvider | None) -> None:
+    global _payments
+    _payments = provider
+
+
+def override_payouts(provider: PayoutProvider | None) -> None:
+    global _payouts
+    _payouts = provider

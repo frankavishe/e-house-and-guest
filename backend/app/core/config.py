@@ -51,6 +51,9 @@ class Settings(BaseSettings):
     # Object storage (R12)
     storage_provider: Literal["s3", "local"] = "s3"
     s3_endpoint_url: str = "http://localhost:9000"
+    # Endpoint used in presigned URLs handed to browsers; defaults to s3_endpoint_url.
+    # In docker the API reaches MinIO as http://minio:9000 but browsers need localhost.
+    s3_presign_endpoint_url: str = ""
     s3_public_base_url: str = "http://localhost:9000/public"
     s3_region: str = "us-east-1"
     s3_access_key: str = "minioadmin"
