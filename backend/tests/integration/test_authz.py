@@ -10,9 +10,10 @@ import pytest_asyncio
 from fastapi import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.accounts.models import OwnerKind, OwnerProfile, VerificationStatus
 from app.core import security
 from app.core.db import get_session
-from app.core.deps import AdminUser, CurrentUser, OptionalUser
+from app.core.deps import AdminUser, CurrentUser, OptionalUser, Owner, VerifiedOwner
 from app.main import create_app
 from tests.factories import make_user, sign_in
 
@@ -32,6 +33,16 @@ async def signed_in(user: CurrentUser) -> dict[str, str]:
 @probe.get("/admin")
 async def admin(user: AdminUser) -> dict[str, str]:
     return {"user": str(user.id)}
+
+
+@probe.get("/owner")
+async def owner(profile: Owner) -> dict[str, str]:
+    return {"owner": str(profile.id)}
+
+
+@probe.get("/verified-owner")
+async def verified_owner(profile: VerifiedOwner) -> dict[str, str]:
+    return {"owner": str(profile.id)}
 
 
 @pytest_asyncio.fixture(loop_scope="session")
@@ -107,3 +118,48 @@ async def test_bearer_header_accepted(probe_client: httpx.AsyncClient, db: Async
     token = security.encode_access_token(user.id)
     res = await probe_client.get("/probe/signed-in", headers={"Authorization": f"Bearer {token}"})
     assert res.status_code == 200
+
+
+async def _owner(db: AsyncSession, status: VerificationStatus) -> tuple:
+    user = await make_user(db)
+    profile = OwnerProfile(
+        user_id=user.id,
+        kind=OwnerKind.INDIVIDUAL,
+        display_name="Mama Neema",
+        verification_status=status,
+        rejection_reason="docs unclear" if status == VerificationStatus.REJECTED else None,
+    )
+    db.add(profile)
+    await db.flush()
+    return user, profile
+
+
+async def test_owner_routes(probe_client: httpx.AsyncClient, db: AsyncSession) -> None:
+    assert (await probe_client.get("/probe/owner")).status_code == 401
+    sign_in(probe_client, await make_user(db))  # renter without an owner profile
+    assert (await probe_client.get("/probe/owner")).status_code == 403
+    assert (await probe_client.get("/probe/verified-owner")).status_code == 403
+
+    user, profile = await _owner(db, VerificationStatus.PENDING)
+    sign_in(probe_client, user)
+    res = await probe_client.get("/probe/owner")
+    assert res.status_code == 200 and res.json() == {"owner": str(profile.id)}
+    res = await probe_client.get("/probe/verified-owner")
+    assert res.status_code == 403 and res.json()["error"]["code"] == "OWNER_NOT_VERIFIED"
+
+    user, _ = await _owner(db, VerificationStatus.VERIFIED)
+    sign_in(probe_client, user)
+    assert (await probe_client.get("/probe/verified-owner")).status_code == 200
+
+
+async def test_me_reports_owner_role(client: httpx.AsyncClient, db: AsyncSession) -> None:
+    user, profile = await _owner(db, VerificationStatus.VERIFIED)
+    sign_in(client, user)
+    body = (await client.get("/api/v1/me")).json()
+    assert body["roles"] == ["renter", "owner"]
+    assert body["owner_profile"] == {
+        "id": str(profile.id),
+        "kind": "individual",
+        "display_name": "Mama Neema",
+        "verification_status": "verified",
+    }

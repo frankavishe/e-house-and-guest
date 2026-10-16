@@ -17,7 +17,8 @@
     "IDEMPOTENCY_KEY_REUSED": "Ufunguo huu umeshatumika kwa ombi tofauti.",
     "ACCOUNT_SUSPENDED": "Akaunti yako imesimamishwa.",
     "INTERNAL_ERROR": "Hitilafu imetokea. Jaribu tena.",
-    "EMAIL_TAKEN": "Barua pepe hii tayari inatumiwa na akaunti nyingine."
+    "EMAIL_TAKEN": "Barua pepe hii tayari inatumiwa na akaunti nyingine.",
+    "OWNER_NOT_VERIFIED": "Akaunti yako ya mmiliki bado haijathibitishwa."
   },
   "sms": {
     "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."

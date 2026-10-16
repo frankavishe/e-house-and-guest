@@ -89,28 +89,28 @@ on its own.
 ### Accounts & auth (FR-001, FR-002, FR-004)
 
 - [X] T025 [P] Write auth tests first in `backend/tests/integration/test_auth.py`: OTP request/verify happy path, wrong code, 5-attempt limit, 5-minute expiry, 3-per-15-min rate limit (429), phone normalisation (`0712…` → `+255712…`), refresh rotation and reuse detection revokes family, logout
-- [ ] T026 [P] Write authorization tests first in `backend/tests/integration/test_authz.py`: public vs signed-in vs owner vs admin endpoints return 401/403 correctly; suspended user is rejected
+- [X] T026 [P] Write authorization tests first in `backend/tests/integration/test_authz.py`: public vs signed-in vs owner vs admin endpoints return 401/403 correctly; suspended user is rejected
 - [X] T027 [P] Write contract tests for `/auth/*`, `/me` and `/health` in `backend/tests/contract/test_auth_contract.py`
 - [X] T028 Create `users`, `otp_codes`, `refresh_tokens` models + migration in `backend/app/accounts/models.py` and `backend/alembic/versions/0003_accounts.py`
 - [X] T029 Implement security helpers in `backend/app/core/security.py` (phone normalisation/validation, OTP generate + HMAC hash, JWT encode/decode, refresh token hashing, Fernet encrypt/decrypt, cookie setters)
 - [X] T030 Implement auth service + router (`/auth/otp/request`, `/auth/otp/verify`, `/auth/refresh`, `/auth/logout`) in `backend/app/accounts/service.py` and `backend/app/accounts/router.py`
-- [ ] T031 Implement `current_user`, `require_owner`, `require_verified_owner`, `require_admin` dependencies in `backend/app/core/deps.py`
+- [X] T031 Implement `current_user`, `require_owner`, `require_verified_owner`, `require_admin` dependencies in `backend/app/core/deps.py`
 - [X] T032 Implement `GET/PATCH /me` in `backend/app/accounts/router.py` (language preference stored on user)
 
 ### Catalogue & locations (FR-005, FR-006)
 
-- [ ] T033 [P] Write attribute-schema validation tests first in `backend/tests/unit/test_attribute_schema.py`: schema validation (unique keys, sw+en labels, filter/type compatibility, min ≤ max) and listing value validation for every type in contracts/attribute-schema.md, including unknown keys → error
-- [ ] T034 Create `locations` and `categories` models + migration in `backend/app/catalog/models.py` and `backend/alembic/versions/0004_catalog.py`
-- [ ] T035 Implement attribute schema meta-validation and the dynamic Pydantic value-model builder (cached by `category_id` + `schema_version`) in `backend/app/catalog/attributes.py`
-- [ ] T036 Implement catalog service + public router (`GET /categories`, `GET /categories/{slug}`, `GET /locations`) in `backend/app/catalog/service.py` and `backend/app/catalog/router.py`
-- [ ] T037 [P] Build seed data `backend/seed/locations.csv` (31 regions, all districts, wards for Dar es Salaam, Arusha, Dodoma, Mwanza, Zanzibar Urban/West) and `backend/seed/categories.yaml` (6 groups + leaves, modes, units and attribute schemas per contracts/attribute-schema.md, all labels sw+en)
-- [ ] T038 Implement the idempotent seed command `python -m app.seed --locations --categories --demo --all` in `backend/app/seed.py`
+- [X] T033 [P] Write attribute-schema validation tests first in `backend/tests/unit/test_attribute_schema.py`: schema validation (unique keys, sw+en labels, filter/type compatibility, min ≤ max) and listing value validation for every type in contracts/attribute-schema.md, including unknown keys → error
+- [X] T034 Create `locations` and `categories` models + migration in `backend/app/catalog/models.py` and `backend/alembic/versions/0004_catalog.py`
+- [X] T035 Implement attribute schema meta-validation and the dynamic Pydantic value-model builder (cached by `category_id` + `schema_version`) in `backend/app/catalog/attributes.py`
+- [X] T036 Implement catalog service + public router (`GET /categories`, `GET /categories/{slug}`, `GET /locations`) in `backend/app/catalog/service.py` and `backend/app/catalog/router.py`
+- [X] T037 [P] Build seed data `backend/seed/locations.csv` (31 regions, all districts, wards for Dar es Salaam, Arusha, Dodoma, Mwanza, Zanzibar Urban/West) and `backend/seed/categories.yaml` (6 groups + leaves, modes, units and attribute schemas per contracts/attribute-schema.md, all labels sw+en)
+- [X] T038 Implement the idempotent seed command `python -m app.seed --locations --categories --demo --all` in `backend/app/seed.py`
 
 ### Listing core models (shared by US1–US3)
 
-- [ ] T039 Create `owner_profiles`, `payout_methods`, `listings`, `listing_photos`, `listing_prices` models + migration (enums, generated `search_tsv`, indexes from data-model.md) in `backend/app/accounts/models.py`, `backend/app/listings/models.py` and `backend/alembic/versions/0005_listings.py`
-- [ ] T040 Create `availability_blocks` and `bookings` models + migration with the exclusion constraint `EXCLUDE USING gist (listing_id WITH =, period WITH &&) WHERE (kind='exclusive' AND active)` in `backend/app/availability/models.py`, `backend/app/bookings/models.py` and `backend/alembic/versions/0006_bookings.py`
-- [ ] T041 Add demo data to `backend/seed/demo.yaml` (demo renter/owner/admin phones from quickstart.md, verified owner, ≥ 3 active listings per leaf category across the 5 cities with prices and photos placeholders, a tent listing with stock 10)
+- [X] T039 Create `owner_profiles`, `payout_methods`, `listings`, `listing_photos`, `listing_prices` models + migration (enums, generated `search_tsv`, indexes from data-model.md) in `backend/app/accounts/models.py`, `backend/app/listings/models.py` and `backend/alembic/versions/0005_listings.py`
+- [X] T040 Create `availability_blocks` and `bookings` models + migration with the exclusion constraint `EXCLUDE USING gist (listing_id WITH =, period WITH &&) WHERE (kind='exclusive' AND active)` in `backend/app/availability/models.py`, `backend/app/bookings/models.py` and `backend/alembic/versions/0006_bookings.py`
+- [X] T041 Add demo data to `backend/seed/demo.yaml` (demo renter/owner/admin phones from quickstart.md, verified owner, ≥ 3 active listings per leaf category across the 5 cities with prices and photos placeholders, a tent listing with stock 10)
 
 ### Frontend foundation
 

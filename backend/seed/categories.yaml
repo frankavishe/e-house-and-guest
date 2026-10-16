@@ -1,0 +1,837 @@
+# Seed categories (contracts/attribute-schema.md "Seed categories").
+# Six top-level groups; leaves carry the booking mode, price units and attribute schema.
+# `python -m app.seed --categories` upserts by slug and bumps schema_version on change.
+# Keys under `x-fields` are YAML anchors reused below; the seeder ignores them.
+
+x-fields:
+  amenities_stay: &amenities_stay
+    key: amenities
+    type: multi_enum
+    label: {sw: Huduma, en: Amenities}
+    filter: any_of
+    order: 50
+    options:
+      - {value: wifi, label: {sw: Intaneti (Wi-Fi), en: Wi-Fi}}
+      - {value: parking, label: {sw: Maegesho, en: Parking}}
+      - {value: ac, label: {sw: Kiyoyozi, en: Air conditioning}}
+      - {value: kitchen, label: {sw: Jiko, en: Kitchen}}
+      - {value: tv, label: {sw: Televisheni, en: TV}}
+      - {value: generator, label: {sw: Jenereta, en: Backup generator}}
+      - {value: security, label: {sw: Ulinzi saa 24, en: 24h security}}
+      - {value: pool, label: {sw: Bwawa la kuogelea, en: Swimming pool}}
+      - {value: laundry, label: {sw: Huduma ya kufua, en: Laundry}}
+      - {value: water_tank, label: {sw: Tanki la maji, en: Water storage tank}}
+  bedrooms: &bedrooms
+    key: bedrooms
+    type: integer
+    label: {sw: Vyumba vya kulala, en: Bedrooms}
+    required: true
+    min: 0
+    max: 50
+    filter: range
+    show_on_card: true
+    order: 1
+  bathrooms: &bathrooms
+    key: bathrooms
+    type: integer
+    label: {sw: Mabafu, en: Bathrooms}
+    min: 0
+    max: 50
+    filter: range
+    order: 2
+  max_guests: &max_guests
+    key: max_guests
+    type: integer
+    label: {sw: Idadi ya wageni, en: Maximum guests}
+    required: true
+    min: 1
+    max: 200
+    filter: range
+    show_on_card: true
+    order: 3
+  furnished: &furnished
+    key: furnished
+    type: boolean
+    label: {sw: Ina samani, en: Furnished}
+    filter: exact
+    order: 10
+  capacity: &capacity
+    key: capacity
+    type: integer
+    label: {sw: Uwezo (watu), en: Capacity (people)}
+    required: true
+    min: 1
+    max: 20000
+    filter: range
+    show_on_card: true
+    order: 1
+  area_m2: &area_m2
+    key: area_m2
+    type: decimal
+    label: {sw: Ukubwa, en: Size}
+    unit: {sw: m², en: m²}
+    required: true
+    min: 1
+    max: 1000000
+    filter: range
+    show_on_card: true
+    order: 1
+  security_24h: &security_24h
+    key: security_24h
+    type: boolean
+    label: {sw: Ulinzi saa 24, en: 24h security}
+    filter: exact
+    order: 20
+  seats: &seats
+    key: seats
+    type: integer
+    label: {sw: Viti, en: Seats}
+    required: true
+    min: 1
+    max: 100
+    filter: range
+    show_on_card: true
+    order: 2
+  transmission: &transmission
+    key: transmission
+    type: enum
+    label: {sw: Gia, en: Transmission}
+    filter: exact
+    order: 3
+    options:
+      - {value: manual, label: {sw: Manual, en: Manual}}
+      - {value: automatic, label: {sw: Automatiki, en: Automatic}}
+  fuel_type: &fuel_type
+    key: fuel_type
+    type: enum
+    label: {sw: Aina ya mafuta, en: Fuel type}
+    filter: any_of
+    order: 4
+    options:
+      - {value: petrol, label: {sw: Petroli, en: Petrol}}
+      - {value: diesel, label: {sw: Dizeli, en: Diesel}}
+      - {value: electric, label: {sw: Umeme, en: Electric}}
+      - {value: hybrid, label: {sw: Mseto, en: Hybrid}}
+  with_driver: &with_driver
+    key: with_driver
+    type: boolean
+    label: {sw: Pamoja na dereva, en: With driver}
+    filter: exact
+    show_on_card: true
+    order: 5
+  condition: &condition
+    key: condition
+    type: enum
+    label: {sw: Hali, en: Condition}
+    filter: any_of
+    order: 30
+    options:
+      - {value: new, label: {sw: Mpya, en: New}}
+      - {value: good, label: {sw: Nzuri, en: Good}}
+      - {value: fair, label: {sw: Wastani, en: Fair}}
+  setup_included: &setup_included
+    key: setup_included
+    type: boolean
+    label: {sw: Kufunga kumejumuishwa, en: Setup included}
+    filter: exact
+    order: 20
+  operator_included: &operator_included
+    key: operator_included
+    type: boolean
+    label: {sw: Pamoja na mwendeshaji, en: Operator included}
+    filter: exact
+    order: 21
+  power_watts: &power_watts
+    key: power_watts
+    type: integer
+    label: {sw: Nguvu, en: Power}
+    unit: {sw: W, en: W}
+    min: 1
+    max: 100000
+    filter: range
+    order: 5
+
+groups:
+  - slug: accommodation
+    name: {sw: Malazi, en: Accommodation}
+    sort_order: 1
+    children:
+      - slug: rooms
+        name: {sw: Vyumba, en: Rooms}
+        booking_mode: DATE_RANGE
+        price_units: [night, week, month]
+        default_unit: night
+        sort_order: 1
+        attribute_schema:
+          - *bedrooms
+          - *bathrooms
+          - *max_guests
+          - *furnished
+          - key: private_bathroom
+            type: boolean
+            label: {sw: Bafu binafsi, en: Private bathroom}
+            filter: exact
+            order: 11
+          - *amenities_stay
+      - slug: guest-houses
+        name: {sw: Nyumba za wageni, en: Guest houses}
+        booking_mode: DATE_RANGE
+        price_units: [night, week, month]
+        default_unit: night
+        sort_order: 2
+        attribute_schema:
+          - *bedrooms
+          - *bathrooms
+          - *max_guests
+          - key: breakfast_included
+            type: boolean
+            label: {sw: Kifungua kinywa kimejumuishwa, en: Breakfast included}
+            filter: exact
+            show_on_card: true
+            order: 12
+          - *amenities_stay
+      - slug: serviced-apartments
+        name: {sw: Apartment zenye huduma, en: Serviced apartments}
+        booking_mode: DATE_RANGE
+        price_units: [night, week, month]
+        default_unit: night
+        sort_order: 3
+        attribute_schema:
+          - *bedrooms
+          - *bathrooms
+          - *max_guests
+          - key: housekeeping
+            type: enum
+            label: {sw: Usafi wa nyumba, en: Housekeeping}
+            filter: exact
+            order: 12
+            options:
+              - {value: daily, label: {sw: Kila siku, en: Daily}}
+              - {value: weekly, label: {sw: Kila wiki, en: Weekly}}
+              - {value: none, label: {sw: Hakuna, en: None}}
+          - *amenities_stay
+      - slug: student-housing
+        name: {sw: Hosteli za wanafunzi, en: Student housing}
+        booking_mode: LEASE
+        price_units: [month]
+        default_unit: month
+        sort_order: 4
+        attribute_schema:
+          - key: room_type
+            type: enum
+            label: {sw: Aina ya chumba, en: Room type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: single, label: {sw: Mtu mmoja, en: Single}}
+              - {value: shared, label: {sw: Cha kushirikiana, en: Shared}}
+          - key: gender
+            type: enum
+            label: {sw: Jinsia, en: Gender}
+            required: true
+            filter: exact
+            show_on_card: true
+            order: 2
+            options:
+              - {value: male, label: {sw: Wanaume, en: Male}}
+              - {value: female, label: {sw: Wanawake, en: Female}}
+              - {value: mixed, label: {sw: Mchanganyiko, en: Mixed}}
+          - key: near_institution
+            type: text
+            label: {sw: Karibu na chuo, en: Near institution}
+            max_length: 120
+            order: 3
+          - key: meals_included
+            type: boolean
+            label: {sw: Chakula kimejumuishwa, en: Meals included}
+            filter: exact
+            order: 4
+          - *amenities_stay
+      - slug: co-living
+        name: {sw: Makazi ya pamoja, en: Co-living}
+        booking_mode: LEASE
+        price_units: [month]
+        default_unit: month
+        sort_order: 5
+        attribute_schema:
+          - *bedrooms
+          - *furnished
+          - key: residents
+            type: integer
+            label: {sw: Wakazi wengine, en: Other residents}
+            min: 0
+            max: 50
+            filter: range
+            order: 3
+          - *amenities_stay
+
+  - slug: workspace
+    name: {sw: Sehemu za kazi, en: Workspace}
+    sort_order: 2
+    children:
+      - slug: coworking
+        name: {sw: Sehemu za kazi za pamoja, en: Coworking}
+        booking_mode: TIME_SLOT
+        price_units: [hour, day]
+        default_unit: hour
+        sort_order: 1
+        attribute_schema:
+          - key: desk_type
+            type: enum
+            label: {sw: Aina ya meza, en: Desk type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: hot_desk, label: {sw: Meza ya pamoja, en: Hot desk}}
+              - {value: dedicated_desk, label: {sw: Meza binafsi, en: Dedicated desk}}
+              - {value: private_office, label: {sw: Ofisi binafsi, en: Private office}}
+              - {value: meeting_room, label: {sw: Chumba cha mikutano, en: Meeting room}}
+          - *seats
+          - key: amenities
+            type: multi_enum
+            label: {sw: Huduma, en: Amenities}
+            filter: any_of
+            order: 50
+            options:
+              - {value: wifi, label: {sw: Intaneti (Wi-Fi), en: Wi-Fi}}
+              - {value: ac, label: {sw: Kiyoyozi, en: Air conditioning}}
+              - {value: printing, label: {sw: Uchapishaji, en: Printing}}
+              - {value: projector, label: {sw: Projekta, en: Projector}}
+              - {value: coffee, label: {sw: Kahawa na chai, en: Coffee and tea}}
+              - {value: parking, label: {sw: Maegesho, en: Parking}}
+              - {value: generator, label: {sw: Jenereta, en: Backup generator}}
+      - slug: offices
+        name: {sw: Ofisi, en: Offices}
+        booking_mode: LEASE
+        price_units: [month]
+        default_unit: month
+        sort_order: 2
+        attribute_schema:
+          - *area_m2
+          - key: rooms
+            type: integer
+            label: {sw: Vyumba, en: Rooms}
+            min: 1
+            max: 200
+            filter: range
+            show_on_card: true
+            order: 2
+          - *furnished
+          - key: floor
+            type: integer
+            label: {sw: Ghorofa, en: Floor}
+            min: 0
+            max: 100
+            filter: range
+            order: 3
+          - key: amenities
+            type: multi_enum
+            label: {sw: Huduma, en: Amenities}
+            filter: any_of
+            order: 50
+            options:
+              - {value: parking, label: {sw: Maegesho, en: Parking}}
+              - {value: ac, label: {sw: Kiyoyozi, en: Air conditioning}}
+              - {value: elevator, label: {sw: Lifti, en: Elevator}}
+              - {value: generator, label: {sw: Jenereta, en: Backup generator}}
+              - {value: security, label: {sw: Ulinzi saa 24, en: 24h security}}
+              - {value: internet, label: {sw: Intaneti, en: Internet}}
+              - {value: reception, label: {sw: Mapokezi, en: Reception}}
+
+  - slug: venues
+    name: {sw: Kumbi na maeneo ya matukio, en: Venues}
+    sort_order: 3
+    children:
+      - slug: event-halls
+        name: {sw: Kumbi za sherehe, en: Event halls}
+        booking_mode: TIME_SLOT
+        price_units: [hour, day]
+        default_unit: day
+        sort_order: 1
+        attribute_schema:
+          - *capacity
+          - key: catering_allowed
+            type: boolean
+            label: {sw: Chakula cha nje kinaruhusiwa, en: Outside catering allowed}
+            filter: exact
+            order: 2
+          - &venue_amenities
+            key: amenities
+            type: multi_enum
+            label: {sw: Huduma, en: Amenities}
+            filter: any_of
+            order: 50
+            options:
+              - {value: chairs_tables, label: {sw: Viti na meza, en: Chairs and tables}}
+              - {value: sound_system, label: {sw: Mfumo wa sauti, en: Sound system}}
+              - {value: stage, label: {sw: Jukwaa, en: Stage}}
+              - {value: parking, label: {sw: Maegesho, en: Parking}}
+              - {value: catering, label: {sw: Huduma ya chakula, en: Catering}}
+              - {value: decor, label: {sw: Mapambo, en: Decoration}}
+              - {value: ac, label: {sw: Kiyoyozi, en: Air conditioning}}
+              - {value: generator, label: {sw: Jenereta, en: Backup generator}}
+      - slug: event-venues
+        name: {sw: Maeneo ya matukio ya wazi, en: Outdoor event venues}
+        booking_mode: TIME_SLOT
+        price_units: [hour, day]
+        default_unit: day
+        sort_order: 2
+        attribute_schema:
+          - *capacity
+          - key: venue_type
+            type: enum
+            label: {sw: Aina ya eneo, en: Venue type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 2
+            options:
+              - {value: garden, label: {sw: Bustani, en: Garden}}
+              - {value: beach, label: {sw: Ufukweni, en: Beach}}
+              - {value: rooftop, label: {sw: Juu ya jengo, en: Rooftop}}
+              - {value: open_ground, label: {sw: Uwanja wa wazi, en: Open ground}}
+          - *venue_amenities
+
+  - slug: storage-property
+    name: {sw: Hifadhi na mali, en: Storage & property}
+    sort_order: 4
+    children:
+      - slug: warehouses
+        name: {sw: Maghala, en: Warehouses}
+        booking_mode: LEASE
+        price_units: [month]
+        default_unit: month
+        sort_order: 1
+        attribute_schema:
+          - *area_m2
+          - key: ceiling_height_m
+            type: decimal
+            label: {sw: Urefu wa dari, en: Ceiling height}
+            unit: {sw: m, en: m}
+            min: 1
+            max: 50
+            filter: range
+            order: 2
+          - key: loading_bay
+            type: boolean
+            label: {sw: Sehemu ya kupakia malori, en: Truck loading bay}
+            filter: exact
+            show_on_card: true
+            order: 3
+          - key: three_phase_power
+            type: boolean
+            label: {sw: Umeme wa njia tatu, en: Three-phase power}
+            filter: exact
+            order: 4
+          - *security_24h
+      - slug: self-storage
+        name: {sw: Hifadhi binafsi, en: Self storage}
+        booking_mode: LEASE
+        price_units: [month]
+        default_unit: month
+        sort_order: 2
+        attribute_schema:
+          - *area_m2
+          - key: climate_controlled
+            type: boolean
+            label: {sw: Joto linadhibitiwa, en: Climate controlled}
+            filter: exact
+            order: 2
+          - key: access_24h
+            type: boolean
+            label: {sw: Kuingia saa 24, en: 24h access}
+            filter: exact
+            order: 3
+          - *security_24h
+      - slug: parking
+        name: {sw: Maegesho, en: Parking}
+        booking_mode: DATE_RANGE
+        price_units: [day, month]
+        default_unit: day
+        sort_order: 3
+        attribute_schema:
+          - key: vehicle_size
+            type: multi_enum
+            label: {sw: Aina ya chombo, en: Vehicle size}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: motorbike, label: {sw: Pikipiki, en: Motorbike}}
+              - {value: car, label: {sw: Gari dogo, en: Car}}
+              - {value: van, label: {sw: Van, en: Van}}
+              - {value: truck, label: {sw: Lori, en: Truck}}
+          - key: covered
+            type: boolean
+            label: {sw: Yenye paa, en: Covered}
+            filter: exact
+            order: 2
+          - *security_24h
+
+  - slug: vehicles
+    name: {sw: Magari na usafiri, en: Vehicles & mobility}
+    sort_order: 5
+    children:
+      - slug: cars
+        name: {sw: Magari madogo, en: Cars}
+        booking_mode: DATE_RANGE
+        price_units: [day, week]
+        default_unit: day
+        sort_order: 1
+        attribute_schema:
+          - key: vehicle_type
+            type: enum
+            label: {sw: Aina ya gari, en: Vehicle type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: sedan, label: {sw: Saloon, en: Sedan}}
+              - {value: hatchback, label: {sw: Hatchback, en: Hatchback}}
+              - {value: suv, label: {sw: SUV, en: SUV}}
+              - {value: 4x4, label: {sw: 4x4, en: 4x4}}
+              - {value: pickup, label: {sw: Pick-up, en: Pickup}}
+          - *seats
+          - *transmission
+          - *fuel_type
+          - *with_driver
+          - &air_conditioning
+            key: air_conditioning
+            type: boolean
+            label: {sw: Kiyoyozi, en: Air conditioning}
+            filter: exact
+            order: 6
+      - slug: vans
+        name: {sw: Van, en: Vans}
+        booking_mode: DATE_RANGE
+        price_units: [day, week]
+        default_unit: day
+        sort_order: 2
+        attribute_schema:
+          - key: vehicle_type
+            type: enum
+            label: {sw: Aina ya gari, en: Vehicle type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: minivan, label: {sw: Minivan, en: Minivan}}
+              - {value: cargo_van, label: {sw: Van ya mizigo, en: Cargo van}}
+              - {value: safari_van, label: {sw: Van ya safari, en: Safari van}}
+          - *seats
+          - *transmission
+          - *fuel_type
+          - *with_driver
+          - *air_conditioning
+      - slug: buses
+        name: {sw: Mabasi, en: Buses}
+        booking_mode: DATE_RANGE
+        price_units: [day, week]
+        default_unit: day
+        sort_order: 3
+        attribute_schema:
+          - key: vehicle_type
+            type: enum
+            label: {sw: Aina ya basi, en: Bus type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: minibus, label: {sw: Daladala/Coaster, en: Minibus}}
+              - {value: coach, label: {sw: Basi kubwa, en: Coach}}
+          - *seats
+          - *with_driver
+          - *air_conditioning
+      - slug: motorbikes
+        name: {sw: Pikipiki, en: Motorbikes}
+        booking_mode: DATE_RANGE
+        price_units: [day, week]
+        default_unit: day
+        sort_order: 4
+        attribute_schema:
+          - key: engine_cc
+            type: integer
+            label: {sw: Ukubwa wa injini, en: Engine size}
+            unit: {sw: cc, en: cc}
+            required: true
+            min: 50
+            max: 2000
+            filter: range
+            show_on_card: true
+            order: 1
+          - key: helmet_included
+            type: boolean
+            label: {sw: Kofia ngumu imejumuishwa, en: Helmet included}
+            filter: exact
+            order: 2
+          - *with_driver
+      - slug: bajaji
+        name: {sw: Bajaji, en: Bajaji (tuk-tuks)}
+        booking_mode: DATE_RANGE
+        price_units: [day, week]
+        default_unit: day
+        sort_order: 5
+        attribute_schema:
+          - key: seats
+            type: integer
+            label: {sw: Viti vya abiria, en: Passenger seats}
+            required: true
+            min: 1
+            max: 6
+            filter: range
+            show_on_card: true
+            order: 1
+          - *fuel_type
+          - *with_driver
+      - slug: trucks
+        name: {sw: Malori, en: Trucks}
+        booking_mode: DATE_RANGE
+        price_units: [day, week]
+        default_unit: day
+        sort_order: 6
+        attribute_schema:
+          - key: payload_tonnes
+            type: decimal
+            label: {sw: Uwezo wa mzigo, en: Payload}
+            unit: {sw: tani, en: tonnes}
+            required: true
+            min: 0.5
+            max: 60
+            filter: range
+            show_on_card: true
+            order: 1
+          - key: truck_type
+            type: enum
+            label: {sw: Aina ya lori, en: Truck type}
+            required: true
+            filter: any_of
+            order: 2
+            options:
+              - {value: flatbed, label: {sw: Bodi wazi, en: Flatbed}}
+              - {value: box, label: {sw: Lenye kontena, en: Box truck}}
+              - {value: tipper, label: {sw: Tipa, en: Tipper}}
+              - {value: refrigerated, label: {sw: Lenye friji, en: Refrigerated}}
+          - *with_driver
+
+  - slug: equipment
+    name: {sw: Vifaa na bidhaa, en: Equipment & supplies}
+    sort_order: 6
+    children:
+      - slug: construction
+        name: {sw: Vifaa vya ujenzi, en: Construction equipment}
+        booking_mode: QUANTITY
+        price_units: [item_day]
+        default_unit: item_day
+        sort_order: 1
+        attribute_schema:
+          - key: equipment_type
+            type: enum
+            label: {sw: Aina ya kifaa, en: Equipment type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: concrete_mixer, label: {sw: Mashine ya kuchanganya zege, en: Concrete mixer}}
+              - {value: scaffolding, label: {sw: Jukwaa la ujenzi, en: Scaffolding}}
+              - {value: compactor, label: {sw: Kishindilio, en: Plate compactor}}
+              - {value: water_pump, label: {sw: Pampu ya maji, en: Water pump}}
+              - {value: jack_hammer, label: {sw: Nyundo ya umeme, en: Jack hammer}}
+              - {value: generator, label: {sw: Jenereta, en: Generator}}
+              - {value: ladder, label: {sw: Ngazi, en: Ladder}}
+          - *condition
+          - *operator_included
+      - slug: tents
+        name: {sw: Mahema, en: Tents}
+        booking_mode: QUANTITY
+        price_units: [item_day]
+        default_unit: item_day
+        sort_order: 2
+        attribute_schema:
+          - key: tent_type
+            type: enum
+            label: {sw: Aina ya hema, en: Tent type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: canopy, label: {sw: Kivuli, en: Canopy}}
+              - {value: marquee, label: {sw: Hema kubwa, en: Marquee}}
+              - {value: stretch, label: {sw: Hema la kunyoosha, en: Stretch tent}}
+              - {value: pagoda, label: {sw: Pagoda, en: Pagoda}}
+          - key: capacity
+            type: integer
+            label: {sw: Uwezo (watu), en: Capacity (people)}
+            min: 1
+            max: 5000
+            filter: range
+            show_on_card: true
+            order: 2
+          - *setup_included
+      - slug: tables-chairs
+        name: {sw: Meza na viti, en: Tables & chairs}
+        booking_mode: QUANTITY
+        price_units: [item_day]
+        default_unit: item_day
+        sort_order: 3
+        attribute_schema:
+          - key: item_type
+            type: enum
+            label: {sw: Aina, en: Item type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: plastic_chair, label: {sw: Kiti cha plastiki, en: Plastic chair}}
+              - {value: banquet_chair, label: {sw: Kiti cha sherehe, en: Banquet chair}}
+              - {value: round_table, label: {sw: Meza ya duara, en: Round table}}
+              - {value: rectangular_table, label: {sw: Meza ndefu, en: Rectangular table}}
+              - {value: cocktail_table, label: {sw: Meza ya kusimama, en: Cocktail table}}
+          - key: covers_included
+            type: boolean
+            label: {sw: Vitambaa vimejumuishwa, en: Covers included}
+            filter: exact
+            order: 2
+          - *setup_included
+      - slug: lighting
+        name: {sw: Taa, en: Lighting}
+        booking_mode: QUANTITY
+        price_units: [item_day]
+        default_unit: item_day
+        sort_order: 4
+        attribute_schema:
+          - key: item_type
+            type: enum
+            label: {sw: Aina ya taa, en: Light type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: par_light, label: {sw: Taa za rangi (PAR), en: PAR light}}
+              - {value: string_lights, label: {sw: Taa za mapambo, en: String lights}}
+              - {value: flood_light, label: {sw: Taa kubwa ya uwanja, en: Flood light}}
+              - {value: moving_head, label: {sw: Taa zinazozunguka, en: Moving head}}
+              - {value: chandelier, label: {sw: Kandili, en: Chandelier}}
+          - *power_watts
+          - *setup_included
+      - slug: sound-av
+        name: {sw: Sauti na video, en: Sound & AV}
+        booking_mode: QUANTITY
+        price_units: [item_day]
+        default_unit: item_day
+        sort_order: 5
+        attribute_schema:
+          - key: item_type
+            type: enum
+            label: {sw: Aina ya kifaa, en: Item type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: speaker, label: {sw: Spika, en: Speaker}}
+              - {value: microphone, label: {sw: Kipaza sauti, en: Microphone}}
+              - {value: mixer, label: {sw: Mixer, en: Mixer}}
+              - {value: projector, label: {sw: Projekta, en: Projector}}
+              - {value: screen, label: {sw: Skrini, en: Screen}}
+              - {value: dj_set, label: {sw: Seti ya DJ, en: DJ set}}
+          - *power_watts
+          - *operator_included
+      - slug: bounce-houses
+        name: {sw: Michezo ya kupuliza ya watoto, en: Bounce houses}
+        booking_mode: QUANTITY
+        price_units: [item_day]
+        default_unit: item_day
+        sort_order: 6
+        attribute_schema:
+          - key: size
+            type: enum
+            label: {sw: Ukubwa, en: Size}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: small, label: {sw: Ndogo, en: Small}}
+              - {value: medium, label: {sw: Wastani, en: Medium}}
+              - {value: large, label: {sw: Kubwa, en: Large}}
+          - key: max_children
+            type: integer
+            label: {sw: Idadi ya watoto, en: Maximum children}
+            min: 1
+            max: 100
+            filter: range
+            order: 2
+          - key: attendant_included
+            type: boolean
+            label: {sw: Msimamizi amejumuishwa, en: Attendant included}
+            filter: exact
+            order: 3
+      - slug: it-equipment
+        name: {sw: Vifaa vya TEHAMA, en: IT equipment}
+        booking_mode: QUANTITY
+        price_units: [item_day]
+        default_unit: item_day
+        sort_order: 7
+        attribute_schema:
+          - key: item_type
+            type: enum
+            label: {sw: Aina ya kifaa, en: Item type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: laptop, label: {sw: Kompyuta mpakato, en: Laptop}}
+              - {value: desktop, label: {sw: Kompyuta ya mezani, en: Desktop}}
+              - {value: printer, label: {sw: Printa, en: Printer}}
+              - {value: projector, label: {sw: Projekta, en: Projector}}
+              - {value: router, label: {sw: Ruta, en: Router}}
+              - {value: tablet, label: {sw: Tableti, en: Tablet}}
+          - key: brand
+            type: text
+            label: {sw: Chapa, en: Brand}
+            max_length: 60
+            order: 2
+          - key: ram_gb
+            type: integer
+            label: {sw: RAM, en: RAM}
+            unit: {sw: GB, en: GB}
+            min: 1
+            max: 512
+            filter: range
+            order: 3
+          - *condition
+      - slug: office-supplies
+        name: {sw: Vifaa vya ofisi, en: Office supplies}
+        booking_mode: QUANTITY
+        price_units: [item_day]
+        default_unit: item_day
+        sort_order: 8
+        attribute_schema:
+          - key: item_type
+            type: enum
+            label: {sw: Aina, en: Item type}
+            required: true
+            filter: any_of
+            show_on_card: true
+            order: 1
+            options:
+              - {value: desk, label: {sw: Meza ya ofisi, en: Desk}}
+              - {value: office_chair, label: {sw: Kiti cha ofisi, en: Office chair}}
+              - {value: filing_cabinet, label: {sw: Kabati la mafaili, en: Filing cabinet}}
+              - {value: whiteboard, label: {sw: Ubao mweupe, en: Whiteboard}}
+              - {value: photocopier, label: {sw: Mashine ya kunakili, en: Photocopier}}
+              - {value: shredder, label: {sw: Mashine ya kuchana karatasi, en: Shredder}}
+          - *condition

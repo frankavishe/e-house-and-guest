@@ -12,10 +12,12 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    LargeBinary,
     Numeric,
     Text,
+    text,
 )
-from sqlalchemy.dialects.postgresql import CITEXT
+from sqlalchemy.dialects.postgresql import CITEXT, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base, CreatedAt, Timestamps, UUIDPk
@@ -79,3 +81,85 @@ class RefreshToken(UUIDPk, CreatedAt, Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     replaced_by: Mapped[uuid.UUID | None] = mapped_column()
+
+
+# --- owners (T039) -----------------------------------------------------------------------
+
+
+class OwnerKind(StrEnum):
+    INDIVIDUAL = "individual"
+    BUSINESS = "business"
+
+
+class VerificationStatus(StrEnum):
+    DRAFT = "draft"
+    PENDING = "pending"
+    VERIFIED = "verified"
+    REJECTED = "rejected"
+
+
+class PayoutKind(StrEnum):
+    MOBILE_MONEY = "mobile_money"
+    BANK = "bank"
+
+
+class PaymentNetwork(StrEnum):
+    MPESA = "mpesa"
+    MIXX = "mixx"
+    AIRTEL = "airtel"
+    HALOPESA = "halopesa"
+    AZAMPESA = "azampesa"
+
+
+class OwnerProfile(UUIDPk, Timestamps, Base):
+    __tablename__ = "owner_profiles"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False
+    )
+    kind: Mapped[OwnerKind] = mapped_column(pg_enum(OwnerKind, "owner_kind"), nullable=False)
+    display_name: Mapped[str] = mapped_column(Text, nullable=False)
+    # NIDA, TIN and bank numbers are Fernet-encrypted (R18) and never returned in full.
+    nida_number_enc: Mapped[bytes | None] = mapped_column(LargeBinary)
+    business_name: Mapped[str | None] = mapped_column(Text)
+    brela_reg_no: Mapped[str | None] = mapped_column(Text)
+    tin_enc: Mapped[bytes | None] = mapped_column(LargeBinary)
+    documents: Mapped[list[str]] = mapped_column(
+        JSONB, nullable=False, server_default=text("'[]'::jsonb"), default=list
+    )
+    verification_status: Mapped[VerificationStatus] = mapped_column(
+        pg_enum(VerificationStatus, "verification_status"),
+        nullable=False,
+        default=VerificationStatus.DRAFT,
+    )
+    rejection_reason: Mapped[str | None] = mapped_column(Text)
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    verified_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    rating_avg: Mapped[Decimal | None] = mapped_column(Numeric(3, 2))
+    rating_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+
+class PayoutMethod(UUIDPk, Timestamps, Base):
+    __tablename__ = "payout_methods"
+
+    owner_profile_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("owner_profiles.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    kind: Mapped[PayoutKind] = mapped_column(pg_enum(PayoutKind, "payout_kind"), nullable=False)
+    network: Mapped[PaymentNetwork | None] = mapped_column(
+        pg_enum(PaymentNetwork, "payment_network")
+    )
+    msisdn: Mapped[str | None] = mapped_column(Text)
+    bank_name: Mapped[str | None] = mapped_column(Text)
+    account_name: Mapped[str] = mapped_column(Text, nullable=False)
+    account_number_enc: Mapped[bytes | None] = mapped_column(LargeBinary)
+    is_default: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
+    __table_args__ = (
+        Index(
+            "uq_payout_methods_one_default",
+            "owner_profile_id",
+            unique=True,
+            postgresql_where=text("is_default"),
+        ),
+    )

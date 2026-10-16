@@ -1,0 +1,304 @@
+# Demo data for local development and the quickstart scenarios (quickstart.md).
+# `python -m app.seed --demo` upserts it; listing ids are derived from (leaf, index), so
+# re-running updates rows instead of duplicating them. Photos are placeholders: the
+# storage keys do not exist, so pages show the image fallback (Principle VI).
+
+users:
+  - {phone: "+255700000001", name: Asha Mushi, language: sw}            # renter
+  - {phone: "+255700000002", name: Baraka Mollel, language: sw}         # owner (individual)
+  - {phone: "+255700000003", name: Neema Kweka, language: en}           # owner (business)
+  - {phone: "+255700000009", name: Admin, language: en, is_admin: true}
+
+owners:
+  - phone: "+255700000002"
+    kind: individual
+    display_name: Baraka Homes & Rides
+    nida_number: "19900101-12345-00001-23"
+    payout: {kind: mobile_money, network: mpesa, msisdn: "+255700000002", account_name: Baraka Mollel}
+  - phone: "+255700000003"
+    kind: business
+    display_name: Kweka Event Hire Ltd
+    business_name: Kweka Event Hire Limited
+    brela_reg_no: "154321"
+    tin: "123-456-789"
+    payout: {kind: mobile_money, network: airtel, msisdn: "+255780000003", account_name: Kweka Event Hire Ltd}
+
+# Launch cities → district/ward slugs from seed/locations.csv.
+cities:
+  dar: {region: dar-es-salaam, district: kinondoni, ward: msasani, lat: -6.7488, lng: 39.2762}
+  arusha: {region: arusha, district: arusha-city, ward: sekei, lat: -3.3667, lng: 36.6833}
+  dodoma: {region: dodoma, district: dodoma-city, ward: makole, lat: -6.1731, lng: 35.7419}
+  mwanza: {region: mwanza, district: nyamagana, ward: isamilo, lat: -2.5090, lng: 32.9030}
+  zanzibar: {region: mjini-magharibi, district: mjini, ward: shangani, lat: -6.1617, lng: 39.1866}
+
+x-slots: &slots {open: "08:00", close: "22:00", slot_minutes: 60, days: [1, 2, 3, 4, 5, 6, 7]}
+
+# Per leaf: `defaults` apply to every item; items override. `price` is the default-unit
+# base price; `prices` adds other units ({unit: amount}).
+listings:
+  rooms:
+    owner: "+255700000002"
+    defaults: {instant_book: true, cancellation_policy: flexible, deposit_tzs: 0}
+    items:
+      - {city: dar, title_sw: Chumba safi Msasani, title_en: Clean room in Msasani, price: 45000, prices: {week: 280000},
+         attributes: {bedrooms: 1, bathrooms: 1, max_guests: 2, furnished: true, private_bathroom: true, amenities: [wifi, ac, security]}}
+      - {city: dodoma, title_sw: Chumba karibu na Bunge, title_en: Room near Parliament, price: 30000,
+         attributes: {bedrooms: 1, max_guests: 2, furnished: true, amenities: [wifi, parking]}}
+      - {city: mwanza, title_sw: Chumba chenye mandhari ya ziwa, title_en: Lake-view room, price: 40000,
+         attributes: {bedrooms: 1, bathrooms: 1, max_guests: 2, private_bathroom: true, amenities: [wifi, tv]}}
+  guest-houses:
+    owner: "+255700000002"
+    defaults: {instant_book: true, cancellation_policy: moderate, deposit_tzs: 20000}
+    items:
+      - {city: arusha, title_sw: Nyumba ya wageni Sekei, title_en: Sekei guest house, price: 60000, prices: {week: 380000},
+         attributes: {bedrooms: 2, bathrooms: 1, max_guests: 4, breakfast_included: true, amenities: [wifi, parking, security]}}
+      - {city: arusha, title_sw: Nyumba ya wageni karibu na Mlima Meru, title_en: Guest house near Mount Meru, price: 75000,
+         attributes: {bedrooms: 3, bathrooms: 2, max_guests: 6, breakfast_included: true, amenities: [wifi, parking, kitchen]}}
+      - {city: zanzibar, title_sw: Nyumba ya wageni Mji Mkongwe, title_en: Stone Town guest house, price: 90000,
+         attributes: {bedrooms: 2, bathrooms: 2, max_guests: 4, breakfast_included: true, amenities: [wifi, ac]}}
+  serviced-apartments:
+    owner: "+255700000002"
+    defaults: {instant_book: true, cancellation_policy: strict, deposit_tzs: 100000}
+    items:
+      - {city: dar, title_sw: Apartment ya kisasa Masaki, title_en: Modern apartment in Masaki, price: 180000, prices: {week: 1100000, month: 3800000},
+         attributes: {bedrooms: 2, bathrooms: 2, max_guests: 4, housekeeping: daily, amenities: [wifi, ac, pool, generator, security]}}
+      - {city: arusha, title_sw: Apartment yenye huduma Njiro, title_en: Serviced apartment in Njiro, price: 120000,
+         attributes: {bedrooms: 1, bathrooms: 1, max_guests: 2, housekeeping: weekly, amenities: [wifi, kitchen]}}
+      - {city: zanzibar, title_sw: Apartment ya ufukweni, title_en: Beachfront apartment, price: 220000,
+         attributes: {bedrooms: 3, bathrooms: 2, max_guests: 6, housekeeping: daily, amenities: [wifi, ac, pool]}}
+  student-housing:
+    owner: "+255700000002"
+    defaults: {instant_book: false, cancellation_policy: strict, deposit_tzs: 150000, min_duration: 3}
+    items:
+      - {city: dar, title_sw: Hosteli karibu na UDSM, title_en: Hostel near UDSM, price: 150000,
+         attributes: {room_type: shared, gender: mixed, near_institution: University of Dar es Salaam, meals_included: false, amenities: [wifi, security]}}
+      - {city: dodoma, title_sw: Hosteli karibu na UDOM, title_en: Hostel near UDOM, price: 120000,
+         attributes: {room_type: single, gender: female, near_institution: University of Dodoma, amenities: [wifi, water_tank]}}
+      - {city: mwanza, title_sw: Hosteli karibu na SAUT, title_en: Hostel near SAUT, price: 110000,
+         attributes: {room_type: shared, gender: male, near_institution: St. Augustine University, meals_included: true}}
+  co-living:
+    owner: "+255700000002"
+    defaults: {instant_book: false, cancellation_policy: moderate, deposit_tzs: 300000, min_duration: 1}
+    items:
+      - {city: dar, title_sw: Makazi ya pamoja Mikocheni, title_en: Mikocheni co-living, price: 450000,
+         attributes: {bedrooms: 1, furnished: true, residents: 4, amenities: [wifi, kitchen, laundry]}}
+      - {city: arusha, title_sw: Nyumba ya pamoja kwa wataalamu, title_en: Co-living for professionals, price: 380000,
+         attributes: {bedrooms: 1, furnished: true, residents: 3, amenities: [wifi, parking]}}
+      - {city: zanzibar, title_sw: Makazi ya pamoja ya wasanii, title_en: Artists' co-living house, price: 400000,
+         attributes: {bedrooms: 1, residents: 5, amenities: [wifi, kitchen]}}
+
+  coworking:
+    owner: "+255700000002"
+    defaults: {instant_book: true, cancellation_policy: flexible, slot_config: *slots}
+    items:
+      - {city: dar, title_sw: Meza ya pamoja Kijitonyama, title_en: Hot desk in Kijitonyama, price: 5000, prices: {day: 30000},
+         attributes: {desk_type: hot_desk, seats: 1, amenities: [wifi, ac, coffee, generator]}}
+      - {city: dar, title_sw: Chumba cha mikutano Posta, title_en: Meeting room in Posta, price: 40000, prices: {day: 250000},
+         attributes: {desk_type: meeting_room, seats: 12, amenities: [wifi, ac, projector]}}
+      - {city: arusha, title_sw: Ofisi binafsi kwa saa, title_en: Private office by the hour, price: 15000,
+         attributes: {desk_type: private_office, seats: 4, amenities: [wifi, printing]}}
+  offices:
+    owner: "+255700000003"
+    defaults: {instant_book: false, cancellation_policy: strict, deposit_tzs: 2000000, min_duration: 6}
+    items:
+      - {city: dar, title_sw: Ofisi Upanga ghorofa ya 3, title_en: Upanga office on 3rd floor, price: 1800000,
+         attributes: {area_m2: 120, rooms: 4, furnished: false, floor: 3, amenities: [parking, ac, elevator, generator]}}
+      - {city: dodoma, title_sw: Ofisi karibu na Mji wa Serikali, title_en: Office near Government City, price: 1200000,
+         attributes: {area_m2: 90, rooms: 3, furnished: true, floor: 1, amenities: [parking, internet]}}
+      - {city: mwanza, title_sw: Ofisi katikati ya mji Mwanza, title_en: Mwanza city-centre office, price: 900000,
+         attributes: {area_m2: 60, rooms: 2, floor: 2, amenities: [security, internet]}}
+
+  event-halls:
+    owner: "+255700000003"
+    defaults: {instant_book: false, cancellation_policy: moderate, deposit_tzs: 500000, slot_config: *slots}
+    items:
+      - {city: dar, title_sw: Ukumbi wa harusi Mbezi, title_en: Mbezi wedding hall, price: 2500000, prices: {hour: 350000},
+         attributes: {capacity: 500, catering_allowed: true, amenities: [chairs_tables, sound_system, stage, parking, generator]}}
+      - {city: arusha, title_sw: Ukumbi wa mikutano Arusha, title_en: Arusha conference hall, price: 1500000,
+         attributes: {capacity: 200, catering_allowed: false, amenities: [chairs_tables, sound_system, ac]}}
+      - {city: dodoma, title_sw: Ukumbi wa sherehe Dodoma, title_en: Dodoma celebration hall, price: 1200000,
+         attributes: {capacity: 300, catering_allowed: true, amenities: [chairs_tables, stage, parking]}}
+  event-venues:
+    owner: "+255700000003"
+    defaults: {instant_book: false, cancellation_policy: moderate, deposit_tzs: 300000, slot_config: *slots}
+    items:
+      - {city: zanzibar, title_sw: Ufukwe wa harusi Zanzibar, title_en: Zanzibar beach wedding venue, price: 3000000,
+         attributes: {capacity: 150, venue_type: beach, amenities: [decor, catering]}}
+      - {city: arusha, title_sw: Bustani ya sherehe Arusha, title_en: Arusha garden venue, price: 1800000,
+         attributes: {capacity: 400, venue_type: garden, amenities: [parking, chairs_tables]}}
+      - {city: mwanza, title_sw: Eneo la sherehe kando ya ziwa, title_en: Lakeside event ground, price: 1500000,
+         attributes: {capacity: 600, venue_type: open_ground, amenities: [parking, generator]}}
+
+  warehouses:
+    owner: "+255700000003"
+    defaults: {instant_book: false, cancellation_policy: strict, deposit_tzs: 5000000, min_duration: 6}
+    items:
+      - {city: dar, title_sw: Ghala Mikocheni Viwandani, title_en: Mikocheni industrial warehouse, price: 6000000,
+         attributes: {area_m2: 800, ceiling_height_m: 8, loading_bay: true, three_phase_power: true, security_24h: true}}
+      - {city: dodoma, title_sw: Ghala la mazao Dodoma, title_en: Dodoma produce warehouse, price: 2500000,
+         attributes: {area_m2: 400, ceiling_height_m: 6, loading_bay: true, security_24h: true}}
+      - {city: mwanza, title_sw: Ghala karibu na bandari, title_en: Warehouse near the port, price: 3500000,
+         attributes: {area_m2: 500, loading_bay: false, three_phase_power: true}}
+  self-storage:
+    owner: "+255700000003"
+    defaults: {instant_book: false, cancellation_policy: moderate, deposit_tzs: 100000, min_duration: 1}
+    items:
+      - {city: dar, title_sw: Stoo ndogo Mikocheni, title_en: Small storage unit Mikocheni, price: 150000,
+         attributes: {area_m2: 6, climate_controlled: false, access_24h: true, security_24h: true}}
+      - {city: arusha, title_sw: Stoo ya vitu vya nyumbani, title_en: Household storage unit, price: 120000,
+         attributes: {area_m2: 10, access_24h: false, security_24h: true}}
+      - {city: zanzibar, title_sw: Stoo yenye kiyoyozi, title_en: Climate-controlled storage, price: 250000,
+         attributes: {area_m2: 8, climate_controlled: true, access_24h: true}}
+  parking:
+    owner: "+255700000002"
+    defaults: {instant_book: true, cancellation_policy: flexible, deposit_tzs: 0}
+    items:
+      - {city: dar, title_sw: Maegesho salama Kariakoo, title_en: Secure parking in Kariakoo, price: 10000, prices: {month: 200000},
+         attributes: {vehicle_size: [car, van], covered: false, security_24h: true}}
+      - {city: arusha, title_sw: Maegesho yenye paa, title_en: Covered parking, price: 8000,
+         attributes: {vehicle_size: [car], covered: true, security_24h: true}}
+      - {city: mwanza, title_sw: Maegesho ya malori, title_en: Truck parking yard, price: 15000,
+         attributes: {vehicle_size: [truck, van], security_24h: true}}
+
+  cars:
+    owner: "+255700000002"
+    defaults: {instant_book: true, cancellation_policy: moderate, deposit_tzs: 200000}
+    items:
+      - {city: arusha, title_sw: Land Cruiser 4x4 ya safari, title_en: Land Cruiser 4x4 safari car, price: 250000, prices: {week: 1500000},
+         attributes: {vehicle_type: 4x4, seats: 7, transmission: manual, fuel_type: diesel, with_driver: true, air_conditioning: true}}
+      - {city: dar, title_sw: Toyota IST ya kujiendesha, title_en: Self-drive Toyota IST, price: 70000,
+         attributes: {vehicle_type: hatchback, seats: 5, transmission: automatic, fuel_type: petrol, with_driver: false, air_conditioning: true}}
+      - {city: dodoma, title_sw: RAV4 pamoja na dereva, title_en: RAV4 with driver, price: 150000,
+         attributes: {vehicle_type: suv, seats: 5, transmission: automatic, fuel_type: petrol, with_driver: true}}
+  vans:
+    owner: "+255700000002"
+    defaults: {instant_book: true, cancellation_policy: moderate, deposit_tzs: 200000}
+    items:
+      - {city: arusha, title_sw: Van ya safari yenye paa la kufunguka, title_en: Pop-top safari van, price: 220000,
+         attributes: {vehicle_type: safari_van, seats: 7, transmission: manual, fuel_type: diesel, with_driver: true}}
+      - {city: dar, title_sw: Van ya mizigo, title_en: Cargo van, price: 120000,
+         attributes: {vehicle_type: cargo_van, seats: 3, transmission: manual, fuel_type: diesel, with_driver: false}}
+      - {city: mwanza, title_sw: Noah ya familia, title_en: Family Noah minivan, price: 100000,
+         attributes: {vehicle_type: minivan, seats: 8, transmission: automatic, fuel_type: petrol, with_driver: true, air_conditioning: true}}
+  buses:
+    owner: "+255700000003"
+    defaults: {instant_book: false, cancellation_policy: moderate, deposit_tzs: 300000}
+    items:
+      - {city: dar, title_sw: Coaster ya abiria 30, title_en: 30-seat Coaster, price: 450000,
+         attributes: {vehicle_type: minibus, seats: 30, with_driver: true, air_conditioning: true}}
+      - {city: dodoma, title_sw: Basi la safari 60, title_en: 60-seat coach, price: 900000,
+         attributes: {vehicle_type: coach, seats: 60, with_driver: true, air_conditioning: true}}
+      - {city: arusha, title_sw: Coaster ya watalii, title_en: Tourist Coaster, price: 500000,
+         attributes: {vehicle_type: minibus, seats: 25, with_driver: true}}
+  motorbikes:
+    owner: "+255700000002"
+    defaults: {instant_book: true, cancellation_policy: flexible, deposit_tzs: 50000}
+    items:
+      - {city: dar, title_sw: Boxer 150 ya kujiendesha, title_en: Self-ride Boxer 150, price: 25000,
+         attributes: {engine_cc: 150, helmet_included: true, with_driver: false}}
+      - {city: mwanza, title_sw: Pikipiki ya kubeba mizigo, title_en: Cargo motorbike, price: 30000,
+         attributes: {engine_cc: 200, helmet_included: true, with_driver: false}}
+      - {city: zanzibar, title_sw: Skuta ya kutalii, title_en: Touring scooter, price: 35000,
+         attributes: {engine_cc: 125, helmet_included: true, with_driver: false}}
+  bajaji:
+    owner: "+255700000002"
+    defaults: {instant_book: true, cancellation_policy: flexible, deposit_tzs: 50000}
+    items:
+      - {city: dar, title_sw: Bajaji pamoja na dereva, title_en: Bajaji with driver, price: 40000,
+         attributes: {seats: 3, fuel_type: petrol, with_driver: true}}
+      - {city: dodoma, title_sw: Bajaji ya kujiendesha, title_en: Self-drive bajaji, price: 30000,
+         attributes: {seats: 3, fuel_type: petrol, with_driver: false}}
+      - {city: zanzibar, title_sw: Bajaji ya umeme, title_en: Electric bajaji, price: 45000,
+         attributes: {seats: 3, fuel_type: electric, with_driver: true}}
+  trucks:
+    owner: "+255700000003"
+    defaults: {instant_book: false, cancellation_policy: moderate, deposit_tzs: 500000}
+    items:
+      - {city: dar, title_sw: Lori la tani 10 bodi wazi, title_en: 10-tonne flatbed truck, price: 400000,
+         attributes: {payload_tonnes: 10, truck_type: flatbed, with_driver: true}}
+      - {city: mwanza, title_sw: Lori la friji, title_en: Refrigerated truck, price: 550000,
+         attributes: {payload_tonnes: 7, truck_type: refrigerated, with_driver: true}}
+      - {city: arusha, title_sw: Tipa ya tani 15, title_en: 15-tonne tipper, price: 450000,
+         attributes: {payload_tonnes: 15, truck_type: tipper, with_driver: true}}
+
+  construction:
+    owner: "+255700000003"
+    defaults: {instant_book: true, cancellation_policy: moderate, deposit_tzs: 100000}
+    items:
+      - {city: dar, title_sw: Mashine ya kuchanganya zege, title_en: Concrete mixer, price: 60000, stock: 4,
+         attributes: {equipment_type: concrete_mixer, condition: good, operator_included: false}}
+      - {city: dodoma, title_sw: Jukwaa la ujenzi (seti), title_en: Scaffolding set, price: 15000, stock: 40,
+         attributes: {equipment_type: scaffolding, condition: good}}
+      - {city: mwanza, title_sw: Pampu ya maji ya dizeli, title_en: Diesel water pump, price: 35000, stock: 3,
+         attributes: {equipment_type: water_pump, condition: new}}
+  tents:
+    owner: "+255700000003"
+    defaults: {instant_book: true, cancellation_policy: moderate, deposit_tzs: 50000}
+    items:
+      # Quickstart V5: stock 10 — book 7 for a day, then 5 more → INSUFFICIENT_STOCK (available 3).
+      - {city: dar, title_sw: Hema la watu 100, title_en: 100-guest tent, price: 150000, stock: 10,
+         attributes: {tent_type: marquee, capacity: 100, setup_included: true}}
+      - {city: arusha, title_sw: Kivuli cha mita 3x3, title_en: 3x3 m canopy, price: 25000, stock: 20,
+         attributes: {tent_type: canopy, capacity: 10, setup_included: false}}
+      - {city: zanzibar, title_sw: Hema la kunyoosha la harusi, title_en: Stretch wedding tent, price: 400000, stock: 2,
+         attributes: {tent_type: stretch, capacity: 250, setup_included: true}}
+  tables-chairs:
+    owner: "+255700000003"
+    defaults: {instant_book: true, cancellation_policy: flexible, deposit_tzs: 0}
+    items:
+      - {city: dar, title_sw: Viti vya plastiki, title_en: Plastic chairs, price: 500, stock: 500,
+         attributes: {item_type: plastic_chair, covers_included: false}}
+      - {city: arusha, title_sw: Viti vya sherehe vyenye vitambaa, title_en: Banquet chairs with covers, price: 1500, stock: 300,
+         attributes: {item_type: banquet_chair, covers_included: true, setup_included: true}}
+      - {city: dodoma, title_sw: Meza za duara, title_en: Round tables, price: 5000, stock: 60,
+         attributes: {item_type: round_table, covers_included: true}}
+  lighting:
+    owner: "+255700000003"
+    defaults: {instant_book: true, cancellation_policy: moderate, deposit_tzs: 20000}
+    items:
+      - {city: dar, title_sw: Taa za rangi PAR, title_en: PAR stage lights, price: 15000, stock: 24,
+         attributes: {item_type: par_light, power_watts: 180, setup_included: true}}
+      - {city: zanzibar, title_sw: Taa za mapambo za bustani, title_en: Garden string lights, price: 10000, stock: 30,
+         attributes: {item_type: string_lights, power_watts: 60}}
+      - {city: mwanza, title_sw: Taa kubwa za uwanja, title_en: Flood lights, price: 20000, stock: 8,
+         attributes: {item_type: flood_light, power_watts: 1000}}
+  sound-av:
+    owner: "+255700000003"
+    defaults: {instant_book: true, cancellation_policy: moderate, deposit_tzs: 100000}
+    items:
+      - {city: dar, title_sw: Spika kubwa za sherehe, title_en: Large PA speakers, price: 80000, stock: 6,
+         attributes: {item_type: speaker, power_watts: 2000, operator_included: true}}
+      - {city: arusha, title_sw: Projekta ya mikutano, title_en: Conference projector, price: 50000, stock: 4,
+         attributes: {item_type: projector, operator_included: false}}
+      - {city: dodoma, title_sw: Vipaza sauti visivyo na waya, title_en: Wireless microphones, price: 15000, stock: 10,
+         attributes: {item_type: microphone, operator_included: false}}
+  bounce-houses:
+    owner: "+255700000003"
+    defaults: {instant_book: true, cancellation_policy: moderate, deposit_tzs: 50000}
+    items:
+      - {city: dar, title_sw: Kasri la kupuliza la watoto, title_en: Kids' bouncy castle, price: 120000, stock: 3,
+         attributes: {size: large, max_children: 15, attendant_included: true}}
+      - {city: arusha, title_sw: Mchezo wa kupuliza mdogo, title_en: Small bounce house, price: 70000, stock: 2,
+         attributes: {size: small, max_children: 6, attendant_included: false}}
+      - {city: mwanza, title_sw: Slaidi ya kupuliza, title_en: Inflatable slide, price: 100000, stock: 1,
+         attributes: {size: medium, max_children: 10, attendant_included: true}}
+  it-equipment:
+    owner: "+255700000003"
+    defaults: {instant_book: true, cancellation_policy: moderate, deposit_tzs: 300000}
+    items:
+      - {city: dar, title_sw: Kompyuta mpakato za mafunzo, title_en: Training laptops, price: 25000, stock: 20,
+         attributes: {item_type: laptop, brand: Lenovo, ram_gb: 8, condition: good}}
+      - {city: dodoma, title_sw: Printa ya ofisi, title_en: Office printer, price: 30000, stock: 3,
+         attributes: {item_type: printer, brand: HP, condition: good}}
+      - {city: arusha, title_sw: Ruta za intaneti za matukio, title_en: Event Wi-Fi routers, price: 20000, stock: 5,
+         attributes: {item_type: router, brand: TP-Link, condition: new}}
+  office-supplies:
+    owner: "+255700000003"
+    defaults: {instant_book: true, cancellation_policy: flexible, deposit_tzs: 20000}
+    items:
+      - {city: dar, title_sw: Viti vya ofisi, title_en: Office chairs, price: 3000, stock: 50,
+         attributes: {item_type: office_chair, condition: good}}
+      - {city: dodoma, title_sw: Meza za ofisi, title_en: Office desks, price: 5000, stock: 30,
+         attributes: {item_type: desk, condition: fair}}
+      - {city: mwanza, title_sw: Mashine ya kunakili, title_en: Photocopier, price: 40000, stock: 2,
+         attributes: {item_type: photocopier, condition: good}}

@@ -10,7 +10,14 @@ from sqlalchemy import func, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.accounts.models import Language, OtpCode, RefreshToken, User, UserStatus
+from app.accounts.models import (
+    Language,
+    OtpCode,
+    OwnerProfile,
+    RefreshToken,
+    User,
+    UserStatus,
+)
 from app.accounts.schemas import MePatch, OwnerProfileSummary, Role, UserOut
 from app.core import clock, security
 from app.core.config import get_settings
@@ -203,8 +210,17 @@ async def logout(session: AsyncSession, user: User, raw: str | None) -> None:
 
 
 async def owner_profile_summary(session: AsyncSession, user: User) -> OwnerProfileSummary | None:
-    """The user's owner profile. The owner_profiles table arrives with T039."""
-    return None
+    profile = (
+        await session.execute(select(OwnerProfile).where(OwnerProfile.user_id == user.id))
+    ).scalar_one_or_none()
+    if profile is None:
+        return None
+    return OwnerProfileSummary(
+        id=profile.id,
+        kind=profile.kind.value,
+        display_name=profile.display_name,
+        verification_status=profile.verification_status.value,
+    )
 
 
 async def user_out(session: AsyncSession, user: User) -> UserOut:

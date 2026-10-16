@@ -7,9 +7,10 @@ Access: 🌐 public (no dependency), 👤 `CurrentUser`, 🏠 `require_owner` /
 from typing import Annotated
 
 from fastapi import Depends, Request
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.accounts.models import User, UserStatus
+from app.accounts.models import OwnerProfile, User, UserStatus, VerificationStatus
 from app.core import security
 from app.core.db import get_session
 from app.core.errors import AppError, forbidden, unauthenticated
@@ -58,3 +59,26 @@ async def require_admin(user: CurrentUser) -> User:
 
 
 AdminUser = Annotated[User, Depends(require_admin)]
+
+
+async def require_owner(user: CurrentUser, session: Session) -> OwnerProfile:
+    """🏠 The signed-in user's owner profile, in any verification state."""
+    profile = (
+        await session.execute(select(OwnerProfile).where(OwnerProfile.user_id == user.id))
+    ).scalar_one_or_none()
+    if profile is None:
+        raise forbidden()
+    return profile
+
+
+Owner = Annotated[OwnerProfile, Depends(require_owner)]
+
+
+async def require_verified_owner(profile: Owner) -> OwnerProfile:
+    """🏠 (verified) Required to submit listings for review."""
+    if profile.verification_status != VerificationStatus.VERIFIED:
+        raise AppError("OWNER_NOT_VERIFIED", 403)
+    return profile
+
+
+VerifiedOwner = Annotated[OwnerProfile, Depends(require_verified_owner)]

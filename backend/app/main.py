@@ -10,7 +10,9 @@ from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import models as _models  # noqa: F401  (registers every table)
 from app.accounts.router import router as accounts_router
+from app.catalog.router import router as catalog_router
 from app.core.db import dispose_engine, get_session
 from app.core.errors import install_error_handlers
 from app.core.logging import configure_logging
@@ -39,6 +41,7 @@ def api_router() -> APIRouter:
     router = APIRouter(prefix=API_PREFIX)
     router.include_router(health_router)
     router.include_router(accounts_router)
+    router.include_router(catalog_router)
     return router
 
 
