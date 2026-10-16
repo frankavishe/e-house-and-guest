@@ -84,18 +84,18 @@ on its own.
 - [X] T021 Implement `enqueue(kind, payload, run_at, dedupe_key)` and `claim_batch()` with `FOR UPDATE SKIP LOCKED`, retry with exponential backoff in `backend/app/jobs/service.py`
 - [X] T022 Implement the worker loop and periodic-sweep registry (`@periodic(every=…)`, `@handler(kind)`) in `backend/app/worker.py`
 - [X] T023 [P] Write unit tests for job claim/retry/dedupe in `backend/tests/integration/test_jobs.py`
-- [ ] T024 Create `notifications` model + migration and `notify(user_id, event, payload, channels)` that renders sw/en templates and enqueues `sms.send` jobs, plus the `sms.send` handler in `backend/app/notifications/{models,service,handlers}.py`
+- [X] T024 Create `notifications` model + migration and `notify(user_id, event, payload, channels)` that renders sw/en templates and enqueues `sms.send` jobs, plus the `sms.send` handler in `backend/app/notifications/{models,service,handlers}.py`
 
 ### Accounts & auth (FR-001, FR-002, FR-004)
 
-- [ ] T025 [P] Write auth tests first in `backend/tests/integration/test_auth.py`: OTP request/verify happy path, wrong code, 5-attempt limit, 5-minute expiry, 3-per-15-min rate limit (429), phone normalisation (`0712…` → `+255712…`), refresh rotation and reuse detection revokes family, logout
+- [X] T025 [P] Write auth tests first in `backend/tests/integration/test_auth.py`: OTP request/verify happy path, wrong code, 5-attempt limit, 5-minute expiry, 3-per-15-min rate limit (429), phone normalisation (`0712…` → `+255712…`), refresh rotation and reuse detection revokes family, logout
 - [ ] T026 [P] Write authorization tests first in `backend/tests/integration/test_authz.py`: public vs signed-in vs owner vs admin endpoints return 401/403 correctly; suspended user is rejected
-- [ ] T027 [P] Write contract tests for `/auth/*`, `/me` and `/health` in `backend/tests/contract/test_auth_contract.py`
-- [ ] T028 Create `users`, `otp_codes`, `refresh_tokens` models + migration in `backend/app/accounts/models.py` and `backend/alembic/versions/0003_accounts.py`
-- [ ] T029 Implement security helpers in `backend/app/core/security.py` (phone normalisation/validation, OTP generate + HMAC hash, JWT encode/decode, refresh token hashing, Fernet encrypt/decrypt, cookie setters)
-- [ ] T030 Implement auth service + router (`/auth/otp/request`, `/auth/otp/verify`, `/auth/refresh`, `/auth/logout`) in `backend/app/accounts/service.py` and `backend/app/accounts/router.py`
+- [X] T027 [P] Write contract tests for `/auth/*`, `/me` and `/health` in `backend/tests/contract/test_auth_contract.py`
+- [X] T028 Create `users`, `otp_codes`, `refresh_tokens` models + migration in `backend/app/accounts/models.py` and `backend/alembic/versions/0003_accounts.py`
+- [X] T029 Implement security helpers in `backend/app/core/security.py` (phone normalisation/validation, OTP generate + HMAC hash, JWT encode/decode, refresh token hashing, Fernet encrypt/decrypt, cookie setters)
+- [X] T030 Implement auth service + router (`/auth/otp/request`, `/auth/otp/verify`, `/auth/refresh`, `/auth/logout`) in `backend/app/accounts/service.py` and `backend/app/accounts/router.py`
 - [ ] T031 Implement `current_user`, `require_owner`, `require_verified_owner`, `require_admin` dependencies in `backend/app/core/deps.py`
-- [ ] T032 Implement `GET/PATCH /me` in `backend/app/accounts/router.py` (language preference stored on user)
+- [X] T032 Implement `GET/PATCH /me` in `backend/app/accounts/router.py` (language preference stored on user)
 
 ### Catalogue & locations (FR-005, FR-006)
 

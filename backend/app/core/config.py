@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     test_database_url: str = "postgresql+asyncpg://rental:rental@localhost:5433/rental_test"
 
     # Auth (R10)
-    jwt_secret: str = "dev-only-change-me-jwt-secret"
+    jwt_secret: str = "dev-only-change-me-jwt-secret-32-bytes"
     jwt_access_ttl_seconds: int = 900
     jwt_refresh_ttl_seconds: int = 2_592_000
     otp_hmac_key: str = "dev-only-change-me-otp-hmac-key"

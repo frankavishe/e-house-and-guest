@@ -15,6 +15,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
+from app.core import clock
 from app.core.config import get_settings
 
 NAMING_CONVENTION = {
@@ -46,15 +47,21 @@ class UUIDPk:
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid7)
 
 
+# Python-side defaults read the injectable clock so frozen-time tests see consistent
+# timestamps; the server defaults cover raw SQL inserts.
 class CreatedAt:
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
+        DateTime(timezone=True), default=clock.now, server_default=func.now(), nullable=False
     )
 
 
 class Timestamps(CreatedAt):
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+        DateTime(timezone=True),
+        default=clock.now,
+        onupdate=clock.now,
+        server_default=func.now(),
+        nullable=False,
     )
 
 

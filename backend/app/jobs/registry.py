@@ -25,7 +25,9 @@ Sweep = Callable[[AsyncSession], Awaitable[None]]
 PERIODIC_PREFIX = "periodic:"
 
 # Modules whose import registers handlers and sweeps. Stories append to this list.
-HANDLER_MODULES: list[str] = []
+HANDLER_MODULES: list[str] = [
+    "app.notifications.handlers",
+]
 
 
 @dataclass(frozen=True)

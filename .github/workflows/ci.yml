@@ -30,7 +30,7 @@ jobs:
       ENV: test
       DATABASE_URL: postgresql+asyncpg://rental:rental@localhost:5432/rental_test
       TEST_DATABASE_URL: postgresql+asyncpg://rental:rental@localhost:5432/rental_test
-      JWT_SECRET: ci-jwt-secret
+      JWT_SECRET: ci-only-jwt-secret-at-least-32-bytes-long
       OTP_HMAC_KEY: ci-otp-hmac-key
       FERNET_KEY: ZGV2LW9ubHktY2hhbmdlLW1lLWZlcm5ldC1rZXktMzI=
       PAYMENT_PROVIDER: mock

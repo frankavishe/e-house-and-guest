@@ -16,7 +16,8 @@
     "OUTSIDE_DELIVERY_AREA": "Eneo hili haliko kwenye eneo la usafirishaji.",
     "IDEMPOTENCY_KEY_REUSED": "Ufunguo huu umeshatumika kwa ombi tofauti.",
     "ACCOUNT_SUSPENDED": "Akaunti yako imesimamishwa.",
-    "INTERNAL_ERROR": "Hitilafu imetokea. Jaribu tena."
+    "INTERNAL_ERROR": "Hitilafu imetokea. Jaribu tena.",
+    "EMAIL_TAKEN": "Barua pepe hii tayari inatumiwa na akaunti nyingine."
   },
   "sms": {
     "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."
