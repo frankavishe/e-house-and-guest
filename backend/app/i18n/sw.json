@@ -19,9 +19,17 @@
     "INTERNAL_ERROR": "Hitilafu imetokea. Jaribu tena.",
     "EMAIL_TAKEN": "Barua pepe hii tayari inatumiwa na akaunti nyingine.",
     "OWNER_NOT_VERIFIED": "Akaunti yako ya mmiliki bado haijathibitishwa.",
-    "METHOD_NOT_ALLOWED": "Njia hii haikubali ombi la aina hii."
+    "METHOD_NOT_ALLOWED": "Njia hii haikubali ombi la aina hii.",
+    "INVALID_PERIOD": "Angalia tarehe au muda uliochagua.",
+    "DURATION_OUT_OF_RANGE": "Tangazo hili haliruhusu muda huo wa kukodi.",
+    "PRICE_UNAVAILABLE": "Tangazo hili halina bei kwa kipindi hicho.",
+    "DELIVERY_NOT_OFFERED": "Tangazo hili halitoi huduma ya usafirishaji."
   },
   "sms": {
     "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."
+  },
+  "labels": {
+    "yes": "Ndiyo",
+    "no": "Hapana"
   }
 }

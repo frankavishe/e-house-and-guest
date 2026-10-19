@@ -135,18 +135,18 @@ on its own.
 
 ### Tests for User Story 1 ⚠️ (write first, must fail)
 
-- [ ] T050 [P] [US1] Pricing unit tests in `backend/tests/unit/test_pricing.py`: nights vs days counting, hourly slots, item × days, whole-week rate when cheaper, seasonal rate per night across a season boundary, delivery fee, renter service fee in bps with half-up rounding, deposit, integer-only totals
-- [ ] T051 [P] [US1] Availability query tests in `backend/tests/integration/test_availability_query.py`: exclusive overlaps (half-open ranges, check-out day free), owner blocks, stock remaining per day, inactive blocks ignored, time slots crossing midnight in EAT
-- [ ] T052 [P] [US1] Search integration tests in `backend/tests/integration/test_search.py` covering US1 acceptance scenarios 1–3: category subtree, region filter, `attr.*` exact/range/any_of filters, unknown attr → 422, unavailable listings excluded, `total_tzs` present when a period is given, sorting, bbox, pagination, only `active` listings of verified owners
-- [ ] T053 [P] [US1] Contract tests for `/categories`, `/locations`, `/listings/search`, `/listings/{id}`, `/listings/{id}/availability`, `/listings/{id}/quote` in `backend/tests/contract/test_catalog_search_contract.py`
+- [X] T050 [P] [US1] Pricing unit tests in `backend/tests/unit/test_pricing.py`: nights vs days counting, hourly slots, item × days, whole-week rate when cheaper, seasonal rate per night across a season boundary, delivery fee, renter service fee in bps with half-up rounding, deposit, integer-only totals
+- [X] T051 [P] [US1] Availability query tests in `backend/tests/integration/test_availability_query.py`: exclusive overlaps (half-open ranges, check-out day free), owner blocks, stock remaining per day, inactive blocks ignored, time slots crossing midnight in EAT
+- [X] T052 [P] [US1] Search integration tests in `backend/tests/integration/test_search.py` covering US1 acceptance scenarios 1–3: category subtree, region filter, `attr.*` exact/range/any_of filters, unknown attr → 422, unavailable listings excluded, `total_tzs` present when a period is given, sorting, bbox, pagination, only `active` listings of verified owners
+- [X] T053 [P] [US1] Contract tests for `/categories`, `/locations`, `/listings/search`, `/listings/{id}`, `/listings/{id}/availability`, `/listings/{id}/quote` in `backend/tests/contract/test_catalog_search_contract.py`
 
 ### Implementation for User Story 1
 
-- [ ] T054 [P] [US1] Implement the pricing service `quote(listing, period_input, delivery)` → `Quote` (R5) in `backend/app/pricing/service.py` with schemas in `backend/app/pricing/schemas.py`
-- [ ] T055 [P] [US1] Implement period normalisation (PeriodInput per mode → `tstzrange` + quantity, R2) and duration limits in `backend/app/availability/periods.py`
-- [ ] T056 [US1] Implement availability reads (`is_available`, `available_quantity_by_day`, `unavailable_ranges`, `free_slots` from `slot_config`) in `backend/app/availability/service.py`
-- [ ] T057 [US1] Implement the search query builder (subtree via `path`, locations, `attr.*` parsed against the category schema, price range, `q` on `search_tsv`, NOT EXISTS availability / stock subquery, bbox, sort, pagination) in `backend/app/search/service.py`
-- [ ] T058 [US1] Implement `GET /listings/search`, `GET /listings/{id}` (no phone or exact address), `GET /listings/{id}/availability` and `POST /listings/{id}/quote` in `backend/app/search/router.py` and `backend/app/listings/router.py`
+- [X] T054 [P] [US1] Implement the pricing service `quote(listing, period_input, delivery)` → `Quote` (R5) in `backend/app/pricing/service.py` with schemas in `backend/app/pricing/schemas.py`
+- [X] T055 [P] [US1] Implement period normalisation (PeriodInput per mode → `tstzrange` + quantity, R2) and duration limits in `backend/app/availability/periods.py`
+- [X] T056 [US1] Implement availability reads (`is_available`, `available_quantity_by_day`, `unavailable_ranges`, `free_slots` from `slot_config`) in `backend/app/availability/service.py`
+- [X] T057 [US1] Implement the search query builder (subtree via `path`, locations, `attr.*` parsed against the category schema, price range, `q` on `search_tsv`, NOT EXISTS availability / stock subquery, bbox, sort, pagination) in `backend/app/search/service.py`
+- [X] T058 [US1] Implement `GET /listings/search`, `GET /listings/{id}` (no phone or exact address), `GET /listings/{id}/availability` and `POST /listings/{id}/quote` in `backend/app/search/router.py` and `backend/app/listings/router.py`
 - [ ] T059 [US1] Regenerate the API client and build the home page (category grid + search box, region and date pickers) in `frontend/src/app/[locale]/page.tsx`
 - [ ] T060 [P] [US1] Build `AttributeFilters` rendered from a category `attribute_schema` (exact/range/any_of widgets) in `frontend/src/components/AttributeFilters.tsx`
 - [ ] T061 [US1] Build the search results page (server-rendered list, ListingCard with total price, sort, filters sheet, pagination, URL-driven state) in `frontend/src/app/[locale]/search/page.tsx` and `frontend/src/components/ListingCard.tsx`

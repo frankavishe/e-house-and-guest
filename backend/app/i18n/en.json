@@ -19,9 +19,17 @@
     "INTERNAL_ERROR": "Something went wrong. Please try again.",
     "EMAIL_TAKEN": "This email is already used by another account.",
     "OWNER_NOT_VERIFIED": "Your owner account has not been verified yet.",
-    "METHOD_NOT_ALLOWED": "This method is not allowed here."
+    "METHOD_NOT_ALLOWED": "This method is not allowed here.",
+    "INVALID_PERIOD": "Check the dates or times you chose.",
+    "DURATION_OUT_OF_RANGE": "This listing does not allow that length of booking.",
+    "PRICE_UNAVAILABLE": "This listing has no price for that period.",
+    "DELIVERY_NOT_OFFERED": "This listing does not offer delivery."
   },
   "sms": {
     "otp": "Your sign-in code is {code}. It expires in 5 minutes. Do not share it."
+  },
+  "labels": {
+    "yes": "Yes",
+    "no": "No"
   }
 }

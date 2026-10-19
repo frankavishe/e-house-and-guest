@@ -16,6 +16,8 @@ from app.catalog.router import router as catalog_router
 from app.core.db import dispose_engine, get_session
 from app.core.errors import install_error_handlers, install_error_openapi
 from app.core.logging import configure_logging
+from app.listings.router import router as listings_router
+from app.search.router import router as search_router
 
 API_PREFIX = "/api/v1"
 
@@ -42,6 +44,8 @@ def api_router() -> APIRouter:
     router.include_router(health_router)
     router.include_router(accounts_router)
     router.include_router(catalog_router)
+    router.include_router(search_router)  # before listings: /listings/search
+    router.include_router(listings_router)
     return router
 
 
