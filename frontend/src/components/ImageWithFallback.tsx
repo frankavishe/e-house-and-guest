@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   src: string | null | undefined;
@@ -30,7 +30,14 @@ export function ImageWithFallback({
   priority = false,
 }: Props) {
   const [failed, setFailed] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
   const showImage = Boolean(src) && !failed;
+
+  // A server-rendered image can fail before hydration, when `onError` is not attached yet.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img?.complete && img.naturalWidth === 0) setFailed(true);
+  }, [src]);
   return (
     <div
       className={`relative overflow-hidden bg-line ${className}`}
@@ -39,6 +46,7 @@ export function ImageWithFallback({
       {showImage ? (
         // eslint-disable-next-line @next/next/no-img-element -- plain img: srcset from our own variants
         <img
+          ref={imgRef}
           src={src ?? undefined}
           srcSet={srcSet}
           sizes={sizes}

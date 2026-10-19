@@ -161,10 +161,129 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/listings/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search Listings
+         * @description Public listings. Period fields (as `PeriodInput`) filter by availability and add
+         *     `total_tzs`. Category attributes filter with `attr.<key>=value`, `attr.<key>=a,b`
+         *     (any of) or `attr.<key>.min=` / `.max=` (ranges); unknown keys → 422.
+         */
+        get: operations["search_listings_api_v1_listings_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/listings/{listing_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Listing */
+        get: operations["get_listing_api_v1_listings__listing_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/listings/{listing_id}/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Availability
+         * @description DATE_RANGE/LEASE: unavailable date ranges; TIME_SLOT: free slots per day;
+         *     QUANTITY: units available per day. Defaults to the next 60 days.
+         */
+        get: operations["get_availability_api_v1_listings__listing_id__availability_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/listings/{listing_id}/quote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Quote Listing */
+        post: operations["quote_listing_api_v1_listings__listing_id__quote_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AttributeOut */
+        AttributeOut: {
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Value */
+            value: unknown;
+            /** Display */
+            display: string;
+            /** Unit */
+            unit: string | null;
+            /** Group */
+            group: string | null;
+        };
+        /**
+         * Availability
+         * @description DATE_RANGE/LEASE fill `unavailable`, TIME_SLOT `slots`, QUANTITY `stock`.
+         */
+        Availability: {
+            /**
+             * Booking Mode
+             * @enum {string}
+             */
+            booking_mode: "DATE_RANGE" | "TIME_SLOT" | "LEASE" | "QUANTITY";
+            /** Unavailable */
+            unavailable?: components["schemas"]["DateSpan"][] | null;
+            /** Slots */
+            slots?: components["schemas"]["DaySlots"][] | null;
+            /** Stock */
+            stock?: components["schemas"]["DayStock"][] | null;
+        };
+        /** BasePrice */
+        BasePrice: {
+            /**
+             * Unit
+             * @enum {string}
+             */
+            unit: "hour" | "night" | "day" | "week" | "month" | "item_day";
+            /** Amount Tzs */
+            amount_tzs: number;
+        };
         /** CategoryDetail */
         CategoryDetail: {
             /**
@@ -215,6 +334,65 @@ export interface components {
             /** Children */
             children?: components["schemas"]["CategoryNode"][];
         };
+        /** CategoryRef */
+        CategoryRef: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+        };
+        /**
+         * DateSpan
+         * @description Unavailable EAT days `[start_date, end_date)`.
+         */
+        DateSpan: {
+            /**
+             * Start Date
+             * Format: date
+             */
+            start_date: string;
+            /**
+             * End Date
+             * Format: date
+             */
+            end_date: string;
+        };
+        /** DaySlots */
+        DaySlots: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Slots */
+            slots: components["schemas"]["Slot"][];
+        };
+        /** DayStock */
+        DayStock: {
+            /**
+             * Date
+             * Format: date
+             */
+            date: string;
+            /** Available */
+            available: number;
+        };
+        /** DetailPhoto */
+        DetailPhoto: {
+            /** Url 320 */
+            url_320: string;
+            /** Url 640 */
+            url_640: string;
+            /** Alt */
+            alt: string;
+            /** Url 1280 */
+            url_1280: string;
+        };
         /** Health */
         Health: {
             /**
@@ -227,6 +405,127 @@ export interface components {
              * @enum {string}
              */
             database: "ok" | "down";
+        };
+        /**
+         * Highlight
+         * @description A `show_on_card` attribute, already formatted for display.
+         */
+        Highlight: {
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Value */
+            value: string;
+        };
+        /**
+         * ListingCard
+         * @description `total_tzs` is the full price for the searched period, when one was given.
+         */
+        ListingCard: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Title */
+            title: string;
+            category: components["schemas"]["CategoryRef"];
+            location: components["schemas"]["LocationRef"];
+            cover_photo: components["schemas"]["Photo"] | null;
+            base_price: components["schemas"]["BasePrice"] | null;
+            /** Rating Avg */
+            rating_avg: number | null;
+            /** Rating Count */
+            rating_count: number;
+            /** Instant Book */
+            instant_book: boolean;
+            /** Lat */
+            lat: number | null;
+            /** Lng */
+            lng: number | null;
+            /**
+             * Booking Mode
+             * @enum {string}
+             */
+            booking_mode: "DATE_RANGE" | "TIME_SLOT" | "LEASE" | "QUANTITY";
+            /** Highlights */
+            highlights: components["schemas"]["Highlight"][];
+            /** Total Tzs */
+            total_tzs: number | null;
+        };
+        /** ListingDetail */
+        ListingDetail: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Title */
+            title: string;
+            category: components["schemas"]["CategoryRef"];
+            location: components["schemas"]["LocationRef"];
+            cover_photo: components["schemas"]["Photo"] | null;
+            base_price: components["schemas"]["BasePrice"] | null;
+            /** Rating Avg */
+            rating_avg: number | null;
+            /** Rating Count */
+            rating_count: number;
+            /** Instant Book */
+            instant_book: boolean;
+            /** Lat */
+            lat: number | null;
+            /** Lng */
+            lng: number | null;
+            /**
+             * Booking Mode
+             * @enum {string}
+             */
+            booking_mode: "DATE_RANGE" | "TIME_SLOT" | "LEASE" | "QUANTITY";
+            /** Highlights */
+            highlights: components["schemas"]["Highlight"][];
+            /** Description */
+            description: string;
+            /** Photos */
+            photos: components["schemas"]["DetailPhoto"][];
+            /** Attributes */
+            attributes: components["schemas"]["AttributeOut"][];
+            /** Prices */
+            prices: components["schemas"]["PriceOut"][];
+            /**
+             * Default Unit
+             * @enum {string}
+             */
+            default_unit: "hour" | "night" | "day" | "week" | "month" | "item_day";
+            /** Deposit Tzs */
+            deposit_tzs: number;
+            /**
+             * Delivery
+             * @enum {string}
+             */
+            delivery: "none" | "optional" | "required";
+            /** Delivery Fee Tzs */
+            delivery_fee_tzs: number | null;
+            /** Delivery Area */
+            delivery_area: number[] | null;
+            /** Min Duration */
+            min_duration: number | null;
+            /** Max Duration */
+            max_duration: number | null;
+            /** Slot Config */
+            slot_config: {
+                [key: string]: unknown;
+            } | null;
+            /** Stock */
+            stock: number;
+            /**
+             * Cancellation Policy
+             * @enum {string}
+             */
+            cancellation_policy: "flexible" | "moderate" | "strict";
+            owner: components["schemas"]["OwnerOut"];
+            /** Reviews */
+            reviews: components["schemas"]["ReviewOut"][];
         };
         /** LocalizedText */
         LocalizedText: {
@@ -259,6 +558,13 @@ export interface components {
             lat: number | null;
             /** Lng */
             lng: number | null;
+        };
+        /** LocationRef */
+        LocationRef: {
+            /** Region */
+            region: string;
+            /** District */
+            district: string;
         };
         /** MePatch */
         MePatch: {
@@ -303,6 +609,17 @@ export interface components {
             /** Is New */
             is_new: boolean;
         };
+        /** OwnerOut */
+        OwnerOut: {
+            /** Display Name */
+            display_name: string;
+            /** Rating Avg */
+            rating_avg: number | null;
+            /** Rating Count */
+            rating_count: number;
+            /** Verified */
+            verified: boolean;
+        };
         /** OwnerProfileSummary */
         OwnerProfileSummary: {
             /**
@@ -322,6 +639,126 @@ export interface components {
              * @enum {string}
              */
             verification_status: "draft" | "pending" | "verified" | "rejected";
+        };
+        /** Page[ListingCard] */
+        Page_ListingCard_: {
+            /** Items */
+            items: components["schemas"]["ListingCard"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
+        /** Photo */
+        Photo: {
+            /** Url 320 */
+            url_320: string;
+            /** Url 640 */
+            url_640: string;
+            /** Alt */
+            alt: string;
+        };
+        /** PriceOut */
+        PriceOut: {
+            /**
+             * Unit
+             * @enum {string}
+             */
+            unit: "hour" | "night" | "day" | "week" | "month" | "item_day";
+            /** Amount Tzs */
+            amount_tzs: number;
+            /** Season Start */
+            season_start: string | null;
+            /** Season End */
+            season_end: string | null;
+        };
+        /** Quote */
+        Quote: {
+            /** Lines */
+            lines: components["schemas"]["QuoteLine"][];
+            /** Rental Tzs */
+            rental_tzs: number;
+            /** Delivery Fee Tzs */
+            delivery_fee_tzs: number;
+            /** Service Fee Tzs */
+            service_fee_tzs: number;
+            /** Deposit Tzs */
+            deposit_tzs: number;
+            /** Total Tzs */
+            total_tzs: number;
+        };
+        /**
+         * QuoteLine
+         * @description `label` is `base` or `season` (a seasonal rate); clients localize it.
+         */
+        QuoteLine: {
+            /**
+             * Label
+             * @enum {string}
+             */
+            label: "base" | "season";
+            /**
+             * Unit
+             * @enum {string}
+             */
+            unit: "hour" | "night" | "day" | "week" | "month" | "item_day";
+            /** Count */
+            count: number;
+            /** Unit Price Tzs */
+            unit_price_tzs: number;
+            /** Amount Tzs */
+            amount_tzs: number;
+        };
+        /** QuoteRequest */
+        QuoteRequest: {
+            /** Start Date */
+            start_date?: string | null;
+            /** End Date */
+            end_date?: string | null;
+            /** Start */
+            start?: string | null;
+            /** End */
+            end?: string | null;
+            /** Months */
+            months?: number | null;
+            /** Quantity */
+            quantity?: number | null;
+            /**
+             * Delivery
+             * @default false
+             */
+            delivery: boolean;
+            /** Delivery District Id */
+            delivery_district_id?: number | null;
+        };
+        /** ReviewOut */
+        ReviewOut: {
+            /** Rating */
+            rating: number;
+            /** Comment */
+            comment: string | null;
+            /** Author */
+            author: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** Slot */
+        Slot: {
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
         };
         /** UserOut */
         UserOut: {
@@ -729,6 +1166,265 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LocationOut"][];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    search_listings_api_v1_listings_search_get: {
+        parameters: {
+            query?: {
+                start_date?: string | null;
+                end_date?: string | null;
+                start?: string | null;
+                end?: string | null;
+                months?: number | null;
+                quantity?: number | null;
+                category?: string | null;
+                region?: number | null;
+                district?: number | null;
+                ward?: number | null;
+                q?: string | null;
+                price_min?: number | null;
+                price_max?: number | null;
+                bbox?: string | null;
+                sort?: "newest" | "price_asc" | "price_desc" | "rating";
+                page?: number;
+                page_size?: number;
+            };
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ListingCard_"];
+                };
+            };
+            /** @description Invalid period (`INVALID_PERIOD`) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unknown category */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_listing_api_v1_listings__listing_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ListingDetail"];
+                };
+            };
+            /** @description Unknown or non-public listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_availability_api_v1_listings__listing_id__availability_get: {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: never;
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Availability"];
+                };
+            };
+            /** @description Window longer than 366 days or reversed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unknown or non-public listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    quote_listing_api_v1_listings__listing_id__quote_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuoteRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Quote"];
+                };
+            };
+            /** @description Invalid period or duration */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unknown or non-public listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `SLOT_TAKEN`, `INSUFFICIENT_STOCK` or `PRICE_UNAVAILABLE` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
             /** @description Validation error */

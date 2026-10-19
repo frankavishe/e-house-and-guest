@@ -21,7 +21,11 @@
   "home": {
     "title": "Kodisha vyumba, magari, kumbi na vifaa",
     "subtitle": "Malazi, ofisi, maghala, magari na vifaa vya sherehe kutoka kwa wamiliki waliothibitishwa. Lipa kwa M-Pesa, Mixx, Airtel Money au HaloPesa.",
-    "comingSoon": "Utafutaji unakuja hivi karibuni."
+    "searchTitle": "Tafuta matangazo",
+    "whatLabel": "Unatafuta nini?",
+    "whatPlaceholder": "mfano chumba, gari, hema, ukumbi",
+    "search": "Tafuta",
+    "browse": "Vinjari kwa aina"
   },
   "signIn": {
     "title": "Ingia",
@@ -41,5 +45,114 @@
   "errors": {
     "generic": "Hitilafu imetokea. Jaribu tena.",
     "network": "Hakuna mtandao. Angalia muunganisho wako na ujaribu tena."
+  },
+  "filters": {
+    "title": "Vichujio",
+    "category": "Aina",
+    "allCategories": "Aina zote",
+    "region": "Mkoa",
+    "allRegions": "Mikoa yote",
+    "district": "Wilaya",
+    "allDistricts": "Wilaya zote",
+    "price": "Bei (TSh)",
+    "min": "Chini",
+    "max": "Juu",
+    "any": "Yoyote",
+    "yes": "Ndiyo",
+    "no": "Hapana",
+    "pickCategoryForMore": "Chagua aina ili kupata vichujio zaidi.",
+    "clear": "Futa",
+    "apply": "Onyesha matokeo"
+  },
+  "period": {
+    "from": "Kuanzia",
+    "to": "Hadi",
+    "checkIn": "Kuingia",
+    "checkOut": "Kutoka",
+    "firstDay": "Siku ya kwanza",
+    "lastDay": "Siku ya mwisho",
+    "moveIn": "Tarehe ya kuanza",
+    "months": "Miezi",
+    "monthCount": "{count, plural, one {# mwezi} other {# miezi}}",
+    "any": "Yoyote",
+    "quantity": "Idadi",
+    "date": "Tarehe",
+    "startTime": "Muda wa kuanza",
+    "endTime": "Muda wa kumaliza"
+  },
+  "search": {
+    "title": "Matokeo ya utafutaji",
+    "resultCount": "{count, plural, one {# tangazo} other {# matangazo}}",
+    "totalForDates": "jumla",
+    "fromPrice": "Kuanzia <price></price> / {unit}",
+    "instantBook": "Weka papo hapo",
+    "sortLabel": "Panga",
+    "sort": {
+      "newest": "Mapya kwanza",
+      "price_asc": "Bei: chini kwenda juu",
+      "price_desc": "Bei: juu kwenda chini",
+      "rating": "Waliopimwa juu"
+    },
+    "showMap": "Ramani",
+    "showList": "Orodha",
+    "inMapArea": "Yanaonyeshwa matangazo yaliyo ndani ya ramani.",
+    "clearMapArea": "Tafuta kila mahali",
+    "unknownCategory": "Aina hii haipo.",
+    "noResults": "Hakuna tangazo linalolingana na utafutaji wako.",
+    "noResultsHint": "Jaribu tarehe nyingine, eneo pana zaidi au vichujio vichache.",
+    "pagination": "Kurasa",
+    "previous": "Iliyopita",
+    "next": "Inayofuata",
+    "pageOf": "Ukurasa {page} kati ya {pages}"
+  },
+  "units": {
+    "hour": "saa",
+    "night": "usiku",
+    "day": "siku",
+    "week": "wiki",
+    "month": "mwezi",
+    "item_day": "kipande kwa siku"
+  },
+  "map": {
+    "attribution": "© Wachangiaji wa OpenStreetMap"
+  },
+  "listing": {
+    "photos": "Picha",
+    "owner": "Mmiliki",
+    "verifiedOwner": "Mmiliki aliyethibitishwa",
+    "details": "Maelezo",
+    "prices": "Bei",
+    "perUnit": "Kwa {unit}",
+    "season": "{from} – {to}, kwa {unit}",
+    "deposit": "Amana",
+    "noDeposit": "Hakuna",
+    "delivery": "Usafirishaji",
+    "deliveryNone": "Haupatikani",
+    "delivery_optional": "Unapatikana: {fee}",
+    "delivery_required": "Umejumuishwa: {fee}",
+    "deliveryFree": "bure",
+    "duration": "Muda wa kukodi",
+    "minDuration": "angalau {count} × {unit}",
+    "maxDuration": "isizidi {count} × {unit}",
+    "stock": "Idadi iliyopo",
+    "cancellation": "Kughairi",
+    "availability": "Upatikanaji",
+    "availabilityUnknown": "Imeshindikana kupakia upatikanaji. Jaribu tena baadaye.",
+    "noSlots": "Hakuna muda ulio wazi katika siku chache zijazo.",
+    "free": "Ipo wazi",
+    "taken": "Imechukuliwa",
+    "date": "Tarehe",
+    "available": "Zilizopo",
+    "reviews": "Maoni",
+    "noReviews": "Bado hakuna maoni.",
+    "share": "Shiriki",
+    "shareWhatsapp": "Shiriki kwa WhatsApp",
+    "shareLink": "Shiriki kiungo",
+    "copied": "Kiungo kimenakiliwa"
+  },
+  "policy": {
+    "flexible": "Nafuu",
+    "moderate": "Wastani",
+    "strict": "Kali"
   }
 }

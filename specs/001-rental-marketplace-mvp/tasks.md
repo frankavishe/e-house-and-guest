@@ -147,12 +147,12 @@ on its own.
 - [X] T056 [US1] Implement availability reads (`is_available`, `available_quantity_by_day`, `unavailable_ranges`, `free_slots` from `slot_config`) in `backend/app/availability/service.py`
 - [X] T057 [US1] Implement the search query builder (subtree via `path`, locations, `attr.*` parsed against the category schema, price range, `q` on `search_tsv`, NOT EXISTS availability / stock subquery, bbox, sort, pagination) in `backend/app/search/service.py`
 - [X] T058 [US1] Implement `GET /listings/search`, `GET /listings/{id}` (no phone or exact address), `GET /listings/{id}/availability` and `POST /listings/{id}/quote` in `backend/app/search/router.py` and `backend/app/listings/router.py`
-- [ ] T059 [US1] Regenerate the API client and build the home page (category grid + search box, region and date pickers) in `frontend/src/app/[locale]/page.tsx`
-- [ ] T060 [P] [US1] Build `AttributeFilters` rendered from a category `attribute_schema` (exact/range/any_of widgets) in `frontend/src/components/AttributeFilters.tsx`
-- [ ] T061 [US1] Build the search results page (server-rendered list, ListingCard with total price, sort, filters sheet, pagination, URL-driven state) in `frontend/src/app/[locale]/search/page.tsx` and `frontend/src/components/ListingCard.tsx`
-- [ ] T062 [P] [US1] Build the lazy-loaded map view (Leaflet + OSM, bbox search on move, client-only dynamic import) in `frontend/src/components/SearchMap.tsx`
-- [ ] T063 [US1] Build the listing detail page (photo gallery with srcset, attributes with labels, prices, deposit, delivery, policy, owner badge, availability calendar/slots/stock, reviews placeholder, share link incl. WhatsApp, Open Graph meta) in `frontend/src/app/[locale]/l/[id]/page.tsx`
-- [ ] T064 [US1] Add all US1 strings to `frontend/messages/sw.json` and `frontend/messages/en.json`, and a Playwright smoke test (search → open listing → switch language keeps page, 360×640) in `frontend/tests/e2e/search.spec.ts`
+- [X] T059 [US1] Regenerate the API client and build the home page (category grid + search box, region and date pickers) in `frontend/src/app/[locale]/page.tsx`
+- [X] T060 [P] [US1] Build `AttributeFilters` rendered from a category `attribute_schema` (exact/range/any_of widgets) in `frontend/src/components/AttributeFilters.tsx`
+- [X] T061 [US1] Build the search results page (server-rendered list, ListingCard with total price, sort, filters sheet, pagination, URL-driven state) in `frontend/src/app/[locale]/search/page.tsx` and `frontend/src/components/ListingCard.tsx`
+- [X] T062 [P] [US1] Build the lazy-loaded map view (Leaflet + OSM, bbox search on move, client-only dynamic import) in `frontend/src/components/SearchMap.tsx`
+- [X] T063 [US1] Build the listing detail page (photo gallery with srcset, attributes with labels, prices, deposit, delivery, policy, owner badge, availability calendar/slots/stock, reviews placeholder, share link incl. WhatsApp, Open Graph meta) in `frontend/src/app/[locale]/l/[id]/page.tsx`
+- [X] T064 [US1] Add all US1 strings to `frontend/messages/sw.json` and `frontend/messages/en.json`, and a Playwright smoke test (search → open listing → switch language keeps page, 360×640) in `frontend/tests/e2e/search.spec.ts`
 
 **Checkpoint**: Quickstart V1–V3 pass (V3 with a seeded booking block). US1 is demo-able on its own.
 

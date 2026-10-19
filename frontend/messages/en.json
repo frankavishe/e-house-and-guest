@@ -21,7 +21,11 @@
   "home": {
     "title": "Rent rooms, cars, halls and equipment",
     "subtitle": "Accommodation, offices, warehouses, vehicles and event gear from verified owners. Pay with M-Pesa, Mixx, Airtel Money or HaloPesa.",
-    "comingSoon": "Search is coming soon."
+    "searchTitle": "Search listings",
+    "whatLabel": "What are you looking for?",
+    "whatPlaceholder": "e.g. room, car, tent, hall",
+    "search": "Search",
+    "browse": "Browse by category"
   },
   "signIn": {
     "title": "Sign in",
@@ -41,5 +45,114 @@
   "errors": {
     "generic": "Something went wrong. Please try again.",
     "network": "No connection. Check your network and try again."
+  },
+  "filters": {
+    "title": "Filters",
+    "category": "Category",
+    "allCategories": "All categories",
+    "region": "Region",
+    "allRegions": "All regions",
+    "district": "District",
+    "allDistricts": "All districts",
+    "price": "Price (TSh)",
+    "min": "Min",
+    "max": "Max",
+    "any": "Any",
+    "yes": "Yes",
+    "no": "No",
+    "pickCategoryForMore": "Choose a category for more filters.",
+    "clear": "Clear",
+    "apply": "Show results"
+  },
+  "period": {
+    "from": "From",
+    "to": "To",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "firstDay": "First day",
+    "lastDay": "Last day",
+    "moveIn": "Start date",
+    "months": "Months",
+    "monthCount": "{count, plural, one {# month} other {# months}}",
+    "any": "Any",
+    "quantity": "Quantity",
+    "date": "Date",
+    "startTime": "Start time",
+    "endTime": "End time"
+  },
+  "search": {
+    "title": "Search results",
+    "resultCount": "{count, plural, one {# listing} other {# listings}}",
+    "totalForDates": "total",
+    "fromPrice": "From <price></price> / {unit}",
+    "instantBook": "Instant book",
+    "sortLabel": "Sort",
+    "sort": {
+      "newest": "Newest",
+      "price_asc": "Price: low to high",
+      "price_desc": "Price: high to low",
+      "rating": "Top rated"
+    },
+    "showMap": "Map",
+    "showList": "List",
+    "inMapArea": "Showing listings in the map area.",
+    "clearMapArea": "Search everywhere",
+    "unknownCategory": "This category does not exist.",
+    "noResults": "No listings match your search.",
+    "noResultsHint": "Try other dates, a wider area or fewer filters.",
+    "pagination": "Pages",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {page} of {pages}"
+  },
+  "units": {
+    "hour": "hour",
+    "night": "night",
+    "day": "day",
+    "week": "week",
+    "month": "month",
+    "item_day": "item per day"
+  },
+  "map": {
+    "attribution": "© OpenStreetMap contributors"
+  },
+  "listing": {
+    "photos": "Photos",
+    "owner": "Owner",
+    "verifiedOwner": "Verified owner",
+    "details": "Details",
+    "prices": "Prices",
+    "perUnit": "Per {unit}",
+    "season": "{from} – {to}, per {unit}",
+    "deposit": "Deposit",
+    "noDeposit": "None",
+    "delivery": "Delivery",
+    "deliveryNone": "Not offered",
+    "delivery_optional": "Available: {fee}",
+    "delivery_required": "Included: {fee}",
+    "deliveryFree": "free",
+    "duration": "Booking length",
+    "minDuration": "at least {count} × {unit}",
+    "maxDuration": "at most {count} × {unit}",
+    "stock": "Units available",
+    "cancellation": "Cancellation",
+    "availability": "Availability",
+    "availabilityUnknown": "Availability could not be loaded. Try again later.",
+    "noSlots": "No free time slots in the next few days.",
+    "free": "Available",
+    "taken": "Booked",
+    "date": "Date",
+    "available": "Available",
+    "reviews": "Reviews",
+    "noReviews": "No reviews yet.",
+    "share": "Share",
+    "shareWhatsapp": "Share on WhatsApp",
+    "shareLink": "Share link",
+    "copied": "Link copied"
+  },
+  "policy": {
+    "flexible": "Flexible",
+    "moderate": "Moderate",
+    "strict": "Strict"
   }
 }
