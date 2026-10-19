@@ -43,25 +43,31 @@ function Viewport({ items, bbox }: { items: MapItem[]; bbox?: string }) {
   const map = useMap();
   const router = useRouter();
   const search = useSearchParams();
-  const programmatic = useRef(true);
+  // Only moves that follow a gesture on the map search; fitting the view (which may fire
+  // zero or several `moveend`s) never does.
+  const touched = useRef(false);
 
   useEffect(() => {
     const fromUrl = parseBbox(bbox);
     const fromItems: LatLngBoundsExpression | null = items.length
       ? items.map((i) => [i.lat, i.lng] as [number, number])
       : null;
-    programmatic.current = true;
     map.fitBounds(fromUrl ?? fromItems ?? TANZANIA, { padding: [24, 24], maxZoom: 14 });
+
+    const container = map.getContainer();
+    const gestures = ["pointerdown", "wheel", "keydown", "touchstart"] as const;
+    const onGesture = () => {
+      touched.current = true;
+    };
+    gestures.forEach((g) => container.addEventListener(g, onGesture, { passive: true }));
+    return () => gestures.forEach((g) => container.removeEventListener(g, onGesture));
     // Runs once: later moves come from the visitor.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
 
   useMapEvents({
     moveend(event) {
-      if (programmatic.current) {
-        programmatic.current = false;
-        return;
-      }
+      if (!touched.current) return;
       const b = (event.target as LeafletMap).getBounds();
       const box = [
         clamp(b.getWest(), -180, 180),

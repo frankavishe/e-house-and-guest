@@ -177,18 +177,6 @@ export default async function SearchPage({ params, searchParams }: Props) {
         </Link>
       </div>
 
-      {getParam(pairs, "bbox") && (
-        <p className="text-sm text-muted">
-          {t("search.inMapArea")}{" "}
-          <Link
-            href={`/search${withParams(pairs, { bbox: null })}`}
-            className="text-brand-700 underline"
-          >
-            {t("search.clearMapArea")}
-          </Link>
-        </p>
-      )}
-
       {error && (
         <p
           role="alert"
@@ -216,6 +204,18 @@ export default async function SearchPage({ params, searchParams }: Props) {
               price: formatTZS(i.total_tzs ?? i.base_price?.amount_tzs ?? 0),
             }))}
         />
+      )}
+
+      {getParam(pairs, "bbox") && (
+        <p className="text-sm text-muted">
+          {t("search.inMapArea")}{" "}
+          <Link
+            href={`/search${withParams(pairs, { bbox: null })}`}
+            className="text-brand-700 underline"
+          >
+            {t("search.clearMapArea")}
+          </Link>
+        </p>
       )}
 
       {page && items.length === 0 && !error && (
