@@ -20,7 +20,7 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 Handler = Callable[[AsyncSession, dict[str, Any]], Awaitable[None]]
-Sweep = Callable[[AsyncSession], Awaitable[None]]
+Sweep = Callable[[AsyncSession], Awaitable[object]]  # a sweep may return a count
 
 PERIODIC_PREFIX = "periodic:"
 

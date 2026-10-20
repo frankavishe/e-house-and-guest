@@ -1,6 +1,6 @@
 """Append-only double-entry ledger (data-model.md "ledger_entries", R8).
 
-Sign convention: debit +, credit −. The rows of one `txn_id` sum to 0 (deferred trigger),
+Sign convention: debit +, credit -. The rows of one `txn_id` sum to 0 (deferred trigger),
 and UPDATE/DELETE are rejected by a trigger; corrections are new reversing entries.
 """
 

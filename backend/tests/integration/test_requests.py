@@ -107,12 +107,16 @@ async def test_lease_accept_asks_first_month_and_deposit(
     assert body["quote"]["total_tzs"] == 6 * 800_000 + 1_600_000
 
     installments = (
-        await db.execute(
-            select(LeaseInstallment)
-            .where(LeaseInstallment.booking_id == uuid.UUID(booking_id))
-            .order_by(LeaseInstallment.seq)
+        (
+            await db.execute(
+                select(LeaseInstallment)
+                .where(LeaseInstallment.booking_id == uuid.UUID(booking_id))
+                .order_by(LeaseInstallment.seq)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     assert [i.seq for i in installments] == [1, 2, 3, 4, 5, 6]
     assert {i.amount_tzs for i in installments} == {800_000}
     assert [i.due_at.date().isoformat() for i in installments[:2]] == [

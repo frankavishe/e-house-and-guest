@@ -51,7 +51,8 @@ from app.listings.models import Listing
 from app.listings.schemas import ListingCard, Page
 from app.payments.models import Payment, PaymentStatus
 from app.pricing.schemas import Quote
-from app.pricing.service import BPS, quote as price_quote, round_half_up
+from app.pricing.service import BPS, round_half_up
+from app.pricing.service import quote as price_quote
 
 INSTANT_PAYMENT_WINDOW = timedelta(minutes=15)
 REQUEST_WINDOW = timedelta(hours=24)
@@ -59,8 +60,12 @@ ACCEPTED_PAYMENT_WINDOW = timedelta(hours=24)
 CODE_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"  # Crockford base32
 CODE_ATTEMPTS = 5
 # Statuses in which the parties see each other's phone numbers (R18).
-REVEALED = {BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS, BookingStatus.COMPLETED,
-            BookingStatus.DISPUTED}
+REVEALED = {
+    BookingStatus.CONFIRMED,
+    BookingStatus.IN_PROGRESS,
+    BookingStatus.COMPLETED,
+    BookingStatus.DISPUTED,
+}
 PAID = REVEALED
 OPEN_LEASE = {BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS}
 
@@ -172,7 +177,11 @@ async def create_booking(session: AsyncSession, renter: User, body: BookingCreat
     if mode == BookingMode.LEASE:
         session.add_all(_lease_installments(booking, period.count))
     await record(
-        session, booking, None, actor_kind=ActorKind.USER, actor_user_id=renter.id,
+        session,
+        booking,
+        None,
+        actor_kind=ActorKind.USER,
+        actor_user_id=renter.id,
         note=body.message,
     )
     await session.flush()
@@ -292,9 +301,7 @@ async def _counterpart(session: AsyncSession, booking: Booking, role: RoleT) -> 
         assert owner is not None
         owner_user = await session.get(User, owner.user_id)
         assert owner_user is not None
-        return Counterpart(
-            name=owner.display_name, phone=owner_user.phone if revealed else None
-        )
+        return Counterpart(name=owner.display_name, phone=owner_user.phone if revealed else None)
     renter = await session.get(User, booking.renter_id)
     assert renter is not None
     return Counterpart(
@@ -385,7 +392,7 @@ async def list_bookings(
     page_size: int,
     locale: Locale,
 ) -> Page[BookingSummary]:
-    query: Select[tuple[Booking]] = select(Booking)
+    query: Select[Booking] = select(Booking)
     if role == "owner":
         query = query.join(OwnerProfile, OwnerProfile.id == Booking.owner_profile_id).where(
             OwnerProfile.user_id == user.id
@@ -394,16 +401,18 @@ async def list_bookings(
         query = query.where(Booking.renter_id == user.id)
     if status is not None:
         query = query.where(Booking.status == status)
-    total = (
-        await session.execute(select(func.count()).select_from(query.subquery()))
-    ).scalar_one()
+    total = (await session.execute(select(func.count()).select_from(query.subquery()))).scalar_one()
     rows = (
-        await session.execute(
-            query.order_by(Booking.created_at.desc(), Booking.id.desc())
-            .offset((page - 1) * page_size)
-            .limit(page_size)
+        (
+            await session.execute(
+                query.order_by(Booking.created_at.desc(), Booking.id.desc())
+                .offset((page - 1) * page_size)
+                .limit(page_size)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     cards = await _cards(session, [b.listing_id for b in rows], locale)
     return Page[BookingSummary](
         items=[
@@ -431,12 +440,8 @@ async def list_bookings(
 # --- owner decisions ----------------------------------------------------------------------
 
 
-async def _owned(
-    session: AsyncSession, owner: OwnerProfile, booking_id: uuid.UUID
-) -> Booking:
-    booking = await session.get(
-        Booking, booking_id, with_for_update=True, populate_existing=True
-    )
+async def _owned(session: AsyncSession, owner: OwnerProfile, booking_id: uuid.UUID) -> Booking:
+    booking = await session.get(Booking, booking_id, with_for_update=True, populate_existing=True)
     if booking is None:
         raise not_found("booking")
     if booking.owner_profile_id != owner.id:
@@ -487,7 +492,9 @@ async def receipt(
     booking, _ = await get_for_party(session, user, booking_id)
     if booking.status not in PAID:
         raise AppError("BOOKING_NOT_PAID", 409)
-    paid = [p for p in await payments_of(session, booking.id) if p.status == PaymentStatus.SUCCEEDED]
+    paid = [
+        p for p in await payments_of(session, booking.id) if p.status == PaymentStatus.SUCCEEDED
+    ]
     listing = await session.get(Listing, booking.listing_id)
     owner = await session.get(OwnerProfile, booking.owner_profile_id)
     renter = await session.get(User, booking.renter_id)

@@ -55,12 +55,16 @@ async def test_transition_records_event(db: AsyncSession) -> None:
 
     assert booking.status == S.IN_PROGRESS
     events = (
-        await db.execute(
-            select(BookingEvent)
-            .where(BookingEvent.booking_id == booking.id)
-            .order_by(BookingEvent.created_at, BookingEvent.id)
+        (
+            await db.execute(
+                select(BookingEvent)
+                .where(BookingEvent.booking_id == booking.id)
+                .order_by(BookingEvent.created_at, BookingEvent.id)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     assert [(e.from_status, e.to_status, e.actor_kind) for e in events] == [
         (S.AWAITING_PAYMENT, S.CONFIRMED, "provider"),
         (S.CONFIRMED, S.IN_PROGRESS, "system"),

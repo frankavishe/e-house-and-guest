@@ -51,8 +51,10 @@ from app.integrations import get_payment_provider
 from app.integrations.payments.base import (
     Network,
     PaymentProvider,
-    PaymentStatus as ProviderStatus,
     ProviderUnavailable,
+)
+from app.integrations.payments.base import (
+    PaymentStatus as ProviderStatus,
 )
 from app.ledger import service as ledger
 from app.listings.models import Listing

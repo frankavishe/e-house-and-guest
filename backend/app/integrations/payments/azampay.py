@@ -45,7 +45,7 @@ PROVIDERS = {
 }
 TIMEOUT_S = 15.0
 TOKEN_MARGIN_S = 60
-CALLBACK_PASSWORD_HEADER = "x-callback-password"  # TODO(verify R6)
+CALLBACK_PASSWORD_HEADER = "x-callback-password"  # noqa: S105 (header name)  TODO(verify R6)
 
 
 def _state(value: Any) -> PaymentState:

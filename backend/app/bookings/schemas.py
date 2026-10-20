@@ -11,7 +11,12 @@ from app.listings.schemas import ListingCard
 from app.pricing.schemas import Quote
 
 BookingStatusT = Literal[
-    "requested", "awaiting_payment", "confirmed", "in_progress", "completed", "cancelled",
+    "requested",
+    "awaiting_payment",
+    "confirmed",
+    "in_progress",
+    "completed",
+    "cancelled",
     "disputed",
 ]
 RoleT = Literal["renter", "owner", "admin"]

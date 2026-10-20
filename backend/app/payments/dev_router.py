@@ -30,7 +30,7 @@ async def settle_mock_payment(
     payment = await session.get(Payment, payment_id)
     if payment is None:
         raise not_found("payment")
-    state = "succeeded" if outcome == "succeed" else "failed"
+    state: Literal["succeeded", "failed"] = "succeeded" if outcome == "succeed" else "failed"
     reason = None if state == "succeeded" else "declined"
     provider.force(payment.id, state, reason)
     await service.apply_status(

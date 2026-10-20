@@ -31,8 +31,9 @@ async def _setup(
     async with sessions() as s:
         b = await make_bookable(s, mode, **fields)
         if mode == "QUANTITY":
-            await make_block(s, b.listing, *day_range(D, date(2026, 11, 13)), kind="stock",
-                             quantity=7)
+            await make_block(
+                s, b.listing, *day_range(D, date(2026, 11, 13)), kind="stock", quantity=7
+            )
         await s.commit()
     return b
 

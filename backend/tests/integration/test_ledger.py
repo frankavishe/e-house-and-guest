@@ -34,7 +34,9 @@ async def test_database_rejects_unbalanced_txn(db: AsyncSession) -> None:
     await db.execute(text("SET CONSTRAINTS ALL IMMEDIATE"))
     db.add(
         LedgerEntry(
-            txn_id=uuid.uuid4(), account="provider_cash", amount_tzs=100,
+            txn_id=uuid.uuid4(),
+            account="provider_cash",
+            amount_tzs=100,
             entry_type=EntryType.PAYMENT,
         )
     )
@@ -72,10 +74,10 @@ async def test_booking_payment_split_and_owner_balance(db: AsyncSession) -> None
 
     txn = await ledger.post_booking_payment(db, booking, payment_id=None)
     rows = (
-        (await db.execute(text("SELECT account, amount_tzs FROM ledger_entries WHERE txn_id = :t"),
-                          {"t": txn}))
-        .all()
-    )
+        await db.execute(
+            text("SELECT account, amount_tzs FROM ledger_entries WHERE txn_id = :t"), {"t": txn}
+        )
+    ).all()
     assert dict(rows) == {
         "provider_cash": 266_000,
         "deposit_held": -50_000,

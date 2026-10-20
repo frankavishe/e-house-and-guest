@@ -3,7 +3,7 @@
 Accounts: `provider_cash` (money held at the payment provider), `renter_clearing` (money
 received that belongs to no booking line, e.g. a late payment being refunded),
 `deposit_held`, `platform_revenue` (commission + renter service fee) and
-`owner_payable:<owner_profile_id>`. Sign convention: debit +, credit −.
+`owner_payable:<owner_profile_id>`. Sign convention: debit +, credit -.
 """
 
 import uuid
@@ -91,8 +91,11 @@ async def post_booking_payment(
             Line(PROVIDER_CASH, total, EntryType.PAYMENT),
             Line(DEPOSIT_HELD, -deposit, EntryType.DEPOSIT_HOLD),
             Line(PLATFORM_REVENUE, -(commission + service_fee), EntryType.COMMISSION),
-            Line(owner_account(booking.owner_profile_id), -(rental - commission + delivery),
-                 EntryType.PAYMENT),
+            Line(
+                owner_account(booking.owner_profile_id),
+                -(rental - commission + delivery),
+                EntryType.PAYMENT,
+            ),
         ],
         booking_id=booking.id,
         payment_id=payment_id,

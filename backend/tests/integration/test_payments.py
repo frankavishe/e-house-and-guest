@@ -32,9 +32,9 @@ pytestmark = pytest.mark.usefixtures("frozen_clock")  # now = 2026-11-02 09:00 E
 D = date(2026, 11, 10)
 
 
-async def _booked(client: httpx.AsyncClient, db: AsyncSession, **fields: object) -> tuple[
-    Bookable, str
-]:
+async def _booked(
+    client: httpx.AsyncClient, db: AsyncSession, **fields: object
+) -> tuple[Bookable, str]:
     b = await make_bookable(db, price=50_000, deposit_tzs=20_000, **fields)
     r = await book(client, b, D, days=3)
     assert r.status_code == 201, r.text
@@ -147,7 +147,9 @@ async def test_only_renter_can_pay(client: httpx.AsyncClient, db: AsyncSession) 
     assert r.status_code == 404
 
 
-async def test_duplicate_callback_confirms_once(client: httpx.AsyncClient, db: AsyncSession) -> None:
+async def test_duplicate_callback_confirms_once(
+    client: httpx.AsyncClient, db: AsyncSession
+) -> None:
     b, booking_id = await _booked(client, db)
     await pay(client, b, booking_id, msisdn="+255700000004")
     responses = await deliver_callbacks(client)
@@ -182,9 +184,7 @@ async def test_webhook_rejects_wrong_secret_and_bad_auth(
         "/api/v1/webhooks/payments/mock/not-the-secret", content=cb.body, headers=cb.headers
     )
     assert wrong.status_code == 404
-    unknown = await client.post(
-        webhook_url("nope"), content=cb.body, headers=cb.headers
-    )
+    unknown = await client.post(webhook_url("nope"), content=cb.body, headers=cb.headers)
     assert unknown.status_code == 404
     forged = await client.post(
         webhook_url(), content=cb.body, headers={**cb.headers, "x-mock-signature": "forged"}
@@ -276,9 +276,7 @@ async def test_late_success_refunds_when_taken(
 
     payment = await db.get(Payment, uuid.UUID(payment_id), populate_existing=True)
     assert payment is not None and payment.status == "succeeded"
-    refund = (
-        await db.execute(select(Refund).where(Refund.payment_id == payment.id))
-    ).scalar_one()
+    refund = (await db.execute(select(Refund).where(Refund.payment_id == payment.id))).scalar_one()
     assert refund.amount_tzs == 170_000 and refund.reason == "late_payment"
     assert refund.status == "sent"
     entries = await _ledger(db, booking_id)

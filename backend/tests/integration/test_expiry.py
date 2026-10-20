@@ -10,8 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.availability import service as availability
 from app.bookings.jobs import advance_bookings, expire_holds
 from app.bookings.models import Booking, BookingStatus, CancelledBy
-from app.listings.service import period_for
 from app.listings.schemas import QuoteRequest
+from app.listings.service import period_for
 from tests.conftest import FrozenClock
 from tests.factories import Bookable, book, day_range, make_bookable, make_booking, sign_in
 
@@ -27,7 +27,9 @@ async def _get(db: AsyncSession, booking_id: str | uuid.UUID) -> Booking:
 
 
 async def _free(db: AsyncSession, b: Bookable) -> bool:
-    period = period_for(b.category, b.listing, QuoteRequest(start_date=D, end_date=D + timedelta(3)))
+    period = period_for(
+        b.category, b.listing, QuoteRequest(start_date=D, end_date=D + timedelta(3))
+    )
     assert b.category.booking_mode is not None
     return await availability.is_available(db, b.listing, b.category.booking_mode, period)
 

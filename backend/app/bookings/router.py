@@ -121,9 +121,7 @@ async def decline_booking(
     body: DeclineBody | None = None,
 ) -> BookingOut:
     """`requested → cancelled`; the held dates are released."""
-    booking = await service.decline(
-        session, owner, user, booking_id, body.reason if body else None
-    )
+    booking = await service.decline(session, owner, user, booking_id, body.reason if body else None)
     out = await service.booking_out(session, booking, "owner", locale)
     await session.commit()
     return out

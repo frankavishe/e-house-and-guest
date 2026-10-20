@@ -3,6 +3,7 @@
 from datetime import timedelta
 from typing import Any
 
+import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -102,8 +103,9 @@ async def test_two_workers_never_claim_the_same_job(
 
 
 async def test_worker_runs_handlers_and_records_failures(
-    committed_sessions: async_sessionmaker[AsyncSession],
+    committed_sessions: async_sessionmaker[AsyncSession], monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    monkeypatch.setattr("app.worker.PERIODICS", {})  # only count the jobs enqueued here
     seen: list[dict[str, Any]] = []
 
     @handler("t.ok")

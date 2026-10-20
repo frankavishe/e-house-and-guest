@@ -221,7 +221,8 @@ EXCLUSION_VIOLATION = "23P01"
 
 def _sqlstate(exc: IntegrityError) -> str | None:
     orig = exc.orig
-    return getattr(orig, "sqlstate", None) or getattr(orig.__cause__, "sqlstate", None)
+    cause = getattr(orig, "__cause__", None)
+    return getattr(orig, "sqlstate", None) or getattr(cause, "sqlstate", None)
 
 
 async def unavailable_error(

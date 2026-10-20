@@ -233,7 +233,12 @@ def day_range(start: date, end: date) -> tuple[datetime, datetime]:
 
 # --- bookings (US2) -----------------------------------------------------------------------
 
-DEFAULT_UNITS = {"DATE_RANGE": "night", "TIME_SLOT": "hour", "LEASE": "month", "QUANTITY": "item_day"}
+DEFAULT_UNITS = {
+    "DATE_RANGE": "night",
+    "TIME_SLOT": "hour",
+    "LEASE": "month",
+    "QUANTITY": "item_day",
+}
 
 
 class Bookable:
@@ -396,7 +401,13 @@ async def make_booking(
     await db.flush()
     kind = "stock" if b.category.booking_mode == BookingMode.QUANTITY else "exclusive"
     await make_block(
-        db, b.listing, start, end, kind=kind, quantity=quantity, source="booking",
+        db,
+        b.listing,
+        start,
+        end,
+        kind=kind,
+        quantity=quantity,
+        source="booking",
         booking_id=booking.id,
     )
     return booking
