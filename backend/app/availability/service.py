@@ -247,9 +247,12 @@ async def reserve(
     listing: Listing,
     mode: BookingMode,
     period: Period,
-    booking_id: uuid.UUID,
+    booking_id: uuid.UUID | None,
+    *,
+    note: str | None = None,
 ) -> AvailabilityBlock:
-    """Hold `period` for a booking, or raise SLOT_TAKEN / INSUFFICIENT_STOCK (409).
+    """Hold `period` for a booking (or, without `booking_id`, as an owner block), or raise
+    SLOT_TAKEN / INSUFFICIENT_STOCK (409).
 
     Exclusive modes insert under the exclusion constraint, so of two racing inserts the
     second fails in the database. Stock locks the listing row first (`FOR UPDATE`), which
@@ -260,9 +263,10 @@ async def reserve(
         period=period.range,
         quantity=period.quantity,
         kind=block_kind(mode),
-        source=BlockSource.BOOKING,
+        source=BlockSource.BOOKING if booking_id else BlockSource.OWNER_BLOCK,
         booking_id=booking_id,
         active=True,
+        note=note,
     )
     if mode == BookingMode.QUANTITY:
         await lock_listing(session, listing.id)

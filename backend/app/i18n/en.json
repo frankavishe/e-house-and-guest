@@ -26,7 +26,14 @@
     "DELIVERY_NOT_OFFERED": "This listing does not offer delivery.",
     "PAYMENT_PENDING": "Another payment is still pending. Complete it or wait for it to finish first.",
     "INSTALLMENT_NOT_DUE": "This installment is not due for payment yet.",
-    "BOOKING_NOT_PAID": "The receipt is available once payment is confirmed."
+    "BOOKING_NOT_PAID": "The receipt is available once payment is confirmed.",
+    "INVALID_ATTRIBUTES": "Some details are not valid for this category. Check the highlighted fields.",
+    "LISTING_INCOMPLETE": "The listing is not complete yet. Add the missing details before submitting.",
+    "OWNER_NOT_SUBMITTED": "Submit your owner verification before submitting listings.",
+    "PRICE_UNIT_NOT_ALLOWED": "That price unit is not used in this category.",
+    "SEASON_OVERLAP": "Seasonal prices for the same unit cannot overlap.",
+    "LISTING_HAS_BOOKINGS": "This listing has upcoming confirmed bookings, so it cannot be deleted. Pause it instead.",
+    "PHOTO_NOT_UPLOADED": "The photo has not finished uploading. Try again."
   },
   "sms": {
     "otp": "Your sign-in code is {code}. It expires in 5 minutes. Do not share it."
@@ -79,6 +86,34 @@
       },
       "installment_paid": {
         "sms": "We received rent for month {seq} ({amount}) for booking {code}. Thank you!"
+      }
+    },
+    "owner": {
+      "verified": {
+        "sms": "Your owner account is verified. Your approved listings are now visible to renters."
+      },
+      "rejected": {
+        "sms": "Your owner verification was not approved: {reason}. Fix it in your account and submit again."
+      }
+    },
+    "listing": {
+      "approved": {
+        "sms": "Your listing \"{title}\" is approved and live."
+      },
+      "rejected": {
+        "sms": "Your listing \"{title}\" was not approved: {reason}. Edit it and submit again."
+      },
+      "changes_approved": {
+        "sms": "Your changes to \"{title}\" are approved and live."
+      },
+      "changes_rejected": {
+        "sms": "Your changes to \"{title}\" were not approved: {reason}. The listing stays live as before."
+      },
+      "suspended": {
+        "sms": "Your listing \"{title}\" was suspended: {reason}. Contact support for help."
+      },
+      "unsuspended": {
+        "sms": "Your listing \"{title}\" is live again."
       }
     }
   }

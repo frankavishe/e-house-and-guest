@@ -1,7 +1,7 @@
 """Listings, photos and prices (data-model.md "listings", T039)."""
 
 import uuid
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from enum import StrEnum
 from typing import Any
@@ -11,6 +11,7 @@ from sqlalchemy import (
     Boolean,
     Computed,
     Date,
+    DateTime,
     ForeignKey,
     Index,
     Integer,
@@ -71,8 +72,9 @@ class Listing(UUIDPk, Timestamps, Base):
     attributes: Mapped[dict[str, Any]] = mapped_column(
         JSONB, nullable=False, server_default=text("'{}'::jsonb"), default=dict
     )
-    region_id: Mapped[int] = mapped_column(ForeignKey("locations.id"), nullable=False)
-    district_id: Mapped[int] = mapped_column(ForeignKey("locations.id"), nullable=False)
+    # Required to submit; a fresh draft only has its category.
+    region_id: Mapped[int | None] = mapped_column(ForeignKey("locations.id"))
+    district_id: Mapped[int | None] = mapped_column(ForeignKey("locations.id"))
     ward_id: Mapped[int | None] = mapped_column(ForeignKey("locations.id"))
     address_hint: Mapped[str | None] = mapped_column(Text)
     lat: Mapped[Decimal | None] = mapped_column(Numeric(9, 6))
@@ -147,6 +149,10 @@ class ListingPhoto(UUIDPk, CreatedAt, Base):
     position: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     alt_sw: Mapped[str | None] = mapped_column(Text)
     alt_en: Mapped[str | None] = mapped_column(Text)
+    # Set when the owner confirms the upload; unconfirmed rows are invisible everywhere.
+    confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Added to a live listing and awaiting review: hidden from the public until approved.
+    pending: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
 
 class ListingPrice(UUIDPk, CreatedAt, Base):

@@ -329,6 +329,7 @@ async def _upsert_listing(
             position=0,
             alt_sw=item["title_sw"],
             alt_en=item["title_en"],
+            confirmed_at=clock.now(),
         )
     )
     await session.flush()

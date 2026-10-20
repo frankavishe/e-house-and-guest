@@ -1,6 +1,7 @@
 """Imports every model module so `Base.metadata` knows all tables (Alembic, tests)."""
 
 from app.accounts import models as accounts  # noqa: F401
+from app.admin import models as admin  # noqa: F401
 from app.availability import models as availability  # noqa: F401
 from app.bookings import models as bookings  # noqa: F401
 from app.catalog import models as catalog  # noqa: F401

@@ -86,22 +86,24 @@ async def prices_for(
 
 
 async def photos_for(
-    session: AsyncSession, listing_ids: Sequence[uuid.UUID]
+    session: AsyncSession, listing_ids: Sequence[uuid.UUID], *, public: bool = True
 ) -> dict[uuid.UUID, list[ListingPhoto]]:
+    """Confirmed photos in display order; `public` also hides those awaiting review."""
     out: dict[uuid.UUID, list[ListingPhoto]] = {i: [] for i in listing_ids}
     if listing_ids:
-        rows = await session.execute(
-            select(ListingPhoto)
-            .where(ListingPhoto.listing_id.in_(listing_ids))
-            .order_by(ListingPhoto.position, ListingPhoto.created_at)
+        query = select(ListingPhoto).where(
+            ListingPhoto.listing_id.in_(listing_ids), ListingPhoto.confirmed_at.is_not(None)
         )
+        if public:
+            query = query.where(ListingPhoto.pending.is_(False))
+        rows = await session.execute(query.order_by(ListingPhoto.position, ListingPhoto.created_at))
         for photo in rows.scalars():
             out[photo.listing_id].append(photo)
     return out
 
 
-async def location_names(session: AsyncSession, ids: Iterable[int]) -> dict[int, str]:
-    wanted = set(ids)
+async def location_names(session: AsyncSession, ids: Iterable[int | None]) -> dict[int, str]:
+    wanted = {i for i in ids if i is not None}
     if not wanted:
         return {}
     rows = await session.execute(select(Location.id, Location.name).where(Location.id.in_(wanted)))
@@ -222,7 +224,8 @@ def _summary(
             id=category.id, slug=category.slug, name=localized(category.name, locale)
         ),
         "location": LocationRef(
-            region=names.get(listing.region_id, ""), district=names.get(listing.district_id, "")
+            region=names.get(listing.region_id or 0, ""),
+            district=names.get(listing.district_id or 0, ""),
         ),
         "cover_photo": Photo(url_320=cover.url_320, url_640=cover.url_640, alt=cover.alt)
         if cover

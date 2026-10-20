@@ -2,7 +2,7 @@
 
 import itertools
 import uuid
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -193,7 +193,14 @@ async def make_listing(
                 season_end=row.get("season_end"),
             )
         )
-    db.add(ListingPhoto(listing_id=listing.id, storage_key=f"test/{listing.id}.jpg", position=0))
+    db.add(
+        ListingPhoto(
+            listing_id=listing.id,
+            storage_key=f"test/{listing.id}.jpg",
+            position=0,
+            confirmed_at=datetime.now(UTC),
+        )
+    )
     await db.flush()
     return listing
 
@@ -411,3 +418,46 @@ async def make_booking(
         booking_id=booking.id,
     )
     return booking
+
+
+# --- owners & moderation (US3) ------------------------------------------------------------
+
+WAREHOUSE_SCHEMA: list[dict[str, Any]] = [
+    {
+        "key": "floor_area",
+        "type": "decimal",
+        "label": {"sw": "Eneo la sakafu", "en": "Floor area"},
+        "required": True,
+        "min": 1,
+        "max": 100_000,
+        "filter": "range",
+        "order": 1,
+    },
+    {
+        "key": "loading_bay",
+        "type": "boolean",
+        "label": {"sw": "Sehemu ya kupakia", "en": "Loading bay"},
+        "required": False,
+        "filter": "exact",
+        "order": 2,
+    },
+]
+
+
+async def make_admin(db: AsyncSession) -> User:
+    return await make_user(db, name="Admin Person", is_admin=True)
+
+
+def jpeg_with_exif(size: tuple[int, int] = (1600, 1200)) -> bytes:
+    """A JPEG carrying EXIF GPS data, to check the image job strips it."""
+    import io
+
+    from PIL import Image
+
+    image = Image.new("RGB", size, (200, 120, 40))
+    exif = Image.Exif()
+    exif[0x010F] = "TestCam"  # Make
+    exif[0x8825] = {1: "S", 2: (6.0, 48.0, 0.0), 3: "E", 4: (39.0, 17.0, 0.0)}  # GPS IFD
+    out = io.BytesIO()
+    image.save(out, "JPEG", exif=exif)
+    return out.getvalue()

@@ -26,7 +26,14 @@
     "DELIVERY_NOT_OFFERED": "Tangazo hili halitoi huduma ya usafirishaji.",
     "PAYMENT_PENDING": "Malipo mengine bado yanasubiri. Kamilisha au subiri yaishe kwanza.",
     "INSTALLMENT_NOT_DUE": "Awamu hii bado haijafika wakati wa kulipwa.",
-    "BOOKING_NOT_PAID": "Risiti inapatikana baada ya malipo kuthibitishwa."
+    "BOOKING_NOT_PAID": "Risiti inapatikana baada ya malipo kuthibitishwa.",
+    "INVALID_ATTRIBUTES": "Baadhi ya maelezo si sahihi kwa kundi hili. Angalia sehemu zilizoonyeshwa.",
+    "LISTING_INCOMPLETE": "Tangazo bado halijakamilika. Ongeza maelezo yanayokosekana kabla ya kuwasilisha.",
+    "OWNER_NOT_SUBMITTED": "Wasilisha uthibitisho wako wa mmiliki kabla ya kuwasilisha matangazo.",
+    "PRICE_UNIT_NOT_ALLOWED": "Kipimo hicho cha bei hakitumiki katika kundi hili.",
+    "SEASON_OVERLAP": "Bei za msimu za kipimo kimoja haziwezi kuingiliana.",
+    "LISTING_HAS_BOOKINGS": "Tangazo hili lina uhifadhi uliothibitishwa unaokuja, hivyo haliwezi kufutwa. Lisimamishe badala yake.",
+    "PHOTO_NOT_UPLOADED": "Picha haijamaliza kupakiwa. Jaribu tena."
   },
   "sms": {
     "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."
@@ -79,6 +86,34 @@
       },
       "installment_paid": {
         "sms": "Tumepokea kodi ya mwezi {seq} ({amount}) kwa oda {code}. Asante!"
+      }
+    },
+    "owner": {
+      "verified": {
+        "sms": "Akaunti yako ya mmiliki imethibitishwa. Matangazo yako yaliyoidhinishwa sasa yanaonekana kwa wakodishaji."
+      },
+      "rejected": {
+        "sms": "Uthibitisho wako wa mmiliki haukuidhinishwa: {reason}. Rekebisha kwenye akaunti yako na uwasilishe tena."
+      }
+    },
+    "listing": {
+      "approved": {
+        "sms": "Tangazo lako \"{title}\" limeidhinishwa na liko hewani."
+      },
+      "rejected": {
+        "sms": "Tangazo lako \"{title}\" halikuidhinishwa: {reason}. Lirekebishe na uwasilishe tena."
+      },
+      "changes_approved": {
+        "sms": "Mabadiliko yako kwenye \"{title}\" yameidhinishwa na yako hewani."
+      },
+      "changes_rejected": {
+        "sms": "Mabadiliko yako kwenye \"{title}\" hayakuidhinishwa: {reason}. Tangazo linabaki kama lilivyokuwa."
+      },
+      "suspended": {
+        "sms": "Tangazo lako \"{title}\" limesimamishwa: {reason}. Wasiliana na huduma kwa wateja."
+      },
+      "unsuspended": {
+        "sms": "Tangazo lako \"{title}\" liko hewani tena."
       }
     }
   }
