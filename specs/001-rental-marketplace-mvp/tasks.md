@@ -193,11 +193,11 @@ on its own.
 - [x] T086 [US2] Implement lease installment billing, reminders and overdue handling as worker jobs in `backend/app/bookings/leases.py` (FR-020)
 - [x] T087 [P] [US2] Implement the in-app notification feed endpoints `GET /notifications`, `POST /notifications/read` in `backend/app/notifications/router.py` (FR-019)
 - [x] T088 [US2] Add SMS/in-app templates (booking requested, awaiting payment, confirmed + receipt, payment failed, expired) to `backend/app/i18n/sw.json` and `backend/app/i18n/en.json`
-- [ ] T089 [US2] Build the booking widget on the listing page (mode-specific inputs: date range, slot picker, months, quantity; live quote; delivery toggle; sign-in redirect) in `frontend/src/components/BookingWidget.tsx`
-- [ ] T090 [US2] Build checkout (price breakdown, network choice, paying number prefilled from login phone, start payment, 3 s status polling, retry on failure, expiry countdown) in `frontend/src/app/[locale]/book/[bookingId]/page.tsx`
-- [ ] T091 [US2] Build the receipt/confirmation page and "My bookings" list/detail in `frontend/src/app/[locale]/book/[bookingId]/receipt/page.tsx` and `frontend/src/app/[locale]/account/bookings/page.tsx`
-- [ ] T092 [US2] Build the notification bell + feed (unread count, mark read, link to booking) in `frontend/src/components/NotificationBell.tsx`, with sw/en strings
-- [ ] T093 [US2] Add US2 strings to `frontend/messages/{sw,en}.json` and a Playwright smoke test (search → book → pay with mock → confirmed, 360×640) in `frontend/tests/e2e/book-and-pay.spec.ts`
+- [x] T089 [US2] Build the booking widget on the listing page (mode-specific inputs: date range, slot picker, months, quantity; live quote; delivery toggle; sign-in redirect) in `frontend/src/components/BookingWidget.tsx`
+- [x] T090 [US2] Build checkout (price breakdown, network choice, paying number prefilled from login phone, start payment, 3 s status polling, retry on failure, expiry countdown) in `frontend/src/app/[locale]/book/[bookingId]/page.tsx`
+- [x] T091 [US2] Build the receipt/confirmation page and "My bookings" list/detail in `frontend/src/app/[locale]/book/[bookingId]/receipt/page.tsx` and `frontend/src/app/[locale]/account/bookings/page.tsx`
+- [x] T092 [US2] Build the notification bell + feed (unread count, mark read, link to booking) in `frontend/src/components/NotificationBell.tsx`, with sw/en strings
+- [x] T093 [US2] Add US2 strings to `frontend/messages/{sw,en}.json` and a Playwright smoke test (search → book → pay with mock → confirmed, 360×640) in `frontend/tests/e2e/book-and-pay.spec.ts`
 
 **Checkpoint**: Quickstart V4–V9 pass (V9 through the API: owner accepts via `POST /bookings/{id}/accept`). **MVP = Setup + Foundational + US1 + US2**, with listings seeded by the team.
 

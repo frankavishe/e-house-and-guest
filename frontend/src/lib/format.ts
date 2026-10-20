@@ -67,3 +67,23 @@ export function formatPhone(e164: string): string {
   const m = /^\+255(\d{3})(\d{3})(\d{3})$/.exec(e164);
   return m ? `0${m[1]} ${m[2]} ${m[3]}` : e164;
 }
+
+type PeriodMode = "DATE_RANGE" | "TIME_SLOT" | "LEASE" | "QUANTITY";
+
+/** A booked period for display. `end` is exclusive (EAT midnight after the last day), except
+ * for nights, where it is the check-out day, and time slots, which show the clock times. */
+export function formatPeriod(
+  period: { start: string; end: string },
+  mode: PeriodMode,
+  unit: string | null | undefined,
+  locale: Locale,
+): string {
+  const { start, end } = period;
+  if (mode === "TIME_SLOT") {
+    return `${formatDate(start, locale)}, ${formatTime(start, locale)}–${formatTime(end, locale)}`;
+  }
+  const last = mode === "LEASE" || unit === "night" ? end : new Date(new Date(end).getTime() - 1);
+  const from = formatDate(start, locale);
+  const to = formatDate(last, locale);
+  return from === to ? from : `${from} – ${to}`;
+}

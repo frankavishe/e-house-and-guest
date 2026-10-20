@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/api/server";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { NotificationBell } from "./NotificationBell";
 
 export async function SiteHeader() {
   const [t, user] = await Promise.all([getTranslations(), getCurrentUser()]);
@@ -17,9 +18,16 @@ export async function SiteHeader() {
             <LanguageSwitcher />
           </Suspense>
           {user ? (
-            <span className="max-w-32 truncate rounded-md px-2 py-1 text-sm text-ink">
-              {user.name ?? t("nav.account")}
-            </span>
+            <>
+              <NotificationBell />
+              <Link
+                href="/account/bookings"
+                title={t("nav.myBookings")}
+                className="max-w-32 truncate rounded-md px-2 py-1 text-sm text-ink hover:bg-canvas"
+              >
+                {user.name ?? t("nav.account")}
+              </Link>
+            </>
           ) : (
             <Link
               href="/account/sign-in"

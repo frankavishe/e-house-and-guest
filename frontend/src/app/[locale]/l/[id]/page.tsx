@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import { BookingWidget } from "@/components/BookingWidget";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { addDays, ListingAvailability } from "@/components/ListingAvailability";
 import { Money } from "@/components/Money";
@@ -10,6 +11,7 @@ import { ShareLinks } from "@/components/ShareLinks";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
 import { getAvailability, getListing, type ListingDetail } from "@/lib/api/queries";
+import { getCurrentUser } from "@/lib/api/server";
 import { eatDateString, formatDate, formatTZS } from "@/lib/format";
 import { cleanParams, getParam, type RawParams } from "@/lib/search";
 
@@ -65,14 +67,15 @@ export default async function ListingPage({ params, searchParams }: Props) {
   if (!listing) notFound();
 
   const today = eatDateString(new Date());
-  const asked =
-    getParam(cleanParams(query), "start_date") ?? getParam(cleanParams(query), "slot_date");
+  const pairs = cleanParams(query);
+  const asked = getParam(pairs, "start_date") ?? getParam(pairs, "slot_date");
   const from = asked && /^\d{4}-\d{2}-\d{2}$/.test(asked) && asked > today ? asked : today;
   const days = WINDOW_DAYS[listing.booking_mode];
-  const [t, availability, head] = await Promise.all([
+  const [t, availability, head, user] = await Promise.all([
     getTranslations(),
     getAvailability(listing.id, from, addDays(from, days - 1)),
     headers(),
+    getCurrentUser(),
   ]);
   const host = head.get("x-forwarded-host") ?? head.get("host") ?? "localhost";
   const proto = head.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
@@ -140,6 +143,12 @@ export default async function ListingPage({ params, searchParams }: Props) {
           </p>
         )}
       </header>
+
+      <BookingWidget
+        listing={listing}
+        signedIn={Boolean(user)}
+        initial={Object.fromEntries(pairs)}
+      />
 
       <div className="flex items-center gap-3 rounded-xl border border-line bg-surface p-3">
         <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 font-semibold text-brand-800">

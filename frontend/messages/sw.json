@@ -16,7 +16,8 @@
     "account": "Akaunti yangu",
     "language": "Lugha",
     "switchTo": "English",
-    "switchToLabel": "Badili lugha kuwa Kiingereza"
+    "switchToLabel": "Badili lugha kuwa Kiingereza",
+    "myBookings": "Uhifadhi wangu"
   },
   "home": {
     "title": "Kodisha vyumba, magari, kumbi na vifaa",
@@ -154,5 +155,116 @@
     "flexible": "Nafuu",
     "moderate": "Wastani",
     "strict": "Kali"
+  },
+  "booking": {
+    "title": "Hifadhi tangazo hili",
+    "bookNow": "Hifadhi na ulipe",
+    "requestToBook": "Tuma ombi la kuhifadhi",
+    "signInToBook": "Ingia ili uhifadhi",
+    "choosePeriod": "Chagua tarehe zako uone bei.",
+    "quoting": "Tunakokotoa bei…",
+    "breakdown": "Mchanganuo wa bei",
+    "line": "{count} × {unit}",
+    "serviceFee": "Ada ya huduma",
+    "deliveryFee": "Usafirishaji",
+    "deposit": "Amana (inarudishwa)",
+    "total": "Jumla",
+    "wantDelivery": "Niletewe",
+    "deliveryAddress": "Anwani ya kuletewa",
+    "message": "Ujumbe kwa mmiliki (si lazima)",
+    "instantNote": "Lipa sasa kwa pesa ya simu; uhifadhi unathibitishwa papo hapo.",
+    "requestNote": "Mmiliki ana saa 24 kukubali. Utalipa baada ya kukubali tu.",
+    "slotStep": "Muda unahifadhiwa kwa vipindi vya dakika {minutes}.",
+    "seasonRate": "Bei ya msimu"
+  },
+  "checkout": {
+    "title": "Uhifadhi {code}",
+    "amountDue": "Kiasi cha kulipa sasa",
+    "leaseFirst": "Kodi ya mwezi wa kwanza pamoja na amana. Miezi inayofuata hutozwa kabla haijaanza.",
+    "network": "Mtandao wa pesa ya simu",
+    "phone": "Namba ya kulipia",
+    "phoneHint": "Namba hii itapokea ombi la malipo. Inaweza kutofautiana na namba ya kuingia.",
+    "pay": "Lipa {amount}",
+    "payInstallment": "Lipa mwezi {seq}: {amount}",
+    "waiting": "Angalia simu yako na uweke PIN kuidhinisha malipo.",
+    "failed": "Malipo hayakufanikiwa: {reason}.",
+    "tryAgain": "Jaribu tena, au chagua mtandao mwingine.",
+    "expiresIn": "Lipa ndani ya {time} la sivyo uhifadhi utaachiliwa.",
+    "expired": "Muda wa kulipa umekwisha na uhifadhi umeachiliwa.",
+    "backToListing": "Rudi kwenye tangazo",
+    "awaitingOwner": "Tunasubiri mmiliki. Ana hadi {time} kukubali.",
+    "awaitingOwnerHint": "Tutakutumia SMS akijibu.",
+    "confirmed": "Uhifadhi wako umethibitishwa.",
+    "viewReceipt": "Angalia risiti",
+    "cancelled": "Uhifadhi huu umeghairiwa.",
+    "testNumbers": "Hali ya majaribio: namba zinazoishia 0001 zinafanikiwa, 0002 zinashindwa, 0003 hazijibu.",
+    "owner": "Mmiliki",
+    "renter": "Mkodishaji",
+    "phoneLabel": "Simu",
+    "phoneAfterConfirm": "Namba ya simu itaonekana uhifadhi ukithibitishwa.",
+    "installments": "Malipo ya kila mwezi",
+    "installmentRow": "Mwezi {seq}, unadaiwa {date}",
+    "deliveryTo": "Kuletewa: {address}",
+    "period": "Kipindi",
+    "quantity": "Idadi"
+  },
+  "paymentFailure": {
+    "insufficient_funds": "salio halitoshi",
+    "declined": "yamekataliwa",
+    "timeout": "hakuna jibu kwa wakati",
+    "cancelled": "yameghairiwa kwenye simu",
+    "other": "malipo yameshindwa"
+  },
+  "networks": {
+    "mpesa": "M-Pesa",
+    "mixx": "Mixx by Yas",
+    "airtel": "Airtel Money",
+    "halopesa": "HaloPesa",
+    "azampesa": "AzamPesa"
+  },
+  "bookingStatus": {
+    "requested": "Inasubiri mmiliki",
+    "awaiting_payment": "Inasubiri malipo",
+    "confirmed": "Imethibitishwa",
+    "in_progress": "Inaendelea",
+    "completed": "Imekamilika",
+    "cancelled": "Imeghairiwa",
+    "disputed": "Ina mgogoro"
+  },
+  "installmentStatus": {
+    "pending": "Inadaiwa",
+    "paid": "Imelipwa",
+    "overdue": "Imechelewa",
+    "waived": "Imesamehewa"
+  },
+  "receipt": {
+    "title": "Risiti",
+    "code": "Namba ya uhifadhi",
+    "listing": "Tangazo",
+    "owner": "Mmiliki",
+    "renter": "Mkodishaji",
+    "period": "Kipindi",
+    "quantity": "Idadi",
+    "payments": "Malipo",
+    "reference": "Kumb. {ref}",
+    "paid": "Imelipwa",
+    "total": "Jumla",
+    "issued": "Imetolewa {date}",
+    "print": "Chapisha",
+    "booking": "Rudi kwenye uhifadhi"
+  },
+  "myBookings": {
+    "title": "Uhifadhi wangu",
+    "asRenter": "Ninavyokodi",
+    "asOwner": "Matangazo yangu",
+    "empty": "Bado huna uhifadhi wowote.",
+    "emptyOwner": "Bado hakuna aliyehifadhi matangazo yako.",
+    "find": "Tafuta kitu cha kukodi"
+  },
+  "notifications": {
+    "title": "Arifa",
+    "open": "Arifa ({count} hazijasomwa)",
+    "markAllRead": "Weka zote kuwa zimesomwa",
+    "empty": "Bado hakuna arifa."
   }
 }

@@ -18,6 +18,23 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${apiTarget}/api/:path*` }];
   },
+  webpack(config, { dev }) {
+    // Playwright writes traces under the bind-mounted project while e2e runs; watching them
+    // makes `next dev` recompile and full-reload pages mid-test.
+    if (dev) {
+      config.watchOptions = {
+        ...config.watchOptions,
+        ignored: [
+          "**/.git/**",
+          "**/node_modules/**",
+          "**/.next/**",
+          "**/test-results/**",
+          "**/playwright-report/**",
+        ],
+      };
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       {

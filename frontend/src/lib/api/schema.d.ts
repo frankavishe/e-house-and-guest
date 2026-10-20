@@ -238,6 +238,185 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Bookings
+         * @description The signed-in user's bookings as renter, or on their listings as owner; newest first.
+         */
+        get: operations["list_bookings_api_v1_bookings_get"];
+        put?: never;
+        /**
+         * Create Booking
+         * @description Instant-book listings start in `awaiting_payment` (pay within 15 min); others in
+         *     `requested` until the owner accepts (24 h). The dates are held either way.
+         */
+        post: operations["create_booking_api_v1_bookings_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Booking
+         * @description For the renter, the listing owner or an admin. Phones are shown once confirmed.
+         */
+        get: operations["get_booking_api_v1_bookings__booking_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accept Booking
+         * @description `requested → awaiting_payment`; the renter has 24 h to pay.
+         */
+        post: operations["accept_booking_api_v1_bookings__booking_id__accept_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}/decline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Decline Booking
+         * @description `requested → cancelled`; the held dates are released.
+         */
+        post: operations["decline_booking_api_v1_bookings__booking_id__decline_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}/receipt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Receipt */
+        get: operations["get_receipt_api_v1_bookings__booking_id__receipt_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start Payment
+         * @description Sends a USSD push to `msisdn`. Poll `GET /payments/{id}` (every 3 s) for the result.
+         */
+        post: operations["start_payment_api_v1_bookings__booking_id__payments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/{payment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Payment
+         * @description A payment pending for more than 60 s is re-checked with the provider first.
+         */
+        get: operations["get_payment_api_v1_payments__payment_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Notifications
+         * @description Newest first, rendered in the user's language.
+         */
+        get: operations["list_notifications_api_v1_notifications_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark Read */
+        post: operations["mark_read_api_v1_notifications_read_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -283,6 +462,134 @@ export interface components {
             unit: "hour" | "night" | "day" | "week" | "month" | "item_day";
             /** Amount Tzs */
             amount_tzs: number;
+        };
+        /** BookingCreate */
+        BookingCreate: {
+            /**
+             * Listing Id
+             * Format: uuid
+             */
+            listing_id: string;
+            period: components["schemas"]["PeriodParams"];
+            /**
+             * Delivery
+             * @default false
+             */
+            delivery: boolean;
+            /** Delivery District Id */
+            delivery_district_id?: number | null;
+            /** Delivery Address */
+            delivery_address?: string | null;
+            /** Message */
+            message?: string | null;
+        };
+        /** BookingOut */
+        BookingOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Code */
+            code: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "requested" | "awaiting_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "disputed";
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "renter" | "owner" | "admin";
+            listing: components["schemas"]["ListingCard"];
+            period: components["schemas"]["PeriodOut"];
+            /** Quantity */
+            quantity: number;
+            quote: components["schemas"]["Quote"];
+            /** Amount Due Tzs */
+            amount_due_tzs: number;
+            /** Payment Due At */
+            payment_due_at: string | null;
+            /** Request Expires At */
+            request_expires_at: string | null;
+            /**
+             * Cancellation Policy
+             * @enum {string}
+             */
+            cancellation_policy: "flexible" | "moderate" | "strict";
+            /** Delivery Requested */
+            delivery_requested: boolean;
+            /** Delivery Address */
+            delivery_address: string | null;
+            /** Lease Months */
+            lease_months: number | null;
+            can: components["schemas"]["Can"];
+            counterpart: components["schemas"]["Counterpart"];
+            /** Events */
+            events: components["schemas"]["EventOut"][];
+            /** Payments */
+            payments: components["schemas"]["PaymentOut"][];
+            /** Installments */
+            installments: components["schemas"]["InstallmentOut"][] | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** BookingSummary */
+        BookingSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Code */
+            code: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "requested" | "awaiting_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "disputed";
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "renter" | "owner" | "admin";
+            listing: components["schemas"]["ListingCard"];
+            period: components["schemas"]["PeriodOut"];
+            /** Quantity */
+            quantity: number;
+            /** Total Tzs */
+            total_tzs: number;
+            /** Payment Due At */
+            payment_due_at: string | null;
+            /** Request Expires At */
+            request_expires_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * Can
+         * @description What the viewer may do now; clients show actions from these flags only.
+         */
+        Can: {
+            /** Pay */
+            pay: boolean;
+            /** Cancel */
+            cancel: boolean;
+            /** Accept */
+            accept: boolean;
+            /** Decline */
+            decline: boolean;
+            /** Review */
+            review: boolean;
+            /** Claim */
+            claim: boolean;
         };
         /** CategoryDetail */
         CategoryDetail: {
@@ -347,6 +654,16 @@ export interface components {
             name: string;
         };
         /**
+         * Counterpart
+         * @description The other party. `phone` only once the booking is confirmed (R18).
+         */
+        Counterpart: {
+            /** Name */
+            name: string;
+            /** Phone */
+            phone: string | null;
+        };
+        /**
          * DateSpan
          * @description Unavailable EAT days `[start_date, end_date)`.
          */
@@ -382,6 +699,11 @@ export interface components {
             /** Available */
             available: number;
         };
+        /** DeclineBody */
+        DeclineBody: {
+            /** Reason */
+            reason?: string | null;
+        };
         /** DetailPhoto */
         DetailPhoto: {
             /** Url 320 */
@@ -392,6 +714,26 @@ export interface components {
             alt: string;
             /** Url 1280 */
             url_1280: string;
+        };
+        /** EventOut */
+        EventOut: {
+            /** From Status */
+            from_status: ("requested" | "awaiting_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "disputed") | null;
+            /**
+             * To Status
+             * @enum {string}
+             */
+            to_status: "requested" | "awaiting_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "disputed";
+            /**
+             * Actor Kind
+             * @enum {string}
+             */
+            actor_kind: "user" | "system" | "provider";
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
         };
         /** Health */
         Health: {
@@ -417,6 +759,31 @@ export interface components {
             label: string;
             /** Value */
             value: string;
+        };
+        /** InstallmentOut */
+        InstallmentOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Seq */
+            seq: number;
+            period: components["schemas"]["PeriodOut"];
+            /** Amount Tzs */
+            amount_tzs: number;
+            /**
+             * Due At
+             * Format: date-time
+             */
+            due_at: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "paid" | "overdue" | "waived";
+            /** Payable */
+            payable: boolean;
         };
         /**
          * ListingCard
@@ -566,6 +933,14 @@ export interface components {
             /** District */
             district: string;
         };
+        /**
+         * MarkRead
+         * @description `ids` to mark read; omitted means all of the user's notifications.
+         */
+        MarkRead: {
+            /** Ids */
+            ids?: string[] | null;
+        };
         /** MePatch */
         MePatch: {
             /** Name */
@@ -574,6 +949,40 @@ export interface components {
             email?: string | null;
             /** Language */
             language?: ("sw" | "en") | null;
+        };
+        /** NotificationOut */
+        NotificationOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Event */
+            event: string;
+            /** Text */
+            text: string;
+            /** Booking Id */
+            booking_id: string | null;
+            /** Read At */
+            read_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** NotificationPage */
+        NotificationPage: {
+            /** Items */
+            items: components["schemas"]["NotificationOut"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+            /** Unread Count */
+            unread_count: number;
         };
         /** OtpRequestIn */
         OtpRequestIn: {
@@ -640,6 +1049,17 @@ export interface components {
              */
             verification_status: "draft" | "pending" | "verified" | "rejected";
         };
+        /** Page[BookingSummary] */
+        Page_BookingSummary_: {
+            /** Items */
+            items: components["schemas"]["BookingSummary"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
         /** Page[ListingCard] */
         Page_ListingCard_: {
             /** Items */
@@ -650,6 +1070,91 @@ export interface components {
             page_size: number;
             /** Total */
             total: number;
+        };
+        /**
+         * PaymentCreate
+         * @description `msisdn` is the paying number; it may differ from the login phone.
+         */
+        PaymentCreate: {
+            /**
+             * Network
+             * @enum {string}
+             */
+            network: "mpesa" | "mixx" | "airtel" | "halopesa" | "azampesa";
+            /** Msisdn */
+            msisdn: string;
+            /** Installment Id */
+            installment_id?: string | null;
+        };
+        /** PaymentOut */
+        PaymentOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Booking Id
+             * Format: uuid
+             */
+            booking_id: string;
+            /** Installment Id */
+            installment_id: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "succeeded" | "failed" | "expired";
+            /**
+             * Network
+             * @enum {string}
+             */
+            network: "mpesa" | "mixx" | "airtel" | "halopesa" | "azampesa";
+            /** Msisdn */
+            msisdn: string;
+            /** Amount Tzs */
+            amount_tzs: number;
+            /** Failure Reason */
+            failure_reason: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Confirmed At */
+            confirmed_at: string | null;
+        };
+        /** PeriodOut */
+        PeriodOut: {
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+        };
+        /**
+         * PeriodParams
+         * @description DATE_RANGE `{start_date, end_date}`, TIME_SLOT `{start, end}`, LEASE `{start_date,
+         *     months}`, QUANTITY `{start_date, end_date, quantity}`. Dates are EAT calendar days.
+         */
+        PeriodParams: {
+            /** Start Date */
+            start_date?: string | null;
+            /** End Date */
+            end_date?: string | null;
+            /** Start */
+            start?: string | null;
+            /** End */
+            end?: string | null;
+            /** Months */
+            months?: number | null;
+            /** Quantity */
+            quantity?: number | null;
         };
         /** Photo */
         Photo: {
@@ -733,6 +1238,53 @@ export interface components {
             /** Delivery District Id */
             delivery_district_id?: number | null;
         };
+        /** Receipt */
+        Receipt: {
+            /** Code */
+            code: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "requested" | "awaiting_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "disputed";
+            /** Listing Title */
+            listing_title: string;
+            /** Owner Name */
+            owner_name: string;
+            /** Renter Name */
+            renter_name: string;
+            period: components["schemas"]["PeriodOut"];
+            /** Quantity */
+            quantity: number;
+            quote: components["schemas"]["Quote"];
+            /** Total Tzs */
+            total_tzs: number;
+            /** Paid Tzs */
+            paid_tzs: number;
+            /** Payments */
+            payments: components["schemas"]["ReceiptPayment"][];
+            /**
+             * Issued At
+             * Format: date-time
+             */
+            issued_at: string;
+        };
+        /** ReceiptPayment */
+        ReceiptPayment: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Network */
+            network: string;
+            /** Provider Txn Id */
+            provider_txn_id: string | null;
+            /** Amount Tzs */
+            amount_tzs: number;
+            /** Confirmed At */
+            confirmed_at: string | null;
+        };
         /** ReviewOut */
         ReviewOut: {
             /** Rating */
@@ -759,6 +1311,11 @@ export interface components {
              * Format: date-time
              */
             end: string;
+        };
+        /** UnreadCount */
+        UnreadCount: {
+            /** Unread Count */
+            unread_count: number;
         };
         /** UserOut */
         UserOut: {
@@ -1425,6 +1982,583 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_bookings_api_v1_bookings_get: {
+        parameters: {
+            query?: {
+                role?: "renter" | "owner";
+                status?: ("requested" | "awaiting_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "disputed") | null;
+                page?: number;
+                page_size?: number;
+            };
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_BookingSummary_"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_booking_api_v1_bookings_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Replays within 24 h return the original response. */
+                "Idempotency-Key"?: string | null;
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BookingCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"];
+                };
+            };
+            /** @description Invalid period or duration */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unknown or non-public listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `SLOT_TAKEN`, `INSUFFICIENT_STOCK` or `PRICE_UNAVAILABLE` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_booking_api_v1_bookings__booking_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    accept_booking_api_v1_bookings__booking_id__accept_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"];
+                };
+            };
+            /** @description Not the owner of this listing */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    decline_booking_api_v1_bookings__booking_id__decline_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["DeclineBody"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"];
+                };
+            };
+            /** @description Not the owner of this listing */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_receipt_api_v1_bookings__booking_id__receipt_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Receipt"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `BOOKING_NOT_PAID` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    start_payment_api_v1_bookings__booking_id__payments_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Replays within 24 h return the original response. */
+                "Idempotency-Key"?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentOut"];
+                };
+            };
+            /** @description Only the renter pays */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unknown booking or installment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` (not awaiting payment), `PAYMENT_PENDING` or `INSTALLMENT_NOT_DUE` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_payment_api_v1_payments__payment_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                payment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaymentOut"];
+                };
+            };
+            /** @description Unknown payment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_notifications_api_v1_notifications_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationPage"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    mark_read_api_v1_notifications_read_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarkRead"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnreadCount"];
                 };
             };
             /** @description Validation error */

@@ -3,24 +3,26 @@ import { Link } from "@/i18n/navigation";
 import { withParams, type Pair } from "@/lib/search";
 import { buttonClasses } from "./ui/Button";
 
-/** Previous / next links that keep every other search parameter. */
+/** Previous / next links that keep every other query parameter of `path`. */
 export async function Pagination({
   pairs,
   page,
   pageSize,
   total,
+  path = "/search",
 }: {
   pairs: Pair[];
   page: number;
   pageSize: number;
   total: number;
+  path?: string;
 }) {
   const t = await getTranslations("search");
   const pages = Math.max(1, Math.ceil(total / pageSize));
   if (pages <= 1) return null;
   const link = (target: number, label: string) => (
     <Link
-      href={`/search${withParams(pairs, { page: target === 1 ? null : String(target) })}`}
+      href={`${path}${withParams(pairs, { page: target === 1 ? null : String(target) })}`}
       className={buttonClasses("secondary")}
       rel={target < page ? "prev" : "next"}
     >

@@ -16,7 +16,8 @@
     "account": "My account",
     "language": "Language",
     "switchTo": "Kiswahili",
-    "switchToLabel": "Switch language to Swahili"
+    "switchToLabel": "Switch language to Swahili",
+    "myBookings": "My bookings"
   },
   "home": {
     "title": "Rent rooms, cars, halls and equipment",
@@ -154,5 +155,116 @@
     "flexible": "Flexible",
     "moderate": "Moderate",
     "strict": "Strict"
+  },
+  "booking": {
+    "title": "Book this listing",
+    "bookNow": "Book and pay",
+    "requestToBook": "Send booking request",
+    "signInToBook": "Sign in to book",
+    "choosePeriod": "Choose your dates to see the price.",
+    "quoting": "Calculating price…",
+    "breakdown": "Price breakdown",
+    "line": "{count} × {unit}",
+    "serviceFee": "Service fee",
+    "deliveryFee": "Delivery",
+    "deposit": "Refundable deposit",
+    "total": "Total",
+    "wantDelivery": "Deliver to me",
+    "deliveryAddress": "Delivery address",
+    "message": "Message to the owner (optional)",
+    "instantNote": "Pay now with mobile money; the booking is confirmed straight away.",
+    "requestNote": "The owner has 24 hours to accept. You pay only after they accept.",
+    "slotStep": "Bookings are in steps of {minutes} minutes.",
+    "seasonRate": "Season rate"
+  },
+  "checkout": {
+    "title": "Booking {code}",
+    "amountDue": "Amount to pay now",
+    "leaseFirst": "First month's rent plus the deposit. Later months are billed before they start.",
+    "network": "Mobile money network",
+    "phone": "Paying number",
+    "phoneHint": "This number gets the payment prompt. It can differ from your login number.",
+    "pay": "Pay {amount}",
+    "payInstallment": "Pay month {seq}: {amount}",
+    "waiting": "Check your phone and enter your PIN to approve the payment.",
+    "failed": "The payment did not go through: {reason}.",
+    "tryAgain": "Try again, or pick another network.",
+    "expiresIn": "Pay within {time} or the booking is released.",
+    "expired": "The time to pay ran out and the booking was released.",
+    "backToListing": "Back to the listing",
+    "awaitingOwner": "Waiting for the owner. They have until {time} to accept.",
+    "awaitingOwnerHint": "We will send you an SMS when they reply.",
+    "confirmed": "Your booking is confirmed.",
+    "viewReceipt": "View receipt",
+    "cancelled": "This booking was cancelled.",
+    "testNumbers": "Test mode: numbers ending in 0001 succeed, 0002 fail, 0003 never answer.",
+    "owner": "Owner",
+    "renter": "Renter",
+    "phoneLabel": "Phone",
+    "phoneAfterConfirm": "The phone number appears once the booking is confirmed.",
+    "installments": "Monthly payments",
+    "installmentRow": "Month {seq}, due {date}",
+    "deliveryTo": "Delivery to: {address}",
+    "period": "Period",
+    "quantity": "Quantity"
+  },
+  "paymentFailure": {
+    "insufficient_funds": "not enough balance",
+    "declined": "declined",
+    "timeout": "no answer in time",
+    "cancelled": "cancelled on the phone",
+    "other": "payment failed"
+  },
+  "networks": {
+    "mpesa": "M-Pesa",
+    "mixx": "Mixx by Yas",
+    "airtel": "Airtel Money",
+    "halopesa": "HaloPesa",
+    "azampesa": "AzamPesa"
+  },
+  "bookingStatus": {
+    "requested": "Waiting for owner",
+    "awaiting_payment": "Awaiting payment",
+    "confirmed": "Confirmed",
+    "in_progress": "In progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "disputed": "Disputed"
+  },
+  "installmentStatus": {
+    "pending": "Due",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "waived": "Waived"
+  },
+  "receipt": {
+    "title": "Receipt",
+    "code": "Booking code",
+    "listing": "Listing",
+    "owner": "Owner",
+    "renter": "Renter",
+    "period": "Period",
+    "quantity": "Quantity",
+    "payments": "Payments",
+    "reference": "Ref. {ref}",
+    "paid": "Paid",
+    "total": "Total",
+    "issued": "Issued {date}",
+    "print": "Print",
+    "booking": "Back to booking"
+  },
+  "myBookings": {
+    "title": "My bookings",
+    "asRenter": "My rentals",
+    "asOwner": "My listings",
+    "empty": "You have no bookings yet.",
+    "emptyOwner": "Nobody has booked your listings yet.",
+    "find": "Find something to rent"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "open": "Notifications ({count} unread)",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet."
   }
 }
