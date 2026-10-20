@@ -41,8 +41,24 @@ def get_storage() -> StorageProvider:
 
 
 def get_payment_provider() -> PaymentProvider:
+    global _payments
     if _payments is None:
-        raise NotImplementedError("payment providers arrive in US2 (T081/T082)")
+        settings = get_settings()
+        if settings.payment_provider == "mock":
+            from app.integrations.payments.mock import MockPaymentProvider
+
+            secret = settings.payment_callback_secret
+            callback_url = (
+                f"{settings.mock_callback_base_url or settings.public_api_base_url}"
+                f"/api/v1/webhooks/payments/mock/{secret}"
+                if settings.env != "test"
+                else None
+            )
+            _payments = MockPaymentProvider(secret=secret, callback_url=callback_url)
+        else:
+            from app.integrations.payments.azampay import AzamPayProvider
+
+            _payments = AzamPayProvider(settings)
     return _payments
 
 

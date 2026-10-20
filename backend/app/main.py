@@ -12,11 +12,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models as _models  # noqa: F401  (registers every table)
 from app.accounts.router import router as accounts_router
+from app.bookings.router import router as bookings_router
 from app.catalog.router import router as catalog_router
+from app.core.config import get_settings
 from app.core.db import dispose_engine, get_session
 from app.core.errors import install_error_handlers, install_error_openapi
 from app.core.logging import configure_logging
 from app.listings.router import router as listings_router
+from app.notifications.router import router as notifications_router
+from app.payments.router import router as payments_router
+from app.payments.router import webhook_router
 from app.search.router import router as search_router
 
 API_PREFIX = "/api/v1"
@@ -46,6 +51,14 @@ def api_router() -> APIRouter:
     router.include_router(catalog_router)
     router.include_router(search_router)  # before listings: /listings/search
     router.include_router(listings_router)
+    router.include_router(bookings_router)
+    router.include_router(payments_router)
+    router.include_router(notifications_router)
+    router.include_router(webhook_router)
+    if get_settings().is_dev_like:
+        from app.payments.dev_router import router as dev_router
+
+        router.include_router(dev_router)
     return router
 
 

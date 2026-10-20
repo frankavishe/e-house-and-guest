@@ -1,22 +1,26 @@
 """Availability reads (R1). The SQL clauses here are shared with search, so a listing shown
-as available is checked by exactly the rule bookings will use. Reservation writes (holds,
-releases) arrive with bookings in US2 (T077)."""
+as available is checked by exactly the rule bookings will use.
+
+Reservation writes (`reserve`, `release`) run inside the booking transaction: exclusive modes
+rely on the exclusion constraint, stock on a listing row lock (Principle IV)."""
 
 import uuid
 from collections.abc import Sequence
 from datetime import date, datetime, time, timedelta
 from typing import Any
 
-from sqlalchemy import DateTime, Exists, Interval, and_, exists, func, literal, select
+from sqlalchemy import DateTime, Exists, Interval, and_, exists, func, literal, select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql.elements import ColumnElement
 
-from app.availability.models import AvailabilityBlock, BlockKind
+from app.availability.models import AvailabilityBlock, BlockKind, BlockSource
 from app.availability.periods import Period
 from app.availability.schemas import DateSpan, DaySlots, DayStock, Slot
 from app.catalog.models import BookingMode
 from app.core import clock
+from app.core.errors import AppError
 from app.listings.models import Listing
 
 TZ = DateTime(timezone=True)
@@ -208,3 +212,80 @@ async def free_slots(
 def availability_filter(mode: BookingMode, period: Period) -> ColumnElement[bool]:
     """Search: the listing (outer `Listing` row) is free for `period`."""
     return and_(~conflict(mode, Listing.id, Listing.stock, period))
+
+
+# --- reservation (US2) --------------------------------------------------------------------
+
+EXCLUSION_VIOLATION = "23P01"
+
+
+def _sqlstate(exc: IntegrityError) -> str | None:
+    orig = exc.orig
+    return getattr(orig, "sqlstate", None) or getattr(orig.__cause__, "sqlstate", None)
+
+
+async def unavailable_error(
+    session: AsyncSession, listing: Listing, mode: BookingMode, period: Period
+) -> AppError:
+    if mode == BookingMode.QUANTITY:
+        return AppError(
+            "INSUFFICIENT_STOCK", 409, {"available": await min_available(session, listing, period)}
+        )
+    return AppError("SLOT_TAKEN", 409)
+
+
+async def lock_listing(session: AsyncSession, listing_id: uuid.UUID) -> None:
+    """Serialise stock bookings of one listing. Take it before inserting the booking: the
+    booking's foreign key share-locks the listing row, and upgrading that lock later lets
+    two racing bookings deadlock."""
+    await session.execute(select(Listing.id).where(Listing.id == listing_id).with_for_update())
+
+
+async def reserve(
+    session: AsyncSession,
+    listing: Listing,
+    mode: BookingMode,
+    period: Period,
+    booking_id: uuid.UUID,
+) -> AvailabilityBlock:
+    """Hold `period` for a booking, or raise SLOT_TAKEN / INSUFFICIENT_STOCK (409).
+
+    Exclusive modes insert under the exclusion constraint, so of two racing inserts the
+    second fails in the database. Stock locks the listing row first (`FOR UPDATE`), which
+    serialises bookings of one item, then checks every day before inserting.
+    """
+    block = AvailabilityBlock(
+        listing_id=listing.id,
+        period=period.range,
+        quantity=period.quantity,
+        kind=block_kind(mode),
+        source=BlockSource.BOOKING,
+        booking_id=booking_id,
+        active=True,
+    )
+    if mode == BookingMode.QUANTITY:
+        await lock_listing(session, listing.id)
+        if not await is_available(session, listing, mode, period):
+            raise await unavailable_error(session, listing, mode, period)
+        session.add(block)
+        await session.flush()
+        return block
+    try:
+        async with session.begin_nested():
+            session.add(block)
+            await session.flush()
+    except IntegrityError as exc:
+        if _sqlstate(exc) == EXCLUSION_VIOLATION:
+            raise AppError("SLOT_TAKEN", 409) from exc
+        raise
+    return block
+
+
+async def release(session: AsyncSession, booking_id: uuid.UUID) -> None:
+    """Free a booking's hold (cancelled, declined or expired)."""
+    await session.execute(
+        update(AvailabilityBlock)
+        .where(AvailabilityBlock.booking_id == booking_id, AvailabilityBlock.active.is_(True))
+        .values(active=False, updated_at=clock.now())
+        .execution_options(synchronize_session="fetch")
+    )

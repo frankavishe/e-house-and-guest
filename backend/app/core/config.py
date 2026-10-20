@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     payout_provider: Literal["manual", "azampay"] = "manual"
     payment_callback_secret: str = "dev-only-change-me-callback-secret"
     public_api_base_url: str = "http://localhost:8000"
+    # Where the mock provider posts its callbacks; inside docker the API reaches itself on
+    # its container port, not the host-mapped one. Defaults to public_api_base_url.
+    mock_callback_base_url: str = ""
     azampay_env: Literal["sandbox", "live"] = "sandbox"
     azampay_app_name: str = ""
     azampay_client_id: str = ""

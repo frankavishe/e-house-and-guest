@@ -130,3 +130,16 @@ def make_id() -> Callable[[], str]:
     import uuid
 
     return lambda: str(uuid.uuid4())
+
+
+@pytest.fixture(autouse=True)
+def mock_payments() -> Iterator[object]:
+    """A fresh mock payment provider per test; callbacks are queued, never sent on their own
+    (tests deliver them with `factories.deliver_callbacks`)."""
+    from app.integrations import override_payments
+    from app.integrations.payments.mock import MockPaymentProvider
+
+    provider = MockPaymentProvider(secret=get_settings().payment_callback_secret)
+    override_payments(provider)
+    yield provider
+    override_payments(None)

@@ -23,7 +23,10 @@
     "INVALID_PERIOD": "Angalia tarehe au muda uliochagua.",
     "DURATION_OUT_OF_RANGE": "Tangazo hili haliruhusu muda huo wa kukodi.",
     "PRICE_UNAVAILABLE": "Tangazo hili halina bei kwa kipindi hicho.",
-    "DELIVERY_NOT_OFFERED": "Tangazo hili halitoi huduma ya usafirishaji."
+    "DELIVERY_NOT_OFFERED": "Tangazo hili halitoi huduma ya usafirishaji.",
+    "PAYMENT_PENDING": "Malipo mengine bado yanasubiri. Kamilisha au subiri yaishe kwanza.",
+    "INSTALLMENT_NOT_DUE": "Awamu hii bado haijafika wakati wa kulipwa.",
+    "BOOKING_NOT_PAID": "Risiti inapatikana baada ya malipo kuthibitishwa."
   },
   "sms": {
     "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."
@@ -31,5 +34,52 @@
   "labels": {
     "yes": "Ndiyo",
     "no": "Hapana"
+  },
+  "notifications": {
+    "booking": {
+      "requested": {
+        "sms": "Ombi jipya {code} la \"{title}\". Kubali au kataa ndani ya saa 24."
+      },
+      "awaiting_payment": {
+        "sms": "Oda {code}: lipa {amount} kabla ya {due} kuthibitisha \"{title}\"."
+      },
+      "confirmed": {
+        "sms": "Oda {code} imethibitishwa: \"{title}\". Asante! Risiti iko kwenye akaunti yako."
+      },
+      "confirmed_owner": {
+        "sms": "Oda {code} ya \"{title}\" imelipwa na kuthibitishwa."
+      },
+      "declined": {
+        "sms": "Samahani, ombi {code} la \"{title}\" limekataliwa. Tafuta chaguo jingine."
+      },
+      "expired": {
+        "sms": "Oda {code} ya \"{title}\" imefutwa kwa sababu muda wa malipo umeisha."
+      }
+    },
+    "payment": {
+      "failed": {
+        "sms": "Malipo ya oda {code} hayakufanikiwa. Jaribu tena au tumia mtandao mwingine."
+      },
+      "refunded": {
+        "sms": "Malipo yako ya {amount} kwa oda {code} yamerudishwa kwa sababu tarehe hazipatikani tena."
+      }
+    },
+    "lease": {
+      "installment_due": {
+        "sms": "Kodi ya mwezi {seq} ya \"{title}\" ({code}): {amount}, inadaiwa {due}."
+      },
+      "installment_reminder": {
+        "sms": "Kumbusho: kodi ya mwezi {seq} ({code}) ya {amount} inadaiwa {due}."
+      },
+      "installment_overdue": {
+        "sms": "Kodi ya mwezi {seq} ya \"{title}\" ({code}) imechelewa kwa siku 7."
+      },
+      "installment_overdue_admin": {
+        "sms": "Kodi iliyochelewa: oda {code}, mwezi {seq}, {amount} (ilidaiwa {due})."
+      },
+      "installment_paid": {
+        "sms": "Tumepokea kodi ya mwezi {seq} ({amount}) kwa oda {code}. Asante!"
+      }
+    }
   }
 }

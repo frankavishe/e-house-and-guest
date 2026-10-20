@@ -5,6 +5,7 @@ Catalogs live in `app/i18n/{sw,en}.json` as nested objects; keys are dotted path
 """
 
 import json
+from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Any, Literal
@@ -64,3 +65,21 @@ def normalize_locale(value: str | None) -> Locale:
 def get_locale(accept_language: Annotated[str | None, Header()] = None) -> Locale:
     """FastAPI dependency: the request language."""
     return normalize_locale(accept_language)
+
+
+def money(amount_tzs: int) -> str:
+    """`1250000` → `TSh 1,250,000` (no decimals, R13)."""
+    return f"TSh {amount_tzs:,}"
+
+
+def eat_datetime(value: datetime) -> str:
+    """An instant as EAT wall time for SMS text, e.g. `02/11/2026 09:15`."""
+    from app.core.clock import to_eat
+
+    return to_eat(value).strftime("%d/%m/%Y %H:%M")
+
+
+def eat_date(value: datetime) -> str:
+    from app.core.clock import to_eat
+
+    return to_eat(value).strftime("%d/%m/%Y")

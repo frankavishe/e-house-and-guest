@@ -99,11 +99,16 @@ def decode_access_token(token: str) -> uuid.UUID | None:
             token,
             get_settings().jwt_secret,
             algorithms=[JWT_ALGORITHM],
-            options={"verify_exp": False, "require": ["sub", "exp", "typ"]},
+            options={
+                "verify_exp": False,
+                "verify_iat": False,
+                "require": ["sub", "exp", "typ"],
+            },
         )
     except jwt.PyJWTError:
         return None
-    # Expiry is checked against the injectable clock (tests freeze time).
+    # Time claims are checked against the injectable clock (tests freeze time), not by
+    # PyJWT against the wall clock.
     if claims.get("typ") != "access" or int(claims["exp"]) <= int(clock.now().timestamp()):
         return None
     try:

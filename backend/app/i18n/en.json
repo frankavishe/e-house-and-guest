@@ -23,7 +23,10 @@
     "INVALID_PERIOD": "Check the dates or times you chose.",
     "DURATION_OUT_OF_RANGE": "This listing does not allow that length of booking.",
     "PRICE_UNAVAILABLE": "This listing has no price for that period.",
-    "DELIVERY_NOT_OFFERED": "This listing does not offer delivery."
+    "DELIVERY_NOT_OFFERED": "This listing does not offer delivery.",
+    "PAYMENT_PENDING": "Another payment is still pending. Complete it or wait for it to finish first.",
+    "INSTALLMENT_NOT_DUE": "This installment is not due for payment yet.",
+    "BOOKING_NOT_PAID": "The receipt is available once payment is confirmed."
   },
   "sms": {
     "otp": "Your sign-in code is {code}. It expires in 5 minutes. Do not share it."
@@ -31,5 +34,52 @@
   "labels": {
     "yes": "Yes",
     "no": "No"
+  },
+  "notifications": {
+    "booking": {
+      "requested": {
+        "sms": "New booking request {code} for \"{title}\". Accept or decline within 24 hours."
+      },
+      "awaiting_payment": {
+        "sms": "Booking {code}: pay {amount} by {due} to confirm \"{title}\"."
+      },
+      "confirmed": {
+        "sms": "Booking {code} is confirmed: \"{title}\". Thank you! Your receipt is in your account."
+      },
+      "confirmed_owner": {
+        "sms": "Booking {code} for \"{title}\" is paid and confirmed."
+      },
+      "declined": {
+        "sms": "Sorry, request {code} for \"{title}\" was declined. Try another listing."
+      },
+      "expired": {
+        "sms": "Booking {code} for \"{title}\" was cancelled because the time to pay ran out."
+      }
+    },
+    "payment": {
+      "failed": {
+        "sms": "Payment for booking {code} failed. Try again or use another network."
+      },
+      "refunded": {
+        "sms": "Your payment of {amount} for booking {code} was refunded because the dates are no longer available."
+      }
+    },
+    "lease": {
+      "installment_due": {
+        "sms": "Rent for month {seq} of \"{title}\" ({code}): {amount}, due {due}."
+      },
+      "installment_reminder": {
+        "sms": "Reminder: rent for month {seq} ({code}) of {amount} is due {due}."
+      },
+      "installment_overdue": {
+        "sms": "Rent for month {seq} of \"{title}\" ({code}) is 7 days overdue."
+      },
+      "installment_overdue_admin": {
+        "sms": "Overdue rent: booking {code}, month {seq}, {amount} (due {due})."
+      },
+      "installment_paid": {
+        "sms": "We received rent for month {seq} ({amount}) for booking {code}. Thank you!"
+      }
+    }
   }
 }

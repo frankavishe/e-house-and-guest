@@ -65,6 +65,9 @@ def error_body(code: str, message: str, details: dict[str, Any] | None = None) -
     return {"error": {"code": code, "message": message, "details": details or {}}}
 
 
+PHONE_FIELDS = {"phone", "msisdn"}
+
+
 def _locale(request: Request) -> str:
     return normalize_locale(request.headers.get("accept-language"))
 
@@ -91,7 +94,7 @@ async def _validation_error(request: Request, exc: Exception) -> JSONResponse:
     # A malformed phone gets its own code so clients can show the "Tanzanian number" hint.
     code = (
         "INVALID_PHONE"
-        if fields and all(f["loc"] and f["loc"][-1] == "phone" for f in fields)
+        if fields and all(f["loc"] and f["loc"][-1] in PHONE_FIELDS for f in fields)
         else "VALIDATION_ERROR"
     )
     message = t(f"errors.{code}", _locale(request))

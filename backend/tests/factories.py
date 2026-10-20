@@ -229,3 +229,174 @@ def day_range(start: date, end: date) -> tuple[datetime, datetime]:
     from app.core.clock import to_eat_midnight
 
     return to_eat_midnight(start), to_eat_midnight(end)
+
+
+# --- bookings (US2) -----------------------------------------------------------------------
+
+DEFAULT_UNITS = {"DATE_RANGE": "night", "TIME_SLOT": "hour", "LEASE": "month", "QUANTITY": "item_day"}
+
+
+class Bookable:
+    """A public listing in a fresh category, its owner, and a separate renter."""
+
+    listing: Listing
+    category: Category
+    owner: OwnerProfile
+    owner_user: User
+    renter: User
+
+
+async def make_bookable(
+    db: AsyncSession,
+    mode: str = "DATE_RANGE",
+    *,
+    unit: str | None = None,
+    price: int = 50_000,
+    commission_bps: int = 1000,
+    renter_fee_bps: int = 0,
+    **listing_fields: Any,
+) -> Bookable:
+    b = Bookable()
+    b.category = await make_category(
+        db,
+        mode=mode,
+        default_unit=unit or DEFAULT_UNITS[mode],
+        commission_bps=commission_bps,
+        renter_fee_bps=renter_fee_bps,
+    )
+    region, district = await make_place(db)
+    b.owner_user = await make_user(db, name="Owner Person")
+    b.owner = await make_owner(db, user=b.owner_user)
+    b.listing = await make_listing(
+        db,
+        owner=b.owner,
+        category=b.category,
+        region=region,
+        district=district,
+        price=price,
+        **listing_fields,
+    )
+    b.renter = await make_user(db, name="Renter Person")
+    return b
+
+
+def period_json(mode: str, start: date, *, days: int = 3, quantity: int = 1) -> dict[str, Any]:
+    """A `PeriodInput` for `mode` starting on `start` (TIME_SLOT: 10:00-12:00 EAT)."""
+    from datetime import time, timedelta
+
+    from app.core.clock import EAT
+
+    match mode:
+        case "TIME_SLOT":
+            begin = datetime.combine(start, time(10), tzinfo=EAT)
+            return {"start": begin.isoformat(), "end": (begin + timedelta(hours=2)).isoformat()}
+        case "LEASE":
+            return {"start_date": start.isoformat(), "months": days}
+        case "QUANTITY":
+            end = start + timedelta(days=days - 1)
+            return {
+                "start_date": start.isoformat(),
+                "end_date": end.isoformat(),
+                "quantity": quantity,
+            }
+        case _:
+            end = start + timedelta(days=days)
+            return {"start_date": start.isoformat(), "end_date": end.isoformat()}
+
+
+async def book(
+    client: httpx.AsyncClient,
+    b: Bookable,
+    start: date,
+    *,
+    days: int = 3,
+    quantity: int = 1,
+    headers: dict[str, str] | None = None,
+    **extra: Any,
+) -> httpx.Response:
+    """POST /bookings as the renter."""
+    sign_in(client, b.renter)
+    assert b.category.booking_mode is not None
+    body = {
+        "listing_id": str(b.listing.id),
+        "period": period_json(b.category.booking_mode.value, start, days=days, quantity=quantity),
+        **extra,
+    }
+    return await client.post("/api/v1/bookings", json=body, headers=headers)
+
+
+def webhook_url(provider: str = "mock") -> str:
+    from app.core.config import get_settings
+
+    return f"/api/v1/webhooks/payments/{provider}/{get_settings().payment_callback_secret}"
+
+
+async def pay(
+    client: httpx.AsyncClient,
+    b: Bookable,
+    booking_id: str,
+    *,
+    msisdn: str = "+255700000001",
+    network: str = "mpesa",
+    **extra: Any,
+) -> httpx.Response:
+    """POST /bookings/{id}/payments as the renter."""
+    sign_in(client, b.renter)
+    return await client.post(
+        f"/api/v1/bookings/{booking_id}/payments",
+        json={"network": network, "msisdn": msisdn, **extra},
+    )
+
+
+async def deliver_callbacks(client: httpx.AsyncClient) -> list[httpx.Response]:
+    """Send every callback the mock provider has queued to the webhook, in order."""
+    from app.integrations import get_payment_provider
+    from app.integrations.payments.mock import MockPaymentProvider
+
+    provider = get_payment_provider()
+    assert isinstance(provider, MockPaymentProvider)
+    return [
+        await client.post(webhook_url(), content=cb.body, headers=cb.headers)
+        for cb in provider.take_callbacks()
+    ]
+
+
+async def make_booking(
+    db: AsyncSession,
+    b: Bookable,
+    start: datetime,
+    end: datetime,
+    *,
+    status: str = "awaiting_payment",
+    quantity: int = 1,
+    total: int = 100_000,
+) -> Any:
+    """A booking row with its active block, bypassing the booking service."""
+    from app.bookings.models import Booking, BookingStatus
+
+    assert b.category.booking_mode is not None
+    booking = Booking(
+        code=f"T-{uuid.uuid4().hex[:8].upper()}",
+        listing_id=b.listing.id,
+        renter_id=b.renter.id,
+        owner_profile_id=b.owner.id,
+        booking_mode=b.category.booking_mode,
+        period=Range(start, end, bounds="[)"),
+        quantity=quantity,
+        status=BookingStatus(status),
+        quote={},
+        rental_tzs=total,
+        total_tzs=total,
+        commission_bps=1000,
+        commission_tzs=total // 10,
+        cancellation_policy=CancellationPolicy.MODERATE,
+        lease_months=1 if b.category.booking_mode == BookingMode.LEASE else None,
+    )
+    db.add(booking)
+    await db.flush()
+    kind = "stock" if b.category.booking_mode == BookingMode.QUANTITY else "exclusive"
+    await make_block(
+        db, b.listing, start, end, kind=kind, quantity=quantity, source="booking",
+        booking_id=booking.id,
+    )
+    return booking
