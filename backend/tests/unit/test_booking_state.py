@@ -26,7 +26,9 @@ ALLOWED: dict[tuple[BookingStatus, Event], BookingStatus] = {
     (S.CONFIRMED, E.CANCEL): S.CANCELLED,
     (S.CONFIRMED, E.DISPUTE): S.DISPUTED,
     (S.IN_PROGRESS, E.END): S.COMPLETED,
+    (S.IN_PROGRESS, E.CANCEL): S.CANCELLED,
     (S.IN_PROGRESS, E.DISPUTE): S.DISPUTED,
+    (S.COMPLETED, E.DISPUTE): S.DISPUTED,
     (S.DISPUTED, E.RESOLVE_COMPLETE): S.COMPLETED,
     (S.DISPUTED, E.RESOLVE_CANCEL): S.CANCELLED,
     (S.CANCELLED, E.LATE_PAYMENT): S.CONFIRMED,
@@ -99,3 +101,17 @@ async def test_late_payment_only_revives_system_cancellations(db: AsyncSession) 
     booking.cancelled_by = CancelledBy.SYSTEM
     await transition(db, booking, Event.LATE_PAYMENT)
     assert booking.status == S.CONFIRMED and booking.cancelled_by is None
+
+
+@pytest.mark.usefixtures("frozen_clock")
+async def test_only_an_admin_cancels_a_running_booking(db: AsyncSession) -> None:
+    b = await make_bookable(db)
+    booking = await make_booking(
+        db, b, *day_range(date(2026, 11, 1), date(2026, 11, 5)), status="in_progress"
+    )
+    for who in (CancelledBy.RENTER, CancelledBy.OWNER, None):
+        with pytest.raises(AppError):
+            await transition(db, booking, Event.CANCEL, cancelled_by=who)
+    await transition(db, booking, Event.CANCEL, cancelled_by=CancelledBy.ADMIN)
+    assert booking.status == S.CANCELLED
+    assert booking.cancelled_by == CancelledBy.ADMIN and booking.cancelled_at is not None

@@ -55,7 +55,7 @@ PAYOUT_KEYS = {
     "created_at",
     "items",
 }
-PAYOUT_ITEM_KEYS = {"booking_id", "booking_code", "amount_tzs"}
+PAYOUT_ITEM_KEYS = {"booking_id", "booking_code", "amount_tzs", "kind"}
 ADMIN_PAYOUT_KEYS = PAYOUT_KEYS | {"owner", "attempts"}
 ADMIN_OWNER_KEYS = {"id", "display_name", "phone"}
 PAGE_KEYS = {"items", "page", "page_size", "total"}

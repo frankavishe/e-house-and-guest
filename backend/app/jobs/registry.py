@@ -30,6 +30,7 @@ HANDLER_MODULES: list[str] = [
     "app.bookings.jobs",
     "app.bookings.leases",
     "app.payments.jobs",
+    "app.payments.refunds",
     "app.listings.jobs",
     "app.payouts.jobs",
 ]

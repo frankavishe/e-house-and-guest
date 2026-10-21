@@ -47,6 +47,7 @@ class PayoutItemOut(BaseModel):
     booking_id: uuid.UUID
     booking_code: str
     amount_tzs: int
+    kind: Literal["earnings", "claim_award"]
 
 
 class PayoutOut(BaseModel):

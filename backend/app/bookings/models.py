@@ -15,6 +15,7 @@ from sqlalchemy import (
     Integer,
     Text,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, TSTZRANGE, Range
 from sqlalchemy.orm import Mapped, mapped_column
@@ -79,6 +80,7 @@ class Booking(UUIDPk, Timestamps, Base):
     lease_months: Mapped[int | None] = mapped_column(Integer)
     cancelled_by: Mapped[CancelledBy | None] = mapped_column(pg_enum(CancelledBy, "cancelled_by"))
     cancel_reason: Mapped[str | None] = mapped_column(Text)
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     __table_args__ = (
@@ -152,4 +154,58 @@ class LeaseInstallment(UUIDPk, Timestamps, Base):
     __table_args__ = (
         UniqueConstraint("booking_id", "seq", name="uq_lease_installments_booking_id_seq"),
         Index("ix_lease_installments_status_due_at", "status", "due_at"),
+    )
+
+
+class ClaimKind(StrEnum):
+    DAMAGE = "damage"
+    DISPUTE = "dispute"
+
+
+class ClaimStatus(StrEnum):
+    OPEN = "open"
+    RESOLVED = "resolved"
+
+
+class ClaimResolution(StrEnum):
+    OWNER_AWARDED = "owner_awarded"
+    RENTER_REFUNDED = "renter_refunded"
+    SPLIT = "split"
+
+
+class Claim(UUIDPk, Timestamps, Base):
+    """A damage claim (owner, ≤ 48 h after the end, FR-027) or a dispute (either party).
+    While open it holds the booking `disputed`, which blocks the deposit refund and payout.
+    `amount_awarded_tzs` is the part of the deposit an admin gives the owner."""
+
+    __tablename__ = "claims"
+
+    booking_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("bookings.id"), nullable=False, index=True
+    )
+    opened_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
+    kind: Mapped[ClaimKind] = mapped_column(pg_enum(ClaimKind, "claim_kind"), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    evidence: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
+    amount_claimed_tzs: Mapped[int | None] = mapped_column(BigInteger)
+    status: Mapped[ClaimStatus] = mapped_column(
+        pg_enum(ClaimStatus, "claim_status"), nullable=False, default=ClaimStatus.OPEN
+    )
+    resolution: Mapped[ClaimResolution | None] = mapped_column(
+        pg_enum(ClaimResolution, "claim_resolution")
+    )
+    amount_awarded_tzs: Mapped[int | None] = mapped_column(BigInteger)
+    resolution_note: Mapped[str | None] = mapped_column(Text)
+    resolved_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        # One open claim per booking.
+        Index(
+            "uq_claims_one_open",
+            "booking_id",
+            unique=True,
+            postgresql_where=text("status = 'open'"),
+        ),
+        Index("ix_claims_status_created_at", "status", "created_at"),
     )

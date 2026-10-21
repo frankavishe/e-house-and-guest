@@ -1,7 +1,9 @@
 """Payouts of owners' net earnings (data-model.md "payouts / payout_items", R7).
 
-A payout batches an owner's eligible bookings; `payout_items.booking_id` is unique, so a
-booking is paid out once. The destination is snapshotted when the money is sent.
+A payout batches an owner's eligible bookings. A booking is paid out once as `earnings`, plus
+at most once more as a `claim_award` when an admin awards the owner part of the deposit
+after the earnings went out (`payout_items` is unique on `(booking_id, kind)`). The
+destination is snapshotted when the money is sent.
 """
 
 import uuid
@@ -9,7 +11,7 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Any
 
-from sqlalchemy import BigInteger, DateTime, ForeignKey, Index, Integer, Text
+from sqlalchemy import BigInteger, DateTime, ForeignKey, Index, Integer, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -22,6 +24,11 @@ class PayoutStatus(StrEnum):
     PROCESSING = "processing"
     PAID = "paid"
     FAILED = "failed"
+
+
+class PayoutItemKind(StrEnum):
+    EARNINGS = "earnings"
+    CLAIM_AWARD = "claim_award"
 
 
 class Payout(UUIDPk, Timestamps, Base):
@@ -58,7 +65,14 @@ class PayoutItem(UUIDPk, CreatedAt, Base):
     payout_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("payouts.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    booking_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("bookings.id"), unique=True, nullable=False
+    booking_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("bookings.id"), nullable=False)
+    kind: Mapped[PayoutItemKind] = mapped_column(
+        pg_enum(PayoutItemKind, "payout_item_kind"),
+        nullable=False,
+        default=PayoutItemKind.EARNINGS,
     )
     amount_tzs: Mapped[int] = mapped_column(BigInteger, nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("booking_id", "kind", name="uq_payout_items_booking_id_kind"),
+    )

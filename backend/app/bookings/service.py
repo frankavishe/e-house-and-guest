@@ -1,4 +1,4 @@
-"""Bookings (US2): creation, owner decisions and the views parties see.
+"""Bookings (US2, US5): creation, owner decisions, cancellation and the views parties see.
 
 Write functions flush but do not commit; the router commits (with the idempotency record
 when there is one), so a booking, its hold, events and notifications land together.
@@ -9,7 +9,7 @@ import uuid
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 
-from sqlalchemy import Select, func, select
+from sqlalchemy import Select, func, select, update
 from sqlalchemy.dialects.postgresql import Range
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,11 +26,13 @@ from app.bookings.models import (
     InstallmentStatus,
     LeaseInstallment,
 )
+from app.bookings.policies import CancelRefund, Charged, cancellation_refund
 from app.bookings.schemas import (
     BookingCreate,
     BookingOut,
     BookingSummary,
     Can,
+    CancelPreviewOut,
     Counterpart,
     EventOut,
     InstallmentOut,
@@ -38,18 +40,21 @@ from app.bookings.schemas import (
     PeriodOut,
     Receipt,
     ReceiptPayment,
+    RefundOut,
     RoleT,
 )
-from app.bookings.state import Event, record, transition
+from app.bookings.state import Event, invalid_transition, record, transition
 from app.catalog.models import BookingMode, Category
 from app.core import clock
 from app.core.errors import AppError, forbidden, not_found
 from app.core.i18n import Locale
 from app.core.security import mask_tail
+from app.ledger import service as ledger
 from app.listings import service as listings
 from app.listings.models import Listing
 from app.listings.schemas import ListingCard, Page
-from app.payments.models import Payment, PaymentStatus
+from app.payments import refunds
+from app.payments.models import Payment, PaymentStatus, Refund, RefundReason
 from app.pricing.schemas import Quote
 from app.pricing.service import BPS, round_half_up
 from app.pricing.service import quote as price_quote
@@ -68,6 +73,27 @@ REVEALED = {
 }
 PAID = REVEALED
 OPEN_LEASE = {BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS}
+# Who may cancel from which status (US5). Owners decline requests instead; only admins stop
+# a running booking. A disputed booking is settled through its claim.
+CANCELLABLE: dict[CancelledBy, set[BookingStatus]] = {
+    CancelledBy.RENTER: {
+        BookingStatus.REQUESTED,
+        BookingStatus.AWAITING_PAYMENT,
+        BookingStatus.CONFIRMED,
+    },
+    CancelledBy.OWNER: {BookingStatus.AWAITING_PAYMENT, BookingStatus.CONFIRMED},
+    CancelledBy.ADMIN: {
+        BookingStatus.REQUESTED,
+        BookingStatus.AWAITING_PAYMENT,
+        BookingStatus.CONFIRMED,
+        BookingStatus.IN_PROGRESS,
+    },
+}
+REFUND_REASON = {
+    CancelledBy.RENTER: RefundReason.CANCELLATION,
+    CancelledBy.OWNER: RefundReason.OWNER_CANCEL,
+    CancelledBy.ADMIN: RefundReason.ADMIN,
+}
 
 
 def new_code() -> str:
@@ -329,6 +355,10 @@ async def booking_out(
     )
     lease_due = any(installment_payable(booking, i) for i in installments)
     is_owner = role == "owner"
+    from app.bookings import claims as claim_service
+
+    claims = await claim_service.claims_of(session, booking.id)
+    claim_kinds = claim_service.claim_kinds(booking, role, claims)
     return BookingOut(
         id=booking.id,
         code=booking.code,
@@ -347,12 +377,12 @@ async def booking_out(
         lease_months=booking.lease_months,
         can=Can(
             pay=role == "renter" and not pending and (awaiting or lease_due),
-            # Cancellation, reviews and claims arrive with US5/US6.
-            cancel=False,
+            cancel=booking.status in CANCELLABLE[canceller(role)],
             accept=is_owner and booking.status == BookingStatus.REQUESTED,
             decline=is_owner and booking.status == BookingStatus.REQUESTED,
+            # Reviews arrive with US6.
             review=False,
-            claim=False,
+            claim=bool(claim_kinds),
         ),
         counterpart=await _counterpart(session, booking, role),
         events=[
@@ -379,7 +409,23 @@ async def booking_out(
         ]
         if booking.booking_mode == BookingMode.LEASE
         else None,
+        refunds=[refund_out(r) for r in await refunds.refunds_of(session, booking.id)],
+        claims=[await claim_service.claim_out(session, booking, c) for c in claims],
+        cancelled_by=booking.cancelled_by.value if booking.cancelled_by else None,
+        cancel_reason=booking.cancel_reason,
         created_at=booking.created_at,
+    )
+
+
+def refund_out(r: Refund) -> RefundOut:
+    return RefundOut(
+        id=r.id,
+        amount_tzs=r.amount_tzs,
+        reason=r.reason.value,
+        status=r.status.value,
+        provider_ref=r.provider_ref,
+        failure_reason=r.failure_reason,
+        created_at=r.created_at,
     )
 
 
@@ -480,6 +526,158 @@ async def decline(
     )
     booking.cancel_reason = reason
     await availability.release(session, booking.id)
+    return booking
+
+
+# --- cancellation (US5, FR-026) ----------------------------------------------------------
+
+
+def canceller(role: RoleT) -> CancelledBy:
+    return {"renter": CancelledBy.RENTER, "owner": CancelledBy.OWNER}.get(role, CancelledBy.ADMIN)
+
+
+async def charged(session: AsyncSession, booking: Booking) -> Charged:
+    """What the renter has paid for this booking (nothing before it is confirmed)."""
+    if booking.status not in PAID:
+        return Charged()
+    if booking.booking_mode != BookingMode.LEASE:
+        return Charged(
+            rental_tzs=booking.rental_tzs,
+            delivery_fee_tzs=booking.delivery_fee_tzs,
+            service_fee_tzs=booking.service_fee_tzs,
+            deposit_tzs=booking.deposit_tzs,
+            commission_tzs=booking.commission_tzs,
+        )
+    paid = [
+        i for i in await installments_of(session, booking.id) if i.status == InstallmentStatus.PAID
+    ]
+    if not paid:
+        return Charged()
+    return Charged(
+        rental_tzs=sum(i.rental_tzs for i in paid),
+        delivery_fee_tzs=booking.delivery_fee_tzs,
+        service_fee_tzs=sum(i.service_fee_tzs for i in paid),
+        deposit_tzs=booking.deposit_tzs,
+        commission_tzs=sum(i.commission_tzs for i in paid),
+    )
+
+
+async def _refund_for(session: AsyncSession, booking: Booking, by: CancelledBy) -> CancelRefund:
+    if booking.status not in CANCELLABLE[by]:
+        raise invalid_transition(booking.status, Event.CANCEL)
+    assert booking.period.lower is not None
+    return cancellation_refund(
+        booking.cancellation_policy,
+        booking.period.lower,
+        await charged(session, booking),
+        by=by,
+        now=clock.now(),
+    )
+
+
+def preview_out(refund: CancelRefund, by: CancelledBy) -> CancelPreviewOut:
+    return CancelPreviewOut(
+        policy=refund.policy.value,
+        cancelled_by=by.value,
+        percent=refund.percent,
+        paid_tzs=refund.paid_tzs,
+        rental_refund_tzs=refund.rental_tzs,
+        delivery_refund_tzs=refund.delivery_fee_tzs,
+        service_fee_refund_tzs=refund.service_fee_tzs,
+        deposit_refund_tzs=refund.deposit_tzs,
+        refund_tzs=refund.total_tzs,
+        deadline=refund.deadline,
+    )
+
+
+async def cancel_preview(
+    session: AsyncSession, user: User, booking_id: uuid.UUID
+) -> CancelPreviewOut:
+    booking, role = await get_for_party(session, user, booking_id)
+    by = canceller(role)
+    return preview_out(await _refund_for(session, booking, by), by)
+
+
+async def _issue_refund(
+    session: AsyncSession, booking: Booking, refund: CancelRefund, by: CancelledBy, user: User
+) -> Refund | None:
+    """Queue the policy refund, each part capped at what its account still holds for the
+    booking (an earlier admin refund may have taken some already)."""
+
+    async def left(account: str) -> int:
+        return max(-(await ledger.booking_balance(session, booking.id, account)), 0)
+
+    platform = await left(ledger.PLATFORM_REVENUE)
+    commission = min(refund.commission_tzs, platform)
+    return await refunds.issue(
+        session,
+        booking,
+        reason=REFUND_REASON[by],
+        created_by=user.id,
+        from_owner_tzs=min(
+            refund.from_owner_tzs, await left(ledger.owner_account(booking.owner_profile_id))
+        ),
+        from_commission_tzs=commission,
+        from_service_fee_tzs=min(refund.service_fee_tzs, platform - commission),
+        from_deposit_tzs=min(refund.deposit_tzs, await left(ledger.DEPOSIT_HELD)),
+    )
+
+
+async def cancel(
+    session: AsyncSession,
+    user: User,
+    booking_id: uuid.UUID,
+    reason: str | None,
+    *,
+    as_admin: bool = False,
+) -> Booking:
+    """Cancel under the booking's policy: release the dates, waive unbilled lease months and
+    queue the refund. An owner's cancellation refunds in full and counts against them."""
+    booking, role = await get_for_party(session, user, booking_id, lock=True)
+    by = CancelledBy.ADMIN if as_admin else canceller(role)
+    refund = await _refund_for(session, booking, by)
+    before = booking.status
+    await transition(
+        session,
+        booking,
+        Event.CANCEL,
+        actor_kind=ActorKind.USER,
+        actor_user_id=user.id,
+        cancelled_by=by,
+        note=reason,
+    )
+    booking.cancel_reason = reason
+    booking.payment_due_at = None
+    await availability.release(session, booking.id)
+    if by == CancelledBy.OWNER:
+        owner = await session.get(OwnerProfile, booking.owner_profile_id)
+        assert owner is not None
+        await session.execute(
+            update(User)
+            .where(User.id == owner.user_id)
+            .values(owner_cancellation_count=User.owner_cancellation_count + 1)
+        )
+    for inst in await installments_of(session, booking.id):
+        if inst.status in (InstallmentStatus.PENDING, InstallmentStatus.OVERDUE):
+            inst.status = InstallmentStatus.WAIVED
+    issued = await _issue_refund(session, booking, refund, by, user)
+    if as_admin:
+        from app.admin.moderation import audit
+
+        await audit(
+            session,
+            user,
+            "booking.cancel",
+            "booking",
+            booking.id,
+            {"status": before.value},
+            {
+                "status": booking.status.value,
+                "reason": reason,
+                "refund_tzs": issued.amount_tzs if issued else 0,
+            },
+        )
+    await session.flush()
     return booking
 
 

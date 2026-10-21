@@ -124,7 +124,8 @@ keys → 422.
 | POST | `/bookings/{id}/decline` | 🏠 owner | `{reason?}` → `cancelled` |
 | POST | `/bookings/{id}/cancel` | 👤 party | `{reason?}` → `cancelled` + `refund_preview` applied per policy (owner cancel = full) |
 | GET | `/bookings/{id}/cancel-preview` | 👤 party | → `{refund_tzs, policy, deadline}` |
-| POST | `/bookings/{id}/claims` | 👤 party | `{kind, description, amount_claimed_tzs?, evidence_keys[]}`; damage only ≤ 48 h after end |
+| POST | `/bookings/{id}/claims` | 👤 party | `{kind, description, amount_claimed_tzs?, evidence_keys[]}`; during the rental or ≤ 48 h after end; damage by the owner only; → `disputed` |
+| POST | `/bookings/{id}/claims/evidence-upload` | 👤 party | `{content_type}` → presigned PUT (JPEG/PNG/PDF ≤ 10 MB), key under `claims/{id}/` |
 
 `Booking = { id, code, status, listing: ListingCard, period, quantity, quote: Quote,
 payment_due_at?, request_expires_at?, cancellation_policy, can: {pay, cancel, accept,
@@ -171,8 +172,9 @@ installments?: [...] }`
 | GET/POST | `/admin/categories` | create `{parent_id, slug, name, booking_mode, price_units, default_unit, attribute_schema, commission_bps, renter_fee_bps}` |
 | PATCH | `/admin/categories/{id}` | edit, incl. schema (validated; type changes on fields in use → 409) |
 | GET | `/admin/bookings?status=&q=` · `/admin/bookings/{id}` | |
-| POST | `/admin/bookings/{id}/cancel` · `/refund {amount_tzs, reason}` | |
-| GET | `/admin/claims?status=open` · POST `/admin/claims/{id}/resolve {resolution, amount_awarded_tzs}` | |
+| POST | `/admin/bookings/{id}/cancel` · `/refund {amount_tzs, source: owner\|platform, reason}` | cancel = full refund (also `in_progress`); refund capped at what the source still holds (409 `REFUND_EXCEEDS_BALANCE`) |
+| POST | `/admin/refunds/{id}/retry` · `/mark-sent {provider_ref}` | failed refunds (provider error or manual-only provider) |
+| GET | `/admin/claims?status=open` · POST `/admin/claims/{id}/resolve {resolution, amount_awarded_tzs?, note?}` | `amount_awarded_tzs` = deposit share for the owner; rest refunded to the renter (422 `INVALID_AWARD`) |
 | GET | `/admin/reports-abuse` · POST `/admin/reports-abuse/{id}/action` | |
 | POST | `/admin/users/{id}/suspend` · `/unsuspend` | |
 | GET | `/admin/payouts?status=` · POST `/admin/payouts/{id}/mark-paid {provider_ref}` · `/retry` | manual fallback (R7) |

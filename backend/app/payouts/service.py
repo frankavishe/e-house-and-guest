@@ -3,12 +3,15 @@
 Earnings come from the ledger: a booking's net is `-SUM(owner_payable:<owner>)` over its
 non-payout entries, so refunds taken from the owner's share lower it automatically.
 
-Payouts: the daily sweep batches each owner's eligible bookings (completed ≥ 24 h ago, not
-disputed, not yet in a payout) into one `pending` payout and queues a `payouts.disburse`
-job, so the provider is called outside the batch transaction and transport errors retry
-with backoff. The provider answers `paid`, `processing` (polled until settled), `failed`
-(admin can retry) or `pending` (manual provider: an admin sends the money and marks it
-paid). Paying posts the `payout` ledger entry and texts the owner.
+Payouts: the daily sweep batches each owner's eligible bookings into one `pending` payout. A
+booking is eligible 24 h after it completed (or was cancelled with something left for the
+owner), when it has no open claim and its net is more than its payout items so far. The
+first item is its `earnings`; a deposit awarded to the owner after that is paid once more as
+a `claim_award` (US5). Each payout is sent by a `payouts.disburse` job, so the provider is
+called outside the batch transaction and transport errors retry with backoff. The provider
+answers `paid`, `processing` (polled until settled), `failed` (admin can retry) or `pending`
+(manual provider: an admin sends the money and marks it paid). Paying posts the `payout`
+ledger entry and texts the owner.
 
     pending ─disburse→ processing ─poll→ paid
        │                   └─────poll→ failed ─retry→ pending
@@ -21,14 +24,21 @@ import uuid
 from collections import defaultdict
 from datetime import date, timedelta
 
-from sqlalchemy import Subquery, exists, func, select
+from sqlalchemy import ColumnElement, Subquery, and_, exists, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.accounts.models import OwnerProfile, PayoutMethod, User
 from app.accounts.owner_service import payout_method_out
 from app.accounts.schemas import PayoutMethodOut
 from app.admin.moderation import audit
-from app.bookings.models import Booking, BookingStatus, InstallmentStatus, LeaseInstallment
+from app.bookings.models import (
+    Booking,
+    BookingStatus,
+    Claim,
+    ClaimStatus,
+    InstallmentStatus,
+    LeaseInstallment,
+)
 from app.bookings.schemas import PeriodOut
 from app.catalog.models import BookingMode
 from app.core import clock
@@ -49,7 +59,7 @@ from app.listings.models import Listing
 from app.listings.schemas import Page
 from app.listings.service import localized
 from app.notifications.service import notify
-from app.payouts.models import Payout, PayoutItem, PayoutStatus
+from app.payouts.models import Payout, PayoutItem, PayoutItemKind, PayoutStatus
 from app.payouts.schemas import (
     AdminPayoutOut,
     EarningItem,
@@ -91,12 +101,45 @@ def _booking_net(owner_profile_id: uuid.UUID | None = None) -> Subquery:
     )
 
 
-def _available(booking: Booking) -> bool:
+def _refunded_commission() -> Subquery:
+    """Commission handed back with cancellation refunds, per booking (positive lines)."""
     return (
-        booking.status == BookingStatus.COMPLETED
-        and booking.completed_at is not None
-        and booking.completed_at <= clock.now() - ELIGIBLE_AFTER
+        select(
+            LedgerEntry.booking_id.label("booking_id"),
+            func.sum(LedgerEntry.amount_tzs).label("refunded"),
+        )
+        .where(
+            LedgerEntry.account == ledger.PLATFORM_REVENUE,
+            LedgerEntry.entry_type == EntryType.COMMISSION,
+            LedgerEntry.amount_tzs > 0,
+        )
+        .group_by(LedgerEntry.booking_id)
+        .subquery()
     )
+
+
+def _settled_since(cutoff: object) -> ColumnElement[bool]:
+    """Completed, or cancelled, at or before `cutoff`."""
+    return or_(
+        and_(Booking.status == BookingStatus.COMPLETED, Booking.completed_at <= cutoff),
+        and_(Booking.status == BookingStatus.CANCELLED, Booking.cancelled_at <= cutoff),
+    )
+
+
+def _no_open_claim() -> ColumnElement[bool]:
+    return ~exists().where(Claim.booking_id == Booking.id, Claim.status == ClaimStatus.OPEN)
+
+
+def _available(booking: Booking, open_claim: bool) -> bool:
+    cutoff = clock.now() - ELIGIBLE_AFTER
+    settled_at = (
+        booking.completed_at
+        if booking.status == BookingStatus.COMPLETED
+        else booking.cancelled_at
+        if booking.status == BookingStatus.CANCELLED
+        else None
+    )
+    return settled_at is not None and settled_at <= cutoff and not open_claim
 
 
 # --- earnings (US4-AS1) -------------------------------------------------------------------
@@ -120,6 +163,8 @@ async def earnings(
         .group_by(LeaseInstallment.booking_id)
         .subquery()
     )
+    refunded = _refunded_commission()
+    open_claim = exists().where(Claim.booking_id == Booking.id, Claim.status == ClaimStatus.OPEN)
     stmt = (
         select(
             Booking,
@@ -127,15 +172,21 @@ async def earnings(
             Listing.title_en,
             net.c.net,
             lease_commission.c.commission,
+            refunded.c.refunded,
+            open_claim,
             Payout.id,
             Payout.status,
         )
         .join(net, net.c.booking_id == Booking.id)
         .join(Listing, Listing.id == Booking.listing_id)
         .outerjoin(lease_commission, lease_commission.c.booking_id == Booking.id)
-        .outerjoin(PayoutItem, PayoutItem.booking_id == Booking.id)
+        .outerjoin(refunded, refunded.c.booking_id == Booking.id)
+        .outerjoin(
+            PayoutItem,
+            and_(PayoutItem.booking_id == Booking.id, PayoutItem.kind == PayoutItemKind.EARNINGS),
+        )
         .outerjoin(Payout, Payout.id == PayoutItem.payout_id)
-        .where(Booking.owner_profile_id == profile.id)
+        .where(Booking.owner_profile_id == profile.id, net.c.net != 0)
         .order_by(func.lower(Booking.period).desc(), Booking.id)
     )
     if start is not None:
@@ -146,19 +197,19 @@ async def earnings(
         )
 
     items: list[EarningItem] = []
-    for booking, title_sw, title_en, net_tzs, lease_comm, payout_id, payout_status in (
-        await session.execute(stmt)
-    ).all():
+    for row in (await session.execute(stmt)).all():
+        booking, title_sw, title_en, net_tzs, lease_comm, refunded_comm, claimed = row[:7]
+        payout_id, payout_status = row[7:]
         commission = (
             int(lease_comm or 0)
             if booking.booking_mode == BookingMode.LEASE
             else booking.commission_tzs
-        )
+        ) - int(refunded_comm or 0)
         status: EarningStatus
         if payout_status is not None:
             status = payout_status.value
         else:
-            status = "available" if _available(booking) else "upcoming"
+            status = "available" if _available(booking, bool(claimed)) else "upcoming"
         items.append(
             EarningItem(
                 booking_id=booking.id,
@@ -204,31 +255,44 @@ async def create_payouts(session: AsyncSession) -> list[Payout]:
     """The daily sweep: one new payout per owner with eligible bookings. Payouts that failed
     only for want of a payout method are queued again once the owner has added one."""
     net = _booking_net()
-    rows = await session.execute(
-        select(Booking.id, Booking.owner_profile_id, net.c.net)
-        .join(net, net.c.booking_id == Booking.id)
-        .where(
-            Booking.status == BookingStatus.COMPLETED,
-            Booking.completed_at <= clock.now() - ELIGIBLE_AFTER,
-            net.c.net > 0,
-            ~exists().where(PayoutItem.booking_id == Booking.id),
+    items = (
+        select(
+            PayoutItem.booking_id.label("booking_id"),
+            func.sum(PayoutItem.amount_tzs).label("paid"),
+            func.count().label("n"),
         )
-        .order_by(Booking.owner_profile_id, Booking.completed_at, Booking.id)
+        .group_by(PayoutItem.booking_id)
+        .subquery()
+    )
+    paid = func.coalesce(items.c.paid, 0)
+    rows = await session.execute(
+        select(Booking.id, Booking.owner_profile_id, net.c.net - paid, func.coalesce(items.c.n, 0))
+        .join(net, net.c.booking_id == Booking.id)
+        .outerjoin(items, items.c.booking_id == Booking.id)
+        .where(
+            _settled_since(clock.now() - ELIGIBLE_AFTER),
+            net.c.net - paid > 0,
+            # Earnings, then at most one claim award.
+            func.coalesce(items.c.n, 0) < len(PayoutItemKind),
+            _no_open_claim(),
+        )
+        .order_by(Booking.owner_profile_id, Booking.created_at, Booking.id)
         .limit(BATCH)
         .with_for_update(of=Booking, skip_locked=True)
     )
-    by_owner: dict[uuid.UUID, list[tuple[uuid.UUID, int]]] = defaultdict(list)
-    for booking_id, owner_id, amount in rows.all():
-        by_owner[owner_id].append((booking_id, int(amount)))
+    by_owner: dict[uuid.UUID, list[tuple[uuid.UUID, int, PayoutItemKind]]] = defaultdict(list)
+    for booking_id, owner_id, amount, n in rows.all():
+        kind = PayoutItemKind.EARNINGS if n == 0 else PayoutItemKind.CLAIM_AWARD
+        by_owner[owner_id].append((booking_id, int(amount), kind))
 
     created: list[Payout] = []
     for owner_id, bookings in by_owner.items():
-        payout = Payout(owner_profile_id=owner_id, amount_tzs=sum(a for _, a in bookings))
+        payout = Payout(owner_profile_id=owner_id, amount_tzs=sum(a for _, a, _ in bookings))
         session.add(payout)
         await session.flush()
         session.add_all(
-            PayoutItem(payout_id=payout.id, booking_id=booking_id, amount_tzs=amount)
-            for booking_id, amount in bookings
+            PayoutItem(payout_id=payout.id, booking_id=booking_id, amount_tzs=amount, kind=kind)
+            for booking_id, amount, kind in bookings
         )
         await _queue_disburse(session, payout)
         created.append(payout)
@@ -443,7 +507,12 @@ async def _items(
     )
     for item, code in rows.all():
         out[item.payout_id].append(
-            PayoutItemOut(booking_id=item.booking_id, booking_code=code, amount_tzs=item.amount_tzs)
+            PayoutItemOut(
+                booking_id=item.booking_id,
+                booking_code=code,
+                amount_tzs=item.amount_tzs,
+                kind=item.kind.value,
+            )
         )
     return out
 

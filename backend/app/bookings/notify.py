@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.accounts.models import OwnerProfile, User, UserStatus
-from app.bookings.models import Booking, BookingStatus, LeaseInstallment
+from app.bookings.models import Booking, BookingStatus, CancelledBy, LeaseInstallment
 from app.bookings.state import Event
 from app.core.i18n import eat_date, eat_datetime, money
 from app.listings.models import Listing
@@ -82,6 +82,15 @@ async def on_status(session: AsyncSession, booking: Booking, event: Event) -> No
             await to_renter(session, booking, "booking.declined")
         case BookingStatus.CANCELLED, Event.EXPIRE:
             await to_renter(session, booking, "booking.expired")
+        case BookingStatus.CANCELLED, Event.CANCEL:
+            match booking.cancelled_by:
+                case CancelledBy.RENTER:
+                    await to_owner(session, booking, "booking.cancelled_by_renter")
+                case CancelledBy.OWNER:
+                    await to_renter(session, booking, "booking.cancelled_by_owner")
+                case _:
+                    await to_renter(session, booking, "booking.cancelled_by_admin")
+                    await to_owner(session, booking, "booking.cancelled_by_admin")
         case _:
             pass
 

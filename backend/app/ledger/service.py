@@ -141,19 +141,55 @@ async def post_refund(
     )
 
 
-async def post_deposit_release(
-    session: AsyncSession, booking: Booking, amount_tzs: int, refund_id: uuid.UUID | None
+async def post_refund_due(
+    session: AsyncSession,
+    booking: Booking,
+    refund_id: uuid.UUID,
+    *,
+    from_owner_tzs: int = 0,
+    from_commission_tzs: int = 0,
+    from_service_fee_tzs: int = 0,
+    from_deposit_tzs: int = 0,
 ) -> uuid.UUID:
-    """The held deposit goes back to the renter (US5)."""
+    """Money the renter is owed moves into `renter_clearing` as soon as the refund is decided
+    (US5), so it can no longer be paid out; `post_refund` later sends it from there."""
+    total = from_owner_tzs + from_commission_tzs + from_service_fee_tzs + from_deposit_tzs
     return await post(
         session,
         [
-            Line(DEPOSIT_HELD, amount_tzs, EntryType.DEPOSIT_RELEASE),
-            Line(PROVIDER_CASH, -amount_tzs, EntryType.DEPOSIT_RELEASE),
+            Line(owner_account(booking.owner_profile_id), from_owner_tzs, EntryType.ADJUSTMENT),
+            # Commission handed back is a (positive) `commission` line, kept apart from the
+            # service fee so earnings can tell what commission the booking kept.
+            Line(PLATFORM_REVENUE, from_commission_tzs, EntryType.COMMISSION),
+            Line(PLATFORM_REVENUE, from_service_fee_tzs, EntryType.ADJUSTMENT),
+            Line(DEPOSIT_HELD, from_deposit_tzs, EntryType.DEPOSIT_RELEASE),
+            Line(RENTER_CLEARING, -total, EntryType.ADJUSTMENT),
         ],
         booking_id=booking.id,
         refund_id=refund_id,
     )
+
+
+async def post_deposit_award(session: AsyncSession, booking: Booking, amount_tzs: int) -> uuid.UUID:
+    """Part of the held deposit goes to the owner after a damage claim (US5)."""
+    return await post(
+        session,
+        [
+            Line(DEPOSIT_HELD, amount_tzs, EntryType.DEPOSIT_RELEASE),
+            Line(owner_account(booking.owner_profile_id), -amount_tzs, EntryType.ADJUSTMENT),
+        ],
+        booking_id=booking.id,
+    )
+
+
+async def booking_balance(session: AsyncSession, booking_id: uuid.UUID, account: str) -> int:
+    """Signed balance of `account` for one booking's entries."""
+    total = await session.execute(
+        select(func.coalesce(func.sum(LedgerEntry.amount_tzs), 0)).where(
+            LedgerEntry.booking_id == booking_id, LedgerEntry.account == account
+        )
+    )
+    return int(total.scalar_one())
 
 
 async def post_payout(

@@ -5,13 +5,18 @@ from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Query, Request, status
 
-from app.bookings import service
+from app.accounts.schemas import UploadIn, UploadOut
+from app.bookings import claims, service
 from app.bookings.models import BookingStatus
 from app.bookings.schemas import (
     BookingCreate,
     BookingOut,
     BookingStatusT,
     BookingSummary,
+    CancelBody,
+    CancelPreviewOut,
+    ClaimIn,
+    ClaimOut,
     DeclineBody,
     Receipt,
 )
@@ -28,6 +33,10 @@ TRANSITION: dict[int | str, dict[str, Any]] = {
     **NOT_FOUND,
     403: {"description": "Not the owner of this listing"},
     409: {"description": "`INVALID_TRANSITION`"},
+}
+CANCEL: dict[int | str, dict[str, Any]] = {
+    **NOT_FOUND,
+    409: {"description": "`INVALID_TRANSITION`: not cancellable by you in this status"},
 }
 
 
@@ -136,3 +145,62 @@ async def get_receipt(
     booking_id: uuid.UUID, user: CurrentUser, session: Session, locale: LocaleDep
 ) -> Receipt:
     return await service.receipt(session, user, booking_id, locale)
+
+
+@router.get(
+    "/bookings/{booking_id}/cancel-preview", response_model=CancelPreviewOut, responses=CANCEL
+)
+async def cancel_preview(
+    booking_id: uuid.UUID, user: CurrentUser, session: Session
+) -> CancelPreviewOut:
+    """What cancelling now would refund under the booking's policy (owner: everything)."""
+    return await service.cancel_preview(session, user, booking_id)
+
+
+@router.post("/bookings/{booking_id}/cancel", response_model=BookingOut, responses=CANCEL)
+async def cancel_booking(
+    booking_id: uuid.UUID,
+    user: CurrentUser,
+    session: Session,
+    locale: LocaleDep,
+    body: CancelBody | None = None,
+) -> BookingOut:
+    """→ `cancelled`; the dates are released and the refund from the preview is queued."""
+    booking, role = await service.get_for_party(session, user, booking_id)
+    booking = await service.cancel(session, user, booking_id, body.reason if body else None)
+    out = await service.booking_out(session, booking, role, locale)
+    await session.commit()
+    return out
+
+
+@router.post(
+    "/bookings/{booking_id}/claims/evidence-upload",
+    response_model=UploadOut,
+    responses={**NOT_FOUND, 422: {"description": "Unsupported content type"}},
+)
+async def claim_evidence_upload(
+    booking_id: uuid.UUID, body: UploadIn, user: CurrentUser, session: Session
+) -> UploadOut:
+    """A presigned PUT (JPEG, PNG or PDF, ≤ 10 MB) for a photo or document of a claim."""
+    return await claims.presign_evidence(session, user, booking_id, body.content_type)
+
+
+@router.post(
+    "/bookings/{booking_id}/claims",
+    response_model=ClaimOut,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        **NOT_FOUND,
+        403: {"description": "Only the owner can claim damage"},
+        409: {"description": "`CLAIM_OPEN` or `CLAIM_WINDOW_CLOSED`"},
+    },
+)
+async def open_claim(
+    booking_id: uuid.UUID, body: ClaimIn, user: CurrentUser, session: Session
+) -> ClaimOut:
+    """Open a damage claim (owner) or dispute (either party) during the rental or within
+    48 h after it ends. The booking becomes `disputed` until an admin resolves it."""
+    booking, claim = await claims.open_claim(session, user, booking_id, body)
+    out = await claims.claim_out(session, booking, claim)
+    await session.commit()
+    return out

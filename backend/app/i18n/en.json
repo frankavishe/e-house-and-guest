@@ -33,7 +33,11 @@
     "PRICE_UNIT_NOT_ALLOWED": "That price unit is not used in this category.",
     "SEASON_OVERLAP": "Seasonal prices for the same unit cannot overlap.",
     "LISTING_HAS_BOOKINGS": "This listing has upcoming confirmed bookings, so it cannot be deleted. Pause it instead.",
-    "PHOTO_NOT_UPLOADED": "The photo has not finished uploading. Try again."
+    "PHOTO_NOT_UPLOADED": "The photo has not finished uploading. Try again.",
+    "CLAIM_OPEN": "This booking already has an open claim.",
+    "CLAIM_WINDOW_CLOSED": "Claims can only be opened during the rental or up to 48 hours after it ends.",
+    "INVALID_AWARD": "The award does not fit the resolution or the deposit held.",
+    "REFUND_EXCEEDS_BALANCE": "The refund is larger than what is left to refund for this booking."
   },
   "sms": {
     "otp": "Your sign-in code is {code}. It expires in 5 minutes. Do not share it."
@@ -61,6 +65,15 @@
       },
       "expired": {
         "sms": "Booking {code} for \"{title}\" was cancelled because the time to pay ran out."
+      },
+      "cancelled_by_renter": {
+        "sms": "The renter cancelled booking {code} for \"{title}\". The dates are free again."
+      },
+      "cancelled_by_owner": {
+        "sms": "The owner cancelled booking {code} for \"{title}\". You will get a full refund."
+      },
+      "cancelled_by_admin": {
+        "sms": "Booking {code} for \"{title}\" was cancelled by our support team. Any refund due is on its way."
       }
     },
     "payment": {
@@ -122,6 +135,28 @@
       },
       "failed": {
         "sms": "We could not send your payout of {amount}. Check your payout method in your account."
+      }
+    },
+    "refund": {
+      "sent": {
+        "sms": "Your refund of {amount} for booking {code} has been sent."
+      },
+      "deposit_sent": {
+        "sms": "Your deposit of {amount} for booking {code} has been returned."
+      },
+      "failed_admin": {
+        "sms": "Refund of {amount} for booking {code} failed. Send it by hand and mark it sent."
+      }
+    },
+    "claim": {
+      "opened": {
+        "sms": "A claim was opened on booking {code} for \"{title}\". Our team will review it and contact you."
+      },
+      "opened_admin": {
+        "sms": "New claim on booking {code} (\"{title}\") needs review."
+      },
+      "resolved": {
+        "sms": "The claim on booking {code} is resolved. Deposit awarded to the owner: {award}."
       }
     }
   }

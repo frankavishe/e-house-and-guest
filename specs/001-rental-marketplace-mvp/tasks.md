@@ -265,18 +265,18 @@ on its own.
 
 ### Tests for User Story 5 ⚠️ (write first, must fail)
 
-- [ ] T116 [P] [US5] Cancellation policy unit tests in `backend/tests/unit/test_cancellation_policy.py`: flexible (full until 24 h before start), moderate (full until 5 days, then 50%), strict (50% until 7 days, then none), boundaries in EAT, deposit always refunded on cancel, service fee handling
-- [ ] T117 [P] [US5] Cancellation/refund/claim integration tests in `backend/tests/integration/test_cancellations.py` covering US5 acceptance scenarios 1–3: renter cancel refund amount; owner cancel full refund + `owner_cancellation_count` +1; blocks released; refund ledger entries; deposit auto-refund after 48 h with no claim; damage claim after 48 h rejected; open claim blocks deposit refund and payout; admin resolution (owner_awarded / renter_refunded / split) posts correct ledger entries
-- [ ] T118 [P] [US5] Contract tests for `/bookings/{id}/cancel`, `/bookings/{id}/cancel-preview`, `/bookings/{id}/claims`, `/admin/claims*`, `/admin/bookings*` in `backend/tests/contract/test_cancellations_contract.py`
+- [x] T116 [P] [US5] Cancellation policy unit tests in `backend/tests/unit/test_cancellation_policy.py`: flexible (full until 24 h before start), moderate (full until 5 days, then 50%), strict (50% until 7 days, then none), boundaries in EAT, deposit always refunded on cancel, service fee handling
+- [x] T117 [P] [US5] Cancellation/refund/claim integration tests in `backend/tests/integration/test_cancellations.py` covering US5 acceptance scenarios 1–3: renter cancel refund amount; owner cancel full refund + `owner_cancellation_count` +1; blocks released; refund ledger entries; deposit auto-refund after 48 h with no claim; damage claim after 48 h rejected; open claim blocks deposit refund and payout; admin resolution (owner_awarded / renter_refunded / split) posts correct ledger entries
+- [x] T118 [P] [US5] Contract tests for `/bookings/{id}/cancel`, `/bookings/{id}/cancel-preview`, `/bookings/{id}/claims`, `/admin/claims*`, `/admin/bookings*` in `backend/tests/contract/test_cancellations_contract.py`
 
 ### Implementation for User Story 5
 
-- [ ] T119 [US5] Create the `claims` model + migration in `backend/app/bookings/models.py` and `backend/alembic/versions/0010_claims.py`
-- [ ] T120 [US5] Implement the cancellation policy calculator in `backend/app/bookings/policies.py`
-- [ ] T121 [US5] Implement cancel (renter/owner/admin), cancel preview, refund creation via `PaymentProvider.refund` + refund job + ledger, and the deposit-release job (48 h after end, skipped if a claim is open) in `backend/app/bookings/service.py`, `backend/app/payments/refunds.py` and `backend/app/bookings/jobs.py`
-- [ ] T122 [US5] Implement claims (open within 48 h, evidence upload keys, admin resolve with ledger postings, booking `disputed` transitions) in `backend/app/bookings/claims.py` and endpoints in `backend/app/bookings/router.py` and `backend/app/admin/router.py`
-- [ ] T123 [US5] Add cancellation/refund/claim notification templates to `backend/app/i18n/{sw,en}.json`
-- [ ] T124 [US5] Build cancel flow with refund preview and claim form on booking detail pages, and the admin claims screen, in `frontend/src/app/[locale]/account/bookings/[id]/page.tsx` and `frontend/src/app/[locale]/admin/claims/page.tsx`, with sw/en strings
+- [x] T119 [US5] Create the `claims` model + migration in `backend/app/bookings/models.py` and `backend/alembic/versions/0010_claims.py`
+- [x] T120 [US5] Implement the cancellation policy calculator in `backend/app/bookings/policies.py`
+- [x] T121 [US5] Implement cancel (renter/owner/admin), cancel preview, refund creation via `PaymentProvider.refund` + refund job + ledger, and the deposit-release job (48 h after end, skipped if a claim is open) in `backend/app/bookings/service.py`, `backend/app/payments/refunds.py` and `backend/app/bookings/jobs.py`
+- [x] T122 [US5] Implement claims (open within 48 h, evidence upload keys, admin resolve with ledger postings, booking `disputed` transitions) in `backend/app/bookings/claims.py` and endpoints in `backend/app/bookings/router.py` and `backend/app/admin/router.py`
+- [x] T123 [US5] Add cancellation/refund/claim notification templates to `backend/app/i18n/{sw,en}.json`
+- [ ] T124 [US5] Build cancel flow with refund preview and claim form on booking detail pages, and the admin claims screen, in `frontend/src/app/[locale]/book/[bookingId]/page.tsx` and `frontend/src/app/[locale]/admin/claims/page.tsx`, with sw/en strings
 
 **Checkpoint**: Quickstart V13–V14 pass.
 

@@ -33,7 +33,11 @@
     "PRICE_UNIT_NOT_ALLOWED": "Kipimo hicho cha bei hakitumiki katika kundi hili.",
     "SEASON_OVERLAP": "Bei za msimu za kipimo kimoja haziwezi kuingiliana.",
     "LISTING_HAS_BOOKINGS": "Tangazo hili lina uhifadhi uliothibitishwa unaokuja, hivyo haliwezi kufutwa. Lisimamishe badala yake.",
-    "PHOTO_NOT_UPLOADED": "Picha haijamaliza kupakiwa. Jaribu tena."
+    "PHOTO_NOT_UPLOADED": "Picha haijamaliza kupakiwa. Jaribu tena.",
+    "CLAIM_OPEN": "Uhifadhi huu tayari una dai lililo wazi.",
+    "CLAIM_WINDOW_CLOSED": "Dai linaweza kufunguliwa wakati wa ukodishaji au hadi saa 48 baada ya kumalizika.",
+    "INVALID_AWARD": "Kiasi kilichotolewa hakilingani na uamuzi au amana iliyoshikiliwa.",
+    "REFUND_EXCEEDS_BALANCE": "Marejesho ni makubwa kuliko kilichobaki kurejeshwa kwa uhifadhi huu."
   },
   "sms": {
     "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."
@@ -61,6 +65,15 @@
       },
       "expired": {
         "sms": "Oda {code} ya \"{title}\" imefutwa kwa sababu muda wa malipo umeisha."
+      },
+      "cancelled_by_renter": {
+        "sms": "Mkodishaji ameghairi uhifadhi {code} wa \"{title}\". Tarehe ziko wazi tena."
+      },
+      "cancelled_by_owner": {
+        "sms": "Mmiliki ameghairi uhifadhi {code} wa \"{title}\". Utarejeshewa pesa zote."
+      },
+      "cancelled_by_admin": {
+        "sms": "Uhifadhi {code} wa \"{title}\" umeghairiwa na timu yetu. Marejesho yoyote yanakuja."
       }
     },
     "payment": {
@@ -122,6 +135,28 @@
       },
       "failed": {
         "sms": "Hatukuweza kutuma malipo yako ya {amount}. Hakikisha njia yako ya kupokea malipo ni sahihi kwenye akaunti yako."
+      }
+    },
+    "refund": {
+      "sent": {
+        "sms": "Marejesho yako ya {amount} kwa uhifadhi {code} yametumwa."
+      },
+      "deposit_sent": {
+        "sms": "Amana yako ya {amount} kwa uhifadhi {code} imerejeshwa."
+      },
+      "failed_admin": {
+        "sms": "Marejesho ya {amount} kwa uhifadhi {code} yameshindikana. Yatume kwa mkono na uyaweke kuwa yametumwa."
+      }
+    },
+    "claim": {
+      "opened": {
+        "sms": "Dai limefunguliwa kwa uhifadhi {code} wa \"{title}\". Timu yetu italipitia na kuwasiliana nawe."
+      },
+      "opened_admin": {
+        "sms": "Dai jipya kwa uhifadhi {code} (\"{title}\") linahitaji kupitiwa."
+      },
+      "resolved": {
+        "sms": "Dai la uhifadhi {code} limeamuliwa. Amana aliyopewa mmiliki: {award}."
       }
     }
   }

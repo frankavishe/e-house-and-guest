@@ -34,6 +34,10 @@ BOOKING_KEYS = {
     "events",
     "payments",
     "installments",
+    "refunds",
+    "claims",
+    "cancelled_by",
+    "cancel_reason",
     "created_at",
 }
 SUMMARY_KEYS = {

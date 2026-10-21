@@ -382,8 +382,13 @@ async def make_booking(
     status: str = "awaiting_payment",
     quantity: int = 1,
     total: int = 100_000,
+    deposit: int = 0,
+    delivery: int = 0,
+    service_fee: int = 0,
+    policy: str = "moderate",
 ) -> Any:
-    """A booking row with its active block, bypassing the booking service."""
+    """A booking row with its active block, bypassing the booking service. `total` is the
+    rental; deposit, delivery and service fee are added to the booking total."""
     from app.bookings.models import Booking, BookingStatus
 
     assert b.category.booking_mode is not None
@@ -396,12 +401,22 @@ async def make_booking(
         period=Range(start, end, bounds="[)"),
         quantity=quantity,
         status=BookingStatus(status),
-        quote={},
+        quote={
+            "lines": [],
+            "rental_tzs": total,
+            "delivery_fee_tzs": delivery,
+            "service_fee_tzs": service_fee,
+            "deposit_tzs": deposit,
+            "total_tzs": total + deposit + delivery + service_fee,
+        },
         rental_tzs=total,
-        total_tzs=total,
+        delivery_fee_tzs=delivery,
+        service_fee_tzs=service_fee,
+        deposit_tzs=deposit,
+        total_tzs=total + deposit + delivery + service_fee,
         commission_bps=1000,
         commission_tzs=total // 10,
-        cancellation_policy=CancellationPolicy.MODERATE,
+        cancellation_policy=CancellationPolicy(policy),
         lease_months=1 if b.category.booking_mode == BookingMode.LEASE else None,
     )
     db.add(booking)
@@ -490,6 +505,42 @@ async def make_completed_booking(
     booking = await make_booking(db, b, start, end, status="completed", total=total)
     booking.completed_at = completed_at
     await ledger.post_booking_payment(db, booking, payment_id=None)
+    await db.flush()
+    return booking
+
+
+async def make_paid_booking(
+    db: AsyncSession,
+    b: Bookable,
+    start: datetime,
+    end: datetime,
+    *,
+    status: str = "confirmed",
+    completed_at: datetime | None = None,
+    msisdn: str = "+255700000001",
+    **fields: Any,
+) -> Any:
+    """A booking paid in full by mobile money: a succeeded payment and its ledger rows."""
+    from app.accounts.models import PaymentNetwork
+    from app.core import clock
+    from app.ledger import service as ledger
+    from app.payments.models import Payment, PaymentStatus
+
+    booking = await make_booking(db, b, start, end, status=status, **fields)
+    booking.completed_at = completed_at
+    payment = Payment(
+        booking_id=booking.id,
+        provider="mock",
+        network=PaymentNetwork.MPESA,
+        msisdn=msisdn,
+        amount_tzs=booking.total_tzs,
+        status=PaymentStatus.SUCCEEDED,
+        provider_txn_id=f"MOCKS-{uuid.uuid4().hex[:12].upper()}",
+        confirmed_at=clock.now(),
+    )
+    db.add(payment)
+    await db.flush()
+    await ledger.post_booking_payment(db, booking, payment.id)
     await db.flush()
     return booking
 

@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints
 
 from app.availability.periods import PeriodParams
 from app.listings.schemas import ListingCard
@@ -33,6 +33,67 @@ class BookingCreate(BaseModel):
 
 class DeclineBody(BaseModel):
     reason: Annotated[str, Field(max_length=500)] | None = None
+
+
+class CancelBody(BaseModel):
+    reason: Annotated[str, Field(max_length=500)] | None = None
+
+
+class CancelPreviewOut(BaseModel):
+    """What cancelling now would refund (FR-026). `deadline`: when the refund next drops."""
+
+    policy: Literal["flexible", "moderate", "strict"]
+    cancelled_by: Literal["renter", "owner", "admin"]
+    percent: int
+    paid_tzs: int
+    rental_refund_tzs: int
+    delivery_refund_tzs: int
+    service_fee_refund_tzs: int
+    deposit_refund_tzs: int
+    refund_tzs: int
+    deadline: datetime | None
+
+
+ClaimKindT = Literal["damage", "dispute"]
+ClaimResolutionT = Literal["owner_awarded", "renter_refunded", "split"]
+
+
+class ClaimIn(BaseModel):
+    """A damage claim (owner only, until 48 h after the end) or a dispute (either party).
+    `evidence_keys` come from `POST /bookings/{id}/claims/evidence-upload`."""
+
+    kind: ClaimKindT
+    description: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=2000)
+    ]
+    amount_claimed_tzs: Annotated[int, Field(ge=0, le=1_000_000_000)] | None = None
+    evidence_keys: Annotated[list[Annotated[str, Field(max_length=300)]], Field(max_length=10)] = []
+
+
+class ClaimOut(BaseModel):
+    id: uuid.UUID
+    booking_id: uuid.UUID
+    kind: ClaimKindT
+    opened_by: Literal["renter", "owner", "admin"]
+    description: str
+    amount_claimed_tzs: int | None
+    evidence_keys: list[str]
+    status: Literal["open", "resolved"]
+    resolution: ClaimResolutionT | None
+    amount_awarded_tzs: int | None
+    resolution_note: str | None
+    created_at: datetime
+    resolved_at: datetime | None
+
+
+class RefundOut(BaseModel):
+    id: uuid.UUID
+    amount_tzs: int
+    reason: Literal["cancellation", "deposit_return", "owner_cancel", "admin", "late_payment"]
+    status: Literal["pending", "sent", "failed"]
+    provider_ref: str | None
+    failure_reason: str | None
+    created_at: datetime
 
 
 class PeriodOut(BaseModel):
@@ -109,6 +170,10 @@ class BookingOut(BaseModel):
     events: list[EventOut]
     payments: list[PaymentOut]
     installments: list[InstallmentOut] | None
+    refunds: list[RefundOut]
+    claims: list[ClaimOut]
+    cancelled_by: Literal["renter", "owner", "admin", "system"] | None
+    cancel_reason: str | None
     created_at: datetime
 
 

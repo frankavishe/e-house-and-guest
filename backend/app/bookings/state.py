@@ -15,6 +15,7 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.bookings.models import ActorKind, Booking, BookingEvent, BookingStatus, CancelledBy
+from app.core import clock
 from app.core.errors import AppError
 
 S = BookingStatus
@@ -46,7 +47,11 @@ TRANSITIONS: dict[tuple[BookingStatus, Event], BookingStatus] = {
     (S.CONFIRMED, Event.CANCEL): S.CANCELLED,
     (S.CONFIRMED, Event.DISPUTE): S.DISPUTED,
     (S.IN_PROGRESS, Event.END): S.COMPLETED,
+    # Only an admin cancels a running booking (guarded below).
+    (S.IN_PROGRESS, Event.CANCEL): S.CANCELLED,
     (S.IN_PROGRESS, Event.DISPUTE): S.DISPUTED,
+    # A damage claim or dispute raised within 48 h after the end (FR-027).
+    (S.COMPLETED, Event.DISPUTE): S.DISPUTED,
     (S.DISPUTED, Event.RESOLVE_COMPLETE): S.COMPLETED,
     (S.DISPUTED, Event.RESOLVE_CANCEL): S.CANCELLED,
     # A payment that succeeds after its hold expired revives the booking (R6, edge case).
@@ -71,8 +76,14 @@ def next_status(status: BookingStatus, event: Event) -> BookingStatus:
     return target
 
 
-def _guard(booking: Booking, event: Event) -> None:
+def _guard(booking: Booking, event: Event, cancelled_by: CancelledBy | None) -> None:
     if event == Event.LATE_PAYMENT and booking.cancelled_by != CancelledBy.SYSTEM:
+        raise invalid_transition(booking.status, event)
+    if (
+        event == Event.CANCEL
+        and booking.status == S.IN_PROGRESS
+        and cancelled_by != CancelledBy.ADMIN
+    ):
         raise invalid_transition(booking.status, event)
 
 
@@ -111,11 +122,12 @@ async def transition(
 ) -> None:
     """Move `booking` by `event` (409 `INVALID_TRANSITION` if not allowed)."""
     target = next_status(booking.status, event)
-    _guard(booking, event)
+    _guard(booking, event, cancelled_by)
     before = booking.status
     booking.status = target
     if target == S.CANCELLED:
         booking.cancelled_by = cancelled_by or _CANCELLED_BY.get(event, CancelledBy.SYSTEM)
+        booking.cancelled_at = clock.now()
     elif event == Event.LATE_PAYMENT:
         booking.cancelled_by = None
         booking.cancel_reason = None

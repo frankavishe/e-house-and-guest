@@ -73,6 +73,8 @@ class MockPaymentProvider:
         self._queued: list[MockCallback] = []
         self._forced: dict[uuid.UUID, PaymentStatus] = {}
         self._tasks: set[asyncio.Task[None]] = set()
+        self._refund_failure: str | None = None
+        self.refunds: list[tuple[uuid.UUID, int]] = []
 
     # --- PaymentProvider -----------------------------------------------------------------
 
@@ -118,12 +120,19 @@ class MockPaymentProvider:
     async def refund(
         self, *, payment_id: uuid.UUID, amount_tzs: int, msisdn: str, network: Network
     ) -> RefundResult:
+        if self._refund_failure is not None:
+            return RefundResult(ok=False, failure_reason=self._refund_failure)
+        self.refunds.append((payment_id, amount_tzs))
         return RefundResult(ok=True, provider_ref=f"MOCKREF-{secrets.token_hex(6).upper()}")
 
     # --- test and dev helpers ------------------------------------------------------------
 
     def force(self, payment_id: uuid.UUID, state: PaymentState, reason: str | None = None) -> None:
         self._forced[payment_id] = PaymentStatus(state=state, failure_reason=reason)
+
+    def fail_refunds(self, reason: str | None = "provider_error") -> None:
+        """Make refunds fail with `reason` (None: succeed again)."""
+        self._refund_failure = reason
 
     def take_callbacks(self) -> list[MockCallback]:
         queued, self._queued = self._queued, []
