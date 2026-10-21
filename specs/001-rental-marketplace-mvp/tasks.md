@@ -251,7 +251,7 @@ on its own.
 - [x] T112 [P] [US4] Implement `MockPayoutProvider` in `backend/app/integrations/payments/mock.py` and `AzamPay` disbursement in `backend/app/integrations/payments/azampay.py` behind a feature flag (`AZAMPAY_DISBURSE_ENABLED`, default off until R7 is verified)
 - [x] T113 [US4] Implement the payout service (eligibility query, batch creation, disburse, status polling, manual mark-paid, ledger posting, notifications) and the daily payout job in `backend/app/payouts/service.py` and `backend/app/payouts/jobs.py`
 - [x] T114 [US4] Implement `GET /owner/earnings`, `GET /owner/payouts`, and admin `GET /admin/payouts`, `POST /admin/payouts/{id}/mark-paid|retry` in `backend/app/payouts/router.py`
-- [ ] T115 [US4] Build the owner earnings and payouts page and admin payouts screen in `frontend/src/app/[locale]/owner/earnings/page.tsx` and `frontend/src/app/[locale]/admin/payouts/page.tsx`, with sw/en strings
+- [x] T115 [US4] Build the owner earnings and payouts page and admin payouts screen in `frontend/src/app/[locale]/owner/earnings/page.tsx` and `frontend/src/app/[locale]/admin/payouts/page.tsx`, with sw/en strings
 
 **Checkpoint**: Quickstart V12 passes.
 

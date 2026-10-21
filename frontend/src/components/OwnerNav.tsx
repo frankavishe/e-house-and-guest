@@ -5,6 +5,7 @@ const LINKS = [
   ["listings", "/owner/listings"],
   ["calendar", "/owner/calendar"],
   ["requests", "/owner/requests"],
+  ["earnings", "/owner/earnings"],
   ["profile", "/owner/onboarding"],
 ] as const;
 

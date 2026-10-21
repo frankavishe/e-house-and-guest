@@ -2,10 +2,11 @@
 
 import uuid
 from datetime import datetime
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+from app.accounts.schemas import PayoutMethodOut
 from app.bookings.schemas import PeriodOut
 
 EarningStatus = Literal["upcoming", "available", "pending", "processing", "paid", "failed"]
@@ -55,8 +56,8 @@ class PayoutOut(BaseModel):
     provider: str | None
     provider_ref: str | None
     failure_reason: str | None
-    # Masked snapshot of the payout method used (PayoutMethodOut fields).
-    destination: dict[str, Any] | None
+    # Masked snapshot of the payout method used at the last send attempt.
+    destination: PayoutMethodOut | None
     paid_at: datetime | None
     created_at: datetime
     items: list[PayoutItemOut]

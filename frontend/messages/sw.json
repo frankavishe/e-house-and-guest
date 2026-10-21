@@ -322,7 +322,8 @@
     "listings": "Matangazo",
     "calendar": "Kalenda",
     "requests": "Maombi",
-    "profile": "Wasifu"
+    "profile": "Wasifu",
+    "earnings": "Mapato"
   },
   "listingStatus": {
     "draft": "Rasimu",
@@ -491,6 +492,65 @@
     "approve": "Idhinisha",
     "reject": "Kataa",
     "suspend": "Zuia",
-    "unsuspend": "Ondoa zuio"
+    "unsuspend": "Ondoa zuio",
+    "payouts": "Malipo kwa wamiliki"
+  },
+  "payoutStatus": {
+    "upcoming": "Bado hayajaiva",
+    "available": "Malipo yajayo",
+    "pending": "Malipo yanasubiri",
+    "processing": "Yanatumwa",
+    "paid": "Yamelipwa",
+    "failed": "Malipo yameshindikana"
+  },
+  "earnings": {
+    "title": "Mapato",
+    "from": "Kuanzia",
+    "to": "Hadi",
+    "apply": "Onyesha",
+    "clear": "Futa tarehe",
+    "gross": "Jumla",
+    "commission": "Kamisheni",
+    "net": "Mapato yako",
+    "paidOut": "Yaliyolipwa",
+    "pending": "Yanayosubiri kulipwa",
+    "bookings": "Booking",
+    "empty": "Bado hakuna booking zilizolipiwa katika kipindi hiki.",
+    "schedule": "Mapato yanaweza kulipwa saa 24 baada ya booking kuisha, na hutumwa katika malipo ya kila siku yanayofuata.",
+    "payouts": "Malipo",
+    "noPayouts": "Bado hakuna malipo.",
+    "reference": "Kumbukumbu: {ref}",
+    "failed": "Malipo haya hayakuweza kutumwa. Tutajaribu tena, au wasiliana na huduma kwa wateja.",
+    "failedNoMethod": "Ongeza njia ya kupokea malipo hapa chini ili tuweze kutuma malipo haya.",
+    "methods": "Njia ya kupokea malipo",
+    "noMethod": "Ongeza mahali tutakapotuma pesa zako kabla ya malipo yako ya kwanza.",
+    "default": "Kuu",
+    "remove": "Ondoa",
+    "addMethod": "Ongeza njia ya kupokea malipo",
+    "kind": "Pokea pesa kupitia",
+    "kind_mobile_money": "Pesa kwa simu",
+    "kind_bank": "Akaunti ya benki",
+    "network": "Mtandao",
+    "msisdn": "Namba ya pesa kwa simu",
+    "bankName": "Benki",
+    "accountNumber": "Namba ya akaunti",
+    "accountName": "Jina la akaunti",
+    "accountNameHint": "Jina lililosajiliwa kwenye namba au akaunti.",
+    "save": "Hifadhi"
+  },
+  "adminPayouts": {
+    "filter": "Hali ya malipo",
+    "empty": "Hakuna malipo yenye hali hii.",
+    "owner": "Simu ya mmiliki",
+    "destination": "Tuma kwa",
+    "noDestination": "Bado hakuna njia ya kupokea malipo",
+    "created": "Yameundwa",
+    "reference": "Kumbukumbu ya uhamisho",
+    "referenceHint": "Kumbukumbu ya M-Pesa au benki ya uhamisho uliofanya.",
+    "failure": "Sababu ya kushindikana",
+    "bookings": "Booking",
+    "markPaid": "Weka kuwa yamelipwa",
+    "confirmPaid": "Thibitisha yamelipwa",
+    "retry": "Jaribu tena"
   }
 }

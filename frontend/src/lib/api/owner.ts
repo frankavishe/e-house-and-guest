@@ -9,6 +9,11 @@ export type OwnerListingPage = Schemas["Page_OwnerListingOut_"];
 export type Calendar = Schemas["Calendar"];
 export type VerificationPage = Schemas["Page_VerificationItem_"];
 export type AdminListingPage = Schemas["Page_AdminListingItem_"];
+export type Earnings = Schemas["Earnings"];
+export type PayoutPage = Schemas["Page_PayoutOut_"];
+export type AdminPayoutPage = Schemas["Page_AdminPayoutOut_"];
+export type PayoutMethod = Schemas["PayoutMethodOut"];
+export type PayoutStatus = Schemas["PayoutOut"]["status"];
 
 export async function getOwnerProfile(): Promise<OwnerProfile | null> {
   const api = await serverApi();
@@ -51,5 +56,36 @@ export async function getVerificationQueue(page: number): Promise<VerificationPa
 export async function getListingQueue(page: number): Promise<AdminListingPage | null> {
   const api = await serverApi();
   const { data } = await api.GET("/api/v1/admin/listings", { params: { query: { page } } });
+  return data ?? null;
+}
+
+export async function getEarnings(from?: string, to?: string): Promise<Earnings | null> {
+  const api = await serverApi();
+  const { data } = await api.GET("/api/v1/owner/earnings", {
+    params: { query: { from: from || undefined, to: to || undefined } },
+  });
+  return data ?? null;
+}
+
+export async function getOwnerPayouts(page: number): Promise<PayoutPage | null> {
+  const api = await serverApi();
+  const { data } = await api.GET("/api/v1/owner/payouts", { params: { query: { page } } });
+  return data ?? null;
+}
+
+export async function getPayoutMethods(): Promise<PayoutMethod[] | null> {
+  const api = await serverApi();
+  const { data } = await api.GET("/api/v1/owner-profile/payout-methods");
+  return data ?? null;
+}
+
+export async function getAdminPayouts(
+  status: PayoutStatus | undefined,
+  page: number,
+): Promise<AdminPayoutPage | null> {
+  const api = await serverApi();
+  const { data } = await api.GET("/api/v1/admin/payouts", {
+    params: { query: { status, page } },
+  });
   return data ?? null;
 }

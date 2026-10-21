@@ -851,6 +851,108 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/owner/earnings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Owner Earnings
+         * @description Gross, commission and net per booking and in total; `from`/`to` (inclusive) filter
+         *     on the booking's start date in EAT (US4-AS1).
+         */
+        get: operations["owner_earnings_api_v1_owner_earnings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/payouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Owner Payouts
+         * @description Newest first, with the bookings each payout covers.
+         */
+        get: operations["owner_payouts_api_v1_owner_payouts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/payouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Admin Payouts
+         * @description Oldest first. `pending` with the manual provider is the to-send queue (R7).
+         */
+        get: operations["admin_payouts_api_v1_admin_payouts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/payouts/{payout_id}/mark-paid": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mark Payout Paid
+         * @description Record a payout sent outside the platform with its transfer reference; the owner
+         *     gets an SMS and the ledger records the payout.
+         */
+        post: operations["mark_payout_paid_api_v1_admin_payouts__payout_id__mark_paid_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/payouts/{payout_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Retry Payout
+         * @description `failed → pending`; the worker sends it again to the owner's current default method.
+         */
+        post: operations["retry_payout_api_v1_admin_payouts__payout_id__retry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notifications": {
         parameters: {
             query?: never;
@@ -905,6 +1007,40 @@ export interface components {
                     [key: string]: unknown;
                 };
             } | null;
+        };
+        /** AdminPayoutOut */
+        AdminPayoutOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Amount Tzs */
+            amount_tzs: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "processing" | "paid" | "failed";
+            /** Provider */
+            provider: string | null;
+            /** Provider Ref */
+            provider_ref: string | null;
+            /** Failure Reason */
+            failure_reason: string | null;
+            destination: components["schemas"]["PayoutMethodOut"] | null;
+            /** Paid At */
+            paid_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Items */
+            items: components["schemas"]["PayoutItemOut"][];
+            owner: components["schemas"]["PayoutOwner"];
+            /** Attempts */
+            attempts: number;
         };
         /** AttributeOut */
         AttributeOut: {
@@ -1290,6 +1426,62 @@ export interface components {
             /** Url */
             url: string;
         };
+        /**
+         * EarningItem
+         * @description One booking. `upcoming`: not yet payable (not completed, or completed < 24 h ago);
+         *     `available`: waiting for the next payout run; otherwise its payout's status.
+         */
+        EarningItem: {
+            /**
+             * Booking Id
+             * Format: uuid
+             */
+            booking_id: string;
+            /** Booking Code */
+            booking_code: string;
+            /**
+             * Listing Id
+             * Format: uuid
+             */
+            listing_id: string;
+            /** Listing Title */
+            listing_title: string;
+            period: components["schemas"]["PeriodOut"];
+            /** Completed At */
+            completed_at: string | null;
+            /** Gross Tzs */
+            gross_tzs: number;
+            /** Commission Tzs */
+            commission_tzs: number;
+            /** Net Tzs */
+            net_tzs: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "upcoming" | "available" | "pending" | "processing" | "paid" | "failed";
+            /** Payout Id */
+            payout_id: string | null;
+        };
+        /** Earnings */
+        Earnings: {
+            totals: components["schemas"]["EarningsTotals"];
+            /** Items */
+            items: components["schemas"]["EarningItem"][];
+        };
+        /** EarningsTotals */
+        EarningsTotals: {
+            /** Gross Tzs */
+            gross_tzs: number;
+            /** Commission Tzs */
+            commission_tzs: number;
+            /** Net Tzs */
+            net_tzs: number;
+            /** Paid Out Tzs */
+            paid_out_tzs: number;
+            /** Pending Tzs */
+            pending_tzs: number;
+        };
         /** EventOut */
         EventOut: {
             /** From Status */
@@ -1570,6 +1762,11 @@ export interface components {
             region: string;
             /** District */
             district: string;
+        };
+        /** MarkPaid */
+        MarkPaid: {
+            /** Provider Ref */
+            provider_ref: string;
         };
         /**
          * MarkRead
@@ -1933,6 +2130,17 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** Page[AdminPayoutOut] */
+        Page_AdminPayoutOut_: {
+            /** Items */
+            items: components["schemas"]["AdminPayoutOut"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
         /** Page[BookingSummary] */
         Page_BookingSummary_: {
             /** Items */
@@ -1959,6 +2167,17 @@ export interface components {
         Page_OwnerListingOut_: {
             /** Items */
             items: components["schemas"]["OwnerListingOut"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
+        /** Page[PayoutOut] */
+        Page_PayoutOut_: {
+            /** Items */
+            items: components["schemas"]["PayoutOut"][];
             /** Page */
             page: number;
             /** Page Size */
@@ -2030,6 +2249,18 @@ export interface components {
             /** Confirmed At */
             confirmed_at: string | null;
         };
+        /** PayoutItemOut */
+        PayoutItemOut: {
+            /**
+             * Booking Id
+             * Format: uuid
+             */
+            booking_id: string;
+            /** Booking Code */
+            booking_code: string;
+            /** Amount Tzs */
+            amount_tzs: number;
+        };
         /** PayoutMethodIn */
         PayoutMethodIn: {
             /**
@@ -2077,6 +2308,49 @@ export interface components {
             account_number_masked: string | null;
             /** Is Default */
             is_default: boolean;
+        };
+        /** PayoutOut */
+        PayoutOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Amount Tzs */
+            amount_tzs: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "processing" | "paid" | "failed";
+            /** Provider */
+            provider: string | null;
+            /** Provider Ref */
+            provider_ref: string | null;
+            /** Failure Reason */
+            failure_reason: string | null;
+            destination: components["schemas"]["PayoutMethodOut"] | null;
+            /** Paid At */
+            paid_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Items */
+            items: components["schemas"]["PayoutItemOut"][];
+        };
+        /** PayoutOwner */
+        PayoutOwner: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Display Name */
+            display_name: string;
+            /** Phone */
+            phone: string;
         };
         /** PeriodOut */
         PeriodOut: {
@@ -5218,6 +5492,252 @@ export interface operations {
             };
             /** @description Unknown payment */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    owner_earnings_api_v1_owner_earnings_get: {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Earnings"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    owner_payouts_api_v1_owner_payouts_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_PayoutOut_"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    admin_payouts_api_v1_admin_payouts_get: {
+        parameters: {
+            query?: {
+                status?: ("pending" | "processing" | "paid" | "failed") | null;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminPayoutOut_"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    mark_payout_paid_api_v1_admin_payouts__payout_id__mark_paid_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                payout_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarkPaid"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPayoutOut"];
+                };
+            };
+            /** @description Unknown payout */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    retry_payout_api_v1_admin_payouts__payout_id__retry_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                payout_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPayoutOut"];
+                };
+            };
+            /** @description Unknown payout */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

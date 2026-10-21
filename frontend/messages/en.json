@@ -322,7 +322,8 @@
     "listings": "Listings",
     "calendar": "Calendar",
     "requests": "Requests",
-    "profile": "Profile"
+    "profile": "Profile",
+    "earnings": "Earnings"
   },
   "listingStatus": {
     "draft": "Draft",
@@ -491,6 +492,65 @@
     "approve": "Approve",
     "reject": "Reject",
     "suspend": "Suspend",
-    "unsuspend": "Lift suspension"
+    "unsuspend": "Lift suspension",
+    "payouts": "Payouts"
+  },
+  "payoutStatus": {
+    "upcoming": "Not yet payable",
+    "available": "Next payout",
+    "pending": "Payout pending",
+    "processing": "Sending",
+    "paid": "Paid",
+    "failed": "Payout failed"
+  },
+  "earnings": {
+    "title": "Earnings",
+    "from": "From",
+    "to": "To",
+    "apply": "Show",
+    "clear": "Clear dates",
+    "gross": "Gross",
+    "commission": "Commission",
+    "net": "Your earnings",
+    "paidOut": "Paid out",
+    "pending": "Still to pay",
+    "bookings": "Bookings",
+    "empty": "No paid bookings in this period yet.",
+    "schedule": "Earnings become payable 24 hours after a booking ends and are sent in the next daily payout.",
+    "payouts": "Payouts",
+    "noPayouts": "No payouts yet.",
+    "reference": "Reference: {ref}",
+    "failed": "This payout could not be sent. We will try again, or contact support.",
+    "failedNoMethod": "Add a payout method below so we can send this payout.",
+    "methods": "Payout method",
+    "noMethod": "Add where we should send your money before your first payout.",
+    "default": "Default",
+    "remove": "Remove",
+    "addMethod": "Add a payout method",
+    "kind": "Receive money by",
+    "kind_mobile_money": "Mobile money",
+    "kind_bank": "Bank account",
+    "network": "Network",
+    "msisdn": "Mobile money number",
+    "bankName": "Bank",
+    "accountNumber": "Account number",
+    "accountName": "Account name",
+    "accountNameHint": "The name registered on the number or account.",
+    "save": "Save"
+  },
+  "adminPayouts": {
+    "filter": "Payout status",
+    "empty": "No payouts with this status.",
+    "owner": "Owner phone",
+    "destination": "Send to",
+    "noDestination": "No payout method yet",
+    "created": "Created",
+    "reference": "Transfer reference",
+    "referenceHint": "The M-Pesa or bank reference of the transfer you made.",
+    "failure": "Failure",
+    "bookings": "Bookings",
+    "markPaid": "Mark as paid",
+    "confirmPaid": "Confirm paid",
+    "retry": "Retry"
   }
 }

@@ -21,12 +21,15 @@ export default async function AdminLayout({ children, params }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-      <nav aria-label={t("title")} className="flex gap-2">
-        <Link href="/admin/verifications" className="rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
+      <nav aria-label={t("title")} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+        <Link href="/admin/verifications" className="shrink-0 rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
           {t("verifications")}
         </Link>
-        <Link href="/admin/listings" className="rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
+        <Link href="/admin/listings" className="shrink-0 rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
           {t("listings")}
+        </Link>
+        <Link href="/admin/payouts" className="shrink-0 rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
+          {t("payouts")}
         </Link>
       </nav>
       {children}

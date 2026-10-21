@@ -26,6 +26,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.accounts.models import OwnerProfile, PayoutMethod, User
 from app.accounts.owner_service import payout_method_out
+from app.accounts.schemas import PayoutMethodOut
 from app.admin.moderation import audit
 from app.bookings.models import Booking, BookingStatus, InstallmentStatus, LeaseInstallment
 from app.bookings.schemas import PeriodOut
@@ -455,7 +456,7 @@ def payout_out(payout: Payout, items: list[PayoutItemOut]) -> PayoutOut:
         provider=payout.provider,
         provider_ref=payout.provider_ref,
         failure_reason=payout.failure_reason,
-        destination=payout.payout_method,
+        destination=PayoutMethodOut(**payout.payout_method) if payout.payout_method else None,
         paid_at=payout.paid_at,
         created_at=payout.created_at,
         items=items,
