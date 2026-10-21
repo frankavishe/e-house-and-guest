@@ -709,6 +709,163 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Admin Bookings
+         * @description Newest first; `q` matches the booking code or a party's phone number.
+         */
+        get: operations["list_admin_bookings_api_v1_admin_bookings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/bookings/{booking_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Admin Booking */
+        get: operations["get_admin_booking_api_v1_admin_bookings__booking_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/bookings/{booking_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel Admin Booking
+         * @description Cancel (also a running booking) with a full refund of what was paid.
+         */
+        post: operations["cancel_admin_booking_api_v1_admin_bookings__booking_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/bookings/{booking_id}/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refund Admin Booking
+         * @description A discretionary refund to the renter, from the owner's share or platform revenue.
+         */
+        post: operations["refund_admin_booking_api_v1_admin_bookings__booking_id__refund_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/refunds/{refund_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Retry Refund
+         * @description A failed refund goes back to `pending` and is sent again.
+         */
+        post: operations["retry_refund_api_v1_admin_refunds__refund_id__retry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/refunds/{refund_id}/mark-sent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mark Refund Sent
+         * @description The money was returned outside the platform; record the transfer reference.
+         */
+        post: operations["mark_refund_sent_api_v1_admin_refunds__refund_id__mark_sent_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/claims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Claims
+         * @description Oldest first, with presigned evidence links (5 min).
+         */
+        get: operations["list_claims_api_v1_admin_claims_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/claims/{claim_id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resolve Claim
+         * @description Decide the deposit: the award goes to the owner, the rest back to the renter.
+         */
+        post: operations["resolve_claim_api_v1_admin_claims__claim_id__resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/bookings": {
         parameters: {
             query?: never;
@@ -805,6 +962,87 @@ export interface paths {
         get: operations["get_receipt_api_v1_bookings__booking_id__receipt_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}/cancel-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Cancel Preview
+         * @description What cancelling now would refund under the booking's policy (owner: everything).
+         */
+        get: operations["cancel_preview_api_v1_bookings__booking_id__cancel_preview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel Booking
+         * @description → `cancelled`; the dates are released and the refund from the preview is queued.
+         */
+        post: operations["cancel_booking_api_v1_bookings__booking_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}/claims/evidence-upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Claim Evidence Upload
+         * @description A presigned PUT (JPEG, PNG or PDF, ≤ 10 MB) for a photo or document of a claim.
+         */
+        post: operations["claim_evidence_upload_api_v1_bookings__booking_id__claims_evidence_upload_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}/claims": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Open Claim
+         * @description Open a damage claim (owner) or dispute (either party) during the rental or within
+         *     48 h after it ends. The booking becomes `disputed` until an admin resolves it.
+         */
+        post: operations["open_claim_api_v1_bookings__booking_id__claims_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -994,6 +1232,100 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AdminBookingSummary */
+        AdminBookingSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Code */
+            code: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "requested" | "awaiting_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "disputed";
+            /**
+             * Listing Id
+             * Format: uuid
+             */
+            listing_id: string;
+            /** Listing Title */
+            listing_title: string;
+            period: components["schemas"]["PeriodOut"];
+            /** Total Tzs */
+            total_tzs: number;
+            renter: components["schemas"]["AdminParty"];
+            owner: components["schemas"]["AdminParty"];
+            /** Open Claim */
+            open_claim: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** AdminClaimOut */
+        AdminClaimOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Booking Id
+             * Format: uuid
+             */
+            booking_id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "damage" | "dispute";
+            /**
+             * Opened By
+             * @enum {string}
+             */
+            opened_by: "renter" | "owner" | "admin";
+            /** Description */
+            description: string;
+            /** Amount Claimed Tzs */
+            amount_claimed_tzs: number | null;
+            /** Evidence Keys */
+            evidence_keys: string[];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "resolved";
+            /** Resolution */
+            resolution: ("owner_awarded" | "renter_refunded" | "split") | null;
+            /** Amount Awarded Tzs */
+            amount_awarded_tzs: number | null;
+            /** Resolution Note */
+            resolution_note: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Resolved At */
+            resolved_at: string | null;
+            /** Booking Code */
+            booking_code: string;
+            /**
+             * Booking Status
+             * @enum {string}
+             */
+            booking_status: "requested" | "awaiting_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "disputed";
+            /** Deposit Tzs */
+            deposit_tzs: number;
+            renter: components["schemas"]["AdminParty"];
+            owner: components["schemas"]["AdminParty"];
+            /** Evidence */
+            evidence: components["schemas"]["DocumentLink"][];
+        };
         /**
          * AdminListingItem
          * @description A listing in the review queue; `diff` shows pending changes vs the live values.
@@ -1007,6 +1339,18 @@ export interface components {
                     [key: string]: unknown;
                 };
             } | null;
+        };
+        /** AdminParty */
+        AdminParty: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Phone */
+            phone: string;
         };
         /** AdminPayoutOut */
         AdminPayoutOut: {
@@ -1041,6 +1385,22 @@ export interface components {
             owner: components["schemas"]["PayoutOwner"];
             /** Attempts */
             attempts: number;
+        };
+        /**
+         * AdminRefundIn
+         * @description A discretionary refund, taken from the owner's share or from platform revenue.
+         */
+        AdminRefundIn: {
+            /** Amount Tzs */
+            amount_tzs: number;
+            /**
+             * Source
+             * @default platform
+             * @enum {string}
+             */
+            source: "owner" | "platform";
+            /** Reason */
+            reason: string;
         };
         /** AttributeOut */
         AttributeOut: {
@@ -1192,6 +1552,14 @@ export interface components {
             payments: components["schemas"]["PaymentOut"][];
             /** Installments */
             installments: components["schemas"]["InstallmentOut"][] | null;
+            /** Refunds */
+            refunds: components["schemas"]["RefundOut"][];
+            /** Claims */
+            claims: components["schemas"]["ClaimOut"][];
+            /** Cancelled By */
+            cancelled_by: ("renter" | "owner" | "admin" | "system") | null;
+            /** Cancel Reason */
+            cancel_reason: string | null;
             /**
              * Created At
              * Format: date-time
@@ -1292,6 +1660,43 @@ export interface components {
             /** Claim */
             claim: boolean;
         };
+        /** CancelBody */
+        CancelBody: {
+            /** Reason */
+            reason?: string | null;
+        };
+        /**
+         * CancelPreviewOut
+         * @description What cancelling now would refund (FR-026). `deadline`: when the refund next drops.
+         */
+        CancelPreviewOut: {
+            /**
+             * Policy
+             * @enum {string}
+             */
+            policy: "flexible" | "moderate" | "strict";
+            /**
+             * Cancelled By
+             * @enum {string}
+             */
+            cancelled_by: "renter" | "owner" | "admin";
+            /** Percent */
+            percent: number;
+            /** Paid Tzs */
+            paid_tzs: number;
+            /** Rental Refund Tzs */
+            rental_refund_tzs: number;
+            /** Delivery Refund Tzs */
+            delivery_refund_tzs: number;
+            /** Service Fee Refund Tzs */
+            service_fee_refund_tzs: number;
+            /** Deposit Refund Tzs */
+            deposit_refund_tzs: number;
+            /** Refund Tzs */
+            refund_tzs: number;
+            /** Deadline */
+            deadline: string | null;
+        };
         /** CategoryDetail */
         CategoryDetail: {
             /**
@@ -1353,6 +1758,74 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+        };
+        /**
+         * ClaimIn
+         * @description A damage claim (owner only, until 48 h after the end) or a dispute (either party).
+         *     `evidence_keys` come from `POST /bookings/{id}/claims/evidence-upload`.
+         */
+        ClaimIn: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "damage" | "dispute";
+            /** Description */
+            description: string;
+            /** Amount Claimed Tzs */
+            amount_claimed_tzs?: number | null;
+            /**
+             * Evidence Keys
+             * @default []
+             */
+            evidence_keys: string[];
+        };
+        /** ClaimOut */
+        ClaimOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Booking Id
+             * Format: uuid
+             */
+            booking_id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "damage" | "dispute";
+            /**
+             * Opened By
+             * @enum {string}
+             */
+            opened_by: "renter" | "owner" | "admin";
+            /** Description */
+            description: string;
+            /** Amount Claimed Tzs */
+            amount_claimed_tzs: number | null;
+            /** Evidence Keys */
+            evidence_keys: string[];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "resolved";
+            /** Resolution */
+            resolution: ("owner_awarded" | "renter_refunded" | "split") | null;
+            /** Amount Awarded Tzs */
+            amount_awarded_tzs: number | null;
+            /** Resolution Note */
+            resolution_note: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Resolved At */
+            resolved_at: string | null;
         };
         /**
          * Counterpart
@@ -1776,6 +2249,11 @@ export interface components {
             /** Ids */
             ids?: string[] | null;
         };
+        /** MarkRefundSentIn */
+        MarkRefundSentIn: {
+            /** Provider Ref */
+            provider_ref: string;
+        };
         /** MePatch */
         MePatch: {
             /** Name */
@@ -2119,6 +2597,28 @@ export interface components {
              */
             verification_status: "draft" | "pending" | "verified" | "rejected";
         };
+        /** Page[AdminBookingSummary] */
+        Page_AdminBookingSummary_: {
+            /** Items */
+            items: components["schemas"]["AdminBookingSummary"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
+        /** Page[AdminClaimOut] */
+        Page_AdminClaimOut_: {
+            /** Items */
+            items: components["schemas"]["AdminClaimOut"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
         /** Page[AdminListingItem] */
         Page_AdminListingItem_: {
             /** Items */
@@ -2260,6 +2760,11 @@ export interface components {
             booking_code: string;
             /** Amount Tzs */
             amount_tzs: number;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "earnings" | "claim_award";
         };
         /** PayoutMethodIn */
         PayoutMethodIn: {
@@ -2563,6 +3068,51 @@ export interface components {
             amount_tzs: number;
             /** Confirmed At */
             confirmed_at: string | null;
+        };
+        /** RefundOut */
+        RefundOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Amount Tzs */
+            amount_tzs: number;
+            /**
+             * Reason
+             * @enum {string}
+             */
+            reason: "cancellation" | "deposit_return" | "owner_cancel" | "admin" | "late_payment";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "sent" | "failed";
+            /** Provider Ref */
+            provider_ref: string | null;
+            /** Failure Reason */
+            failure_reason: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * ResolveClaimIn
+         * @description `amount_awarded_tzs` is the part of the deposit the owner receives: the whole deposit
+         *     when omitted for `owner_awarded`, 0 for `renter_refunded`, strictly between for `split`.
+         */
+        ResolveClaimIn: {
+            /**
+             * Resolution
+             * @enum {string}
+             */
+            resolution: "owner_awarded" | "renter_refunded" | "split";
+            /** Amount Awarded Tzs */
+            amount_awarded_tzs?: number | null;
+            /** Note */
+            note?: string | null;
         };
         /** ReviewOut */
         ReviewOut: {
@@ -5025,6 +5575,452 @@ export interface operations {
             };
         };
     };
+    list_admin_bookings_api_v1_admin_bookings_get: {
+        parameters: {
+            query?: {
+                status?: ("requested" | "awaiting_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "disputed") | null;
+                q?: string | null;
+                page?: number;
+                page_size?: number;
+            };
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminBookingSummary_"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_admin_booking_api_v1_admin_bookings__booking_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    cancel_admin_booking_api_v1_admin_bookings__booking_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CancelBody"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    refund_admin_booking_api_v1_admin_bookings__booking_id__refund_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminRefundIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RefundOut"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `REFUND_EXCEEDS_BALANCE` or `BOOKING_NOT_PAID` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    retry_refund_api_v1_admin_refunds__refund_id__retry_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                refund_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RefundOut"];
+                };
+            };
+            /** @description Unknown refund */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    mark_refund_sent_api_v1_admin_refunds__refund_id__mark_sent_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                refund_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarkRefundSentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RefundOut"];
+                };
+            };
+            /** @description Unknown refund */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_claims_api_v1_admin_claims_get: {
+        parameters: {
+            query?: {
+                status?: ("open" | "resolved") | null;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminClaimOut_"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    resolve_claim_api_v1_admin_claims__claim_id__resolve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                claim_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResolveClaimIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminClaimOut"];
+                };
+            };
+            /** @description Unknown claim */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION`: already resolved */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     list_bookings_api_v1_bookings_get: {
         parameters: {
             query?: {
@@ -5368,6 +6364,252 @@ export interface operations {
                 };
             };
             /** @description `BOOKING_NOT_PAID` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    cancel_preview_api_v1_bookings__booking_id__cancel_preview_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CancelPreviewOut"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION`: not cancellable by you in this status */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    cancel_booking_api_v1_bookings__booking_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CancelBody"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION`: not cancellable by you in this status */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    claim_evidence_upload_api_v1_bookings__booking_id__claims_evidence_upload_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UploadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadOut"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    open_claim_api_v1_bookings__booking_id__claims_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClaimIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClaimOut"];
+                };
+            };
+            /** @description Only the owner can claim damage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `CLAIM_OPEN` or `CLAIM_WINDOW_CLOSED` */
             409: {
                 headers: {
                     [name: string]: unknown;

@@ -276,7 +276,7 @@ on its own.
 - [x] T121 [US5] Implement cancel (renter/owner/admin), cancel preview, refund creation via `PaymentProvider.refund` + refund job + ledger, and the deposit-release job (48 h after end, skipped if a claim is open) in `backend/app/bookings/service.py`, `backend/app/payments/refunds.py` and `backend/app/bookings/jobs.py`
 - [x] T122 [US5] Implement claims (open within 48 h, evidence upload keys, admin resolve with ledger postings, booking `disputed` transitions) in `backend/app/bookings/claims.py` and endpoints in `backend/app/bookings/router.py` and `backend/app/admin/router.py`
 - [x] T123 [US5] Add cancellation/refund/claim notification templates to `backend/app/i18n/{sw,en}.json`
-- [ ] T124 [US5] Build cancel flow with refund preview and claim form on booking detail pages, and the admin claims screen, in `frontend/src/app/[locale]/book/[bookingId]/page.tsx` and `frontend/src/app/[locale]/admin/claims/page.tsx`, with sw/en strings
+- [x] T124 [US5] Build cancel flow with refund preview and claim form on booking detail pages, and the admin claims screen, in `frontend/src/app/[locale]/book/[bookingId]/page.tsx` and `frontend/src/app/[locale]/admin/claims/page.tsx`, with sw/en strings
 
 **Checkpoint**: Quickstart V13–V14 pass.
 

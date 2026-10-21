@@ -31,6 +31,9 @@ export default async function AdminLayout({ children, params }: Props) {
         <Link href="/admin/payouts" className="shrink-0 rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
           {t("payouts")}
         </Link>
+        <Link href="/admin/claims" className="shrink-0 rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
+          {t("claims")}
+        </Link>
       </nav>
       {children}
     </div>

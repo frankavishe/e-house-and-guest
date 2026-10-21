@@ -40,3 +40,17 @@ export async function listBookings(
   });
   return data ?? null;
 }
+
+export type AdminClaim = Schemas["AdminClaimOut"];
+export type ClaimStatus = AdminClaim["status"];
+
+export async function getAdminClaims(
+  status: ClaimStatus,
+  page: number,
+): Promise<Schemas["Page_AdminClaimOut_"] | null> {
+  const api = await serverApi();
+  const { data } = await api.GET("/api/v1/admin/claims", {
+    params: { query: { status, page } },
+  });
+  return data ?? null;
+}
