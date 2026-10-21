@@ -242,15 +242,15 @@ on its own.
 
 ### Tests for User Story 4 ⚠️ (write first, must fail)
 
-- [ ] T109 [P] [US4] Earnings and payout tests in `backend/tests/integration/test_payouts.py` covering US4 acceptance scenarios 1–2: earnings totals and per-booking items from the ledger; the daily payout job groups eligible bookings (completed ≥ 24 h, no open claim) once (`payout_items.booking_id` unique); disburse success → `paid` with reference + SMS + ledger `payout` entry; failure → `failed` and retry; manual mark-paid; payout initiated within 48 h of completion (SC-008)
-- [ ] T110 [P] [US4] Contract tests for `/owner/earnings`, `/owner/payouts`, `/admin/payouts*` in `backend/tests/contract/test_payouts_contract.py`
+- [x] T109 [P] [US4] Earnings and payout tests in `backend/tests/integration/test_payouts.py` covering US4 acceptance scenarios 1–2: earnings totals and per-booking items from the ledger; the daily payout job groups eligible bookings (completed ≥ 24 h, no open claim) once (`payout_items.booking_id` unique); disburse success → `paid` with reference + SMS + ledger `payout` entry; failure → `failed` and retry; manual mark-paid; payout initiated within 48 h of completion (SC-008)
+- [x] T110 [P] [US4] Contract tests for `/owner/earnings`, `/owner/payouts`, `/admin/payouts*` in `backend/tests/contract/test_payouts_contract.py`
 
 ### Implementation for User Story 4
 
-- [ ] T111 [US4] Create `payouts` and `payout_items` models + migration in `backend/app/payouts/models.py` and `backend/alembic/versions/0009_payouts.py`
-- [ ] T112 [P] [US4] Implement `MockPayoutProvider` in `backend/app/integrations/payments/mock.py` and `AzamPay` disbursement in `backend/app/integrations/payments/azampay.py` behind a feature flag (`AZAMPAY_DISBURSE_ENABLED`, default off until R7 is verified)
-- [ ] T113 [US4] Implement the payout service (eligibility query, batch creation, disburse, status polling, manual mark-paid, ledger posting, notifications) and the daily payout job in `backend/app/payouts/service.py` and `backend/app/payouts/jobs.py`
-- [ ] T114 [US4] Implement `GET /owner/earnings`, `GET /owner/payouts`, and admin `GET /admin/payouts`, `POST /admin/payouts/{id}/mark-paid|retry` in `backend/app/payouts/router.py`
+- [x] T111 [US4] Create `payouts` and `payout_items` models + migration in `backend/app/payouts/models.py` and `backend/alembic/versions/0009_payouts.py`
+- [x] T112 [P] [US4] Implement `MockPayoutProvider` in `backend/app/integrations/payments/mock.py` and `AzamPay` disbursement in `backend/app/integrations/payments/azampay.py` behind a feature flag (`AZAMPAY_DISBURSE_ENABLED`, default off until R7 is verified)
+- [x] T113 [US4] Implement the payout service (eligibility query, batch creation, disburse, status polling, manual mark-paid, ledger posting, notifications) and the daily payout job in `backend/app/payouts/service.py` and `backend/app/payouts/jobs.py`
+- [x] T114 [US4] Implement `GET /owner/earnings`, `GET /owner/payouts`, and admin `GET /admin/payouts`, `POST /admin/payouts/{id}/mark-paid|retry` in `backend/app/payouts/router.py`
 - [ ] T115 [US4] Build the owner earnings and payouts page and admin payouts screen in `frontend/src/app/[locale]/owner/earnings/page.tsx` and `frontend/src/app/[locale]/admin/payouts/page.tsx`, with sw/en strings
 
 **Checkpoint**: Quickstart V12 passes.

@@ -115,6 +115,14 @@
       "unsuspended": {
         "sms": "Your listing \"{title}\" is live again."
       }
+    },
+    "payout": {
+      "paid": {
+        "sms": "Your payout of {amount} has been sent. Reference: {ref}."
+      },
+      "failed": {
+        "sms": "We could not send your payout of {amount}. Check your payout method in your account."
+      }
     }
   }
 }

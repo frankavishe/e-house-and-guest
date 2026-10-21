@@ -16,6 +16,7 @@ import json
 import time
 import uuid
 from collections.abc import Mapping
+from datetime import UTC, datetime
 from typing import Any
 
 import httpx
@@ -28,6 +29,9 @@ from app.integrations.payments.base import (
     Network,
     PaymentState,
     PaymentStatus,
+    PayoutDestination,
+    PayoutResult,
+    PayoutStatus,
     ProviderUnavailable,
     RefundResult,
 )
@@ -165,3 +169,70 @@ class AzamPayProvider:
     ) -> RefundResult:
         # TODO(verify R6/R7): refunds go out as disbursements once confirmed (US4).
         return RefundResult(ok=False, failure_reason="manual_refund_required")
+
+    # --- PayoutProvider (R7), used only with AZAMPAY_DISBURSE_ENABLED ----------------------
+
+    async def disburse(
+        self, *, payout_id: uuid.UUID, amount_tzs: int, destination: PayoutDestination
+    ) -> PayoutResult:
+        # TODO(verify R7): request/response shape and whether bank destinations are
+        # supported, against the sandbox at developerdocs.azampay.co.tz.
+        settings = self._settings
+        if destination.kind == "mobile_money":
+            if destination.network is None or not destination.msisdn:
+                return PayoutResult(state="failed", failure_reason="invalid_destination")
+            bank_name, account = PROVIDERS[destination.network], destination.msisdn.lstrip("+")
+        else:
+            if not destination.bank_name or not destination.account_number:
+                return PayoutResult(state="failed", failure_reason="invalid_destination")
+            bank_name, account = destination.bank_name, destination.account_number
+        data = await self._request(
+            "POST",
+            f"{self._base_url}/azampay/disburse",
+            headers=await self._headers(),
+            json={
+                "source": {
+                    "countryCode": "TZ",
+                    "fullName": settings.azampay_disburse_source_name,
+                    "bankName": settings.azampay_disburse_source_bank,
+                    "accountNumber": settings.azampay_disburse_source_account,
+                    "currency": "TZS",
+                },
+                "destination": {
+                    "countryCode": "TZ",
+                    "fullName": destination.account_name,
+                    "bankName": bank_name,
+                    "accountNumber": account,
+                    "currency": "TZS",
+                },
+                "transferDetails": {
+                    "type": "disbursement",
+                    "amount": amount_tzs,
+                    "date": datetime.now(UTC).isoformat(),
+                },
+                "externalReferenceId": str(payout_id),
+                "remarks": f"Payout {payout_id}",
+            },
+        )
+        if not data.get("success"):
+            return PayoutResult(
+                state="failed", failure_reason=str(data.get("message") or "rejected")
+            )
+        # Accepted for processing; the status query decides paid or failed.
+        return PayoutResult(state="processing", provider_ref=str(data.get("data") or payout_id))
+
+    async def get_payout_status(self, *, payout_id: uuid.UUID, provider_ref: str) -> PayoutStatus:
+        # TODO(verify R7): endpoint and response shape of the disbursement status query.
+        data = await self._request(
+            "GET",
+            f"{self._base_url}/azampay/gettransactionstatus",
+            headers=await self._headers(),
+            params={"pgReferenceId": provider_ref, "bankName": ""},
+        )
+        payload = data.get("data") or data
+        state = _state(payload.get("transactionStatus") or payload.get("status"))
+        if state == "succeeded":
+            return PayoutStatus(state="paid")
+        if state == "failed":
+            return PayoutStatus(state="failed", failure_reason=payload.get("message"))
+        return PayoutStatus(state="processing")

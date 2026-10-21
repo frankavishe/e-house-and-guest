@@ -40,6 +40,7 @@ async def post(
     booking_id: uuid.UUID | None = None,
     payment_id: uuid.UUID | None = None,
     refund_id: uuid.UUID | None = None,
+    payout_id: uuid.UUID | None = None,
 ) -> uuid.UUID:
     """Write one balanced transaction; zero-amount lines are skipped."""
     if sum(line.amount_tzs for line in lines) != 0:
@@ -57,6 +58,7 @@ async def post(
                 booking_id=booking_id,
                 payment_id=payment_id,
                 refund_id=refund_id,
+                payout_id=payout_id,
             )
         )
     await session.flush()
@@ -151,6 +153,20 @@ async def post_deposit_release(
         ],
         booking_id=booking.id,
         refund_id=refund_id,
+    )
+
+
+async def post_payout(
+    session: AsyncSession, owner_profile_id: uuid.UUID, amount_tzs: int, payout_id: uuid.UUID
+) -> uuid.UUID:
+    """Money out to the owner: settles their payable (US4)."""
+    return await post(
+        session,
+        [
+            Line(owner_account(owner_profile_id), amount_tzs, EntryType.PAYOUT),
+            Line(PROVIDER_CASH, -amount_tzs, EntryType.PAYOUT),
+        ],
+        payout_id=payout_id,
     )
 
 

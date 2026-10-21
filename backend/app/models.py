@@ -11,3 +11,4 @@ from app.ledger import models as ledger  # noqa: F401
 from app.listings import models as listings  # noqa: F401
 from app.notifications import models as notifications  # noqa: F401
 from app.payments import models as payments  # noqa: F401
+from app.payouts import models as payouts  # noqa: F401

@@ -25,6 +25,7 @@ from app.listings.router import router as listings_router
 from app.notifications.router import router as notifications_router
 from app.payments.router import router as payments_router
 from app.payments.router import webhook_router
+from app.payouts.router import router as payouts_router
 from app.search.router import router as search_router
 
 API_PREFIX = "/api/v1"
@@ -59,6 +60,7 @@ def api_router() -> APIRouter:
     router.include_router(admin_router)
     router.include_router(bookings_router)
     router.include_router(payments_router)
+    router.include_router(payouts_router)
     router.include_router(notifications_router)
     router.include_router(webhook_router)
     if get_settings().is_dev_like:

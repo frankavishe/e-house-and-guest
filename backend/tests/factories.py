@@ -448,6 +448,52 @@ async def make_admin(db: AsyncSession) -> User:
     return await make_user(db, name="Admin Person", is_admin=True)
 
 
+# --- earnings & payouts (US4) -------------------------------------------------------------
+
+
+async def make_payout_method(
+    db: AsyncSession,
+    owner: OwnerProfile,
+    *,
+    msisdn: str = "+255700000001",
+    network: str = "mpesa",
+    is_default: bool = True,
+) -> Any:
+    """A default mobile money payout method (the mock payout outcome follows `msisdn`)."""
+    from app.accounts.models import PaymentNetwork, PayoutKind, PayoutMethod
+
+    method = PayoutMethod(
+        owner_profile_id=owner.id,
+        kind=PayoutKind.MOBILE_MONEY,
+        network=PaymentNetwork(network),
+        msisdn=msisdn,
+        account_name=owner.display_name,
+        is_default=is_default,
+    )
+    db.add(method)
+    await db.flush()
+    return method
+
+
+async def make_completed_booking(
+    db: AsyncSession,
+    b: Bookable,
+    start: datetime,
+    end: datetime,
+    *,
+    completed_at: datetime,
+    total: int = 200_000,
+) -> Any:
+    """A completed booking whose payment is in the ledger (rental `total`, 10% commission)."""
+    from app.ledger import service as ledger
+
+    booking = await make_booking(db, b, start, end, status="completed", total=total)
+    booking.completed_at = completed_at
+    await ledger.post_booking_payment(db, booking, payment_id=None)
+    await db.flush()
+    return booking
+
+
 def jpeg_with_exif(size: tuple[int, int] = (1600, 1200)) -> bytes:
     """A JPEG carrying EXIF GPS data, to check the image job strips it."""
     import io

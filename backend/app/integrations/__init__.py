@@ -63,8 +63,21 @@ def get_payment_provider() -> PaymentProvider:
 
 
 def get_payout_provider() -> PayoutProvider:
+    global _payouts
     if _payouts is None:
-        raise NotImplementedError("payout providers arrive in US4 (T112)")
+        settings = get_settings()
+        if settings.payout_provider == "mock":
+            from app.integrations.payments.mock import MockPayoutProvider
+
+            _payouts = MockPayoutProvider()
+        elif settings.payout_provider == "azampay" and settings.azampay_disburse_enabled:
+            from app.integrations.payments.azampay import AzamPayProvider
+
+            _payouts = AzamPayProvider(settings)
+        else:
+            from app.integrations.payments.manual import ManualPayoutProvider
+
+            _payouts = ManualPayoutProvider()
     return _payouts
 
 

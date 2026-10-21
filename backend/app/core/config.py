@@ -32,7 +32,8 @@ class Settings(BaseSettings):
 
     # Payments (R6, R7)
     payment_provider: Literal["mock", "azampay"] = "mock"
-    payout_provider: Literal["manual", "azampay"] = "manual"
+    # `manual`: payouts wait for an admin to send the money and mark them paid (R7 fallback).
+    payout_provider: Literal["manual", "mock", "azampay"] = "manual"
     payment_callback_secret: str = "dev-only-change-me-callback-secret"
     public_api_base_url: str = "http://localhost:8000"
     # Where the mock provider posts its callbacks; inside docker the API reaches itself on
@@ -44,6 +45,12 @@ class Settings(BaseSettings):
     azampay_client_secret: str = ""
     azampay_api_key: str = ""
     azampay_callback_password: str = ""
+    # AzamPay disbursement stays off until R7 is verified against the sandbox; until then
+    # PAYOUT_PROVIDER=azampay falls back to manual payouts.
+    azampay_disburse_enabled: bool = False
+    azampay_disburse_source_name: str = ""
+    azampay_disburse_source_bank: str = ""
+    azampay_disburse_source_account: str = ""
 
     # SMS (R11)
     sms_provider: Literal["console", "beem"] = "console"

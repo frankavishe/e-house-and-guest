@@ -115,6 +115,14 @@
       "unsuspended": {
         "sms": "Tangazo lako \"{title}\" liko hewani tena."
       }
+    },
+    "payout": {
+      "paid": {
+        "sms": "Malipo yako ya {amount} yametumwa. Kumbukumbu: {ref}."
+      },
+      "failed": {
+        "sms": "Hatukuweza kutuma malipo yako ya {amount}. Hakikisha njia yako ya kupokea malipo ni sahihi kwenye akaunti yako."
+      }
     }
   }
 }

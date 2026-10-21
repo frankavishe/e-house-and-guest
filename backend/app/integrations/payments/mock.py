@@ -32,6 +32,10 @@ from app.integrations.payments.base import (
     Network,
     PaymentState,
     PaymentStatus,
+    PayoutDestination,
+    PayoutResult,
+    PayoutState,
+    PayoutStatus,
     RefundResult,
 )
 
@@ -160,3 +164,31 @@ class MockPaymentProvider:
                 await client.post(self._callback_url, content=cb.body, headers=cb.headers)
         except httpx.HTTPError:
             log.warning("mock callback delivery failed", exc_info=True)
+
+
+class MockPayoutProvider:
+    """Mock disbursement (US4). Mobile money outcome by the destination's last four digits:
+    `…0002` fails (`invalid_account`), `…0003` is accepted as `processing` and settles as
+    `paid` on the next status query; anything else, and every bank payout, is paid at once."""
+
+    name = "mock"
+
+    def __init__(self) -> None:
+        self._forced: dict[uuid.UUID, PayoutStatus] = {}
+
+    async def disburse(
+        self, *, payout_id: uuid.UUID, amount_tzs: int, destination: PayoutDestination
+    ) -> PayoutResult:
+        ref = f"MOCKPAY-{secrets.token_hex(6).upper()}"
+        code = (destination.msisdn or "")[-4:] if destination.kind == "mobile_money" else ""
+        if code == "0002":
+            return PayoutResult(state="failed", failure_reason="invalid_account")
+        if code == "0003":
+            return PayoutResult(state="processing", provider_ref=ref)
+        return PayoutResult(state="paid", provider_ref=ref)
+
+    async def get_payout_status(self, *, payout_id: uuid.UUID, provider_ref: str) -> PayoutStatus:
+        return self._forced.get(payout_id, PayoutStatus(state="paid"))
+
+    def force(self, payout_id: uuid.UUID, state: PayoutState, reason: str | None = None) -> None:
+        self._forced[payout_id] = PayoutStatus(state=state, failure_reason=reason)

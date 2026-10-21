@@ -143,3 +143,15 @@ def mock_payments() -> Iterator[object]:
     override_payments(provider)
     yield provider
     override_payments(None)
+
+
+@pytest.fixture(autouse=True)
+def mock_payouts() -> Iterator[object]:
+    """A fresh mock payout provider per test (outcome by the destination number)."""
+    from app.integrations import override_payouts
+    from app.integrations.payments.mock import MockPayoutProvider
+
+    provider = MockPayoutProvider()
+    override_payouts(provider)
+    yield provider
+    override_payouts(None)
