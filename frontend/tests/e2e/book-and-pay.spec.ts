@@ -1,28 +1,8 @@
 // US2 smoke (quickstart V4): a visitor picks dates on an instant-book listing, signs in with
 // an SMS code, books, pays with the mock provider and lands on the receipt; the booking then
 // shows in "My bookings". Runs at 360×640 against the compose stack (console SMS, mock pay).
-import { execSync } from "node:child_process";
 import { expect, test } from "@playwright/test";
-
-const NAV = { timeout: 30_000 };
-
-function isoDaysFromNow(days: number): string {
-  return new Date(Date.now() + days * 86_400_000).toISOString().slice(0, 10);
-}
-
-/** The latest sign-in code sent to `phone`, read from the API's console SMS log. */
-async function otpFor(phone: string): Promise<string> {
-  for (let i = 0; i < 20; i++) {
-    const logs = execSync("docker compose logs api --since 2m", {
-      cwd: "..",
-      encoding: "utf8",
-    });
-    const codes = [...logs.matchAll(new RegExp(`\\[sms → \\${phone}\\] \\D*(\\d{6})`, "g"))];
-    if (codes.length) return codes[codes.length - 1][1];
-    await new Promise((r) => setTimeout(r, 500));
-  }
-  throw new Error(`no OTP for ${phone} in the api logs`);
-}
+import { NAV, isoDaysFromNow, otpFor } from "./helpers";
 
 test("book an instant listing and pay with mobile money", async ({ page, request }) => {
   test.setTimeout(120_000);
@@ -71,6 +51,8 @@ test("book an instant listing and pay with mobile money", async ({ page, request
   await expect(page.locator("body")).not.toHaveCSS("overflow-x", "scroll");
 
   await page.getByRole("link", { name: "Asha Mteja" }).click();
+  await expect(page).toHaveURL(/\/en\/account$/, NAV);
+  await page.getByRole("link", { name: /My bookings/ }).click();
   await expect(page).toHaveURL(/\/en\/account\/bookings$/, NAV);
   await expect(page.getByText(code)).toBeVisible();
 });

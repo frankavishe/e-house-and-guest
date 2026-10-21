@@ -238,6 +238,477 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/owner-profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Owner Profile */
+        get: operations["get_owner_profile_api_v1_owner_profile_get"];
+        put?: never;
+        /** Create Owner Profile */
+        post: operations["create_owner_profile_api_v1_owner_profile_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Patch Owner Profile
+         * @description Editable while `draft` or `rejected`.
+         */
+        patch: operations["patch_owner_profile_api_v1_owner_profile_patch"];
+        trace?: never;
+    };
+    "/api/v1/owner-profile/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Presign Owner Document
+         * @description Presigned PUT into the private bucket; attach the key with `PATCH {documents}`.
+         */
+        post: operations["presign_owner_document_api_v1_owner_profile_documents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner-profile/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Owner Profile
+         * @description `draft | rejected → pending` (an admin then verifies or rejects).
+         */
+        post: operations["submit_owner_profile_api_v1_owner_profile_submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner-profile/payout-methods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Payout Methods */
+        get: operations["list_payout_methods_api_v1_owner_profile_payout_methods_get"];
+        put?: never;
+        /** Add Payout Method */
+        post: operations["add_payout_method_api_v1_owner_profile_payout_methods_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner-profile/payout-methods/{method_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Payout Method */
+        delete: operations["delete_payout_method_api_v1_owner_profile_payout_methods__method_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/listings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Own Listings
+         * @description Own listings in any status except deleted, most recently edited first.
+         */
+        get: operations["list_own_listings_api_v1_owner_listings_get"];
+        put?: never;
+        /**
+         * Create Listing
+         * @description A draft in a leaf category; fill it in with PATCH, prices, photos, then submit.
+         */
+        post: operations["create_listing_api_v1_owner_listings_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/listings/{listing_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Own Listing */
+        get: operations["get_own_listing_api_v1_owner_listings__listing_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Listing */
+        delete: operations["delete_listing_api_v1_owner_listings__listing_id__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Listing */
+        patch: operations["patch_listing_api_v1_owner_listings__listing_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/owner/listings/{listing_id}/prices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Replace Prices
+         * @description Replace the whole price list; applies immediately, even on a live listing.
+         */
+        put: operations["replace_prices_api_v1_owner_listings__listing_id__prices_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/listings/{listing_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Submit Listing
+         * @description `draft | rejected → pending_review` (needs a photo and a base price).
+         */
+        post: operations["submit_listing_api_v1_owner_listings__listing_id__submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/listings/{listing_id}/pause": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Pause Listing */
+        post: operations["pause_listing_api_v1_owner_listings__listing_id__pause_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/listings/{listing_id}/resume": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resume Listing */
+        post: operations["resume_listing_api_v1_owner_listings__listing_id__resume_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/listings/{listing_id}/photos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Presign Photo
+         * @description Presigned PUT for a new photo; then PATCH it with `confirmed: true`.
+         */
+        post: operations["presign_photo_api_v1_owner_listings__listing_id__photos_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/listings/{listing_id}/photos/{photo_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Photo */
+        delete: operations["delete_photo_api_v1_owner_listings__listing_id__photos__photo_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Photo
+         * @description Confirm the upload (queues image processing), reorder, or set alt texts.
+         */
+        patch: operations["patch_photo_api_v1_owner_listings__listing_id__photos__photo_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/owner/listings/{listing_id}/blocks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Blocks
+         * @description Current and future owner blocks.
+         */
+        get: operations["list_blocks_api_v1_owner_listings__listing_id__blocks_get"];
+        put?: never;
+        /** Add Block */
+        post: operations["add_block_api_v1_owner_listings__listing_id__blocks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/listings/{listing_id}/blocks/{block_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Block */
+        delete: operations["delete_block_api_v1_owner_listings__listing_id__blocks__block_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/owner/calendar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Owner Calendar
+         * @description Bookings and owner blocks across own listings for the EAT days `from..to`.
+         */
+        get: operations["owner_calendar_api_v1_owner_calendar_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/owner-verifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Owner Verifications
+         * @description Oldest first, with presigned document links (5 min).
+         */
+        get: operations["owner_verifications_api_v1_admin_owner_verifications_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/owner-verifications/{profile_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Approve Owner
+         * @description `pending → verified`; the owner's approved listings become searchable.
+         */
+        post: operations["approve_owner_api_v1_admin_owner_verifications__profile_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/owner-verifications/{profile_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reject Owner
+         * @description `pending → rejected` with a reason the owner sees (US7-AS2).
+         */
+        post: operations["reject_owner_api_v1_admin_owner_verifications__profile_id__reject_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/listings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Admin Listings
+         * @description Without `status`: the review queue (new listings and pending changes), oldest first,
+         *     each with a diff of the pending changes against the live values.
+         */
+        get: operations["admin_listings_api_v1_admin_listings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/listings/{listing_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Approve Listing
+         * @description A new listing goes live, or pending changes are applied.
+         */
+        post: operations["approve_listing_api_v1_admin_listings__listing_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/listings/{listing_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reject Listing
+         * @description A new listing is rejected, or pending changes are dropped (the listing stays live).
+         */
+        post: operations["reject_listing_api_v1_admin_listings__listing_id__reject_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/listings/{listing_id}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Suspend Listing
+         * @description Hide a live listing; future confirmed bookings are kept for admin follow-up.
+         */
+        post: operations["suspend_listing_api_v1_admin_listings__listing_id__suspend_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/listings/{listing_id}/unsuspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Unsuspend Listing */
+        post: operations["unsuspend_listing_api_v1_admin_listings__listing_id__unsuspend_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/bookings": {
         parameters: {
             query?: never;
@@ -421,6 +892,20 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * AdminListingItem
+         * @description A listing in the review queue; `diff` shows pending changes vs the live values.
+         */
+        AdminListingItem: {
+            listing: components["schemas"]["OwnerListingOut"];
+            owner: components["schemas"]["OwnerBrief"];
+            /** Diff */
+            diff: {
+                [key: string]: {
+                    [key: string]: unknown;
+                };
+            } | null;
+        };
         /** AttributeOut */
         AttributeOut: {
             /** Key */
@@ -462,6 +947,45 @@ export interface components {
             unit: "hour" | "night" | "day" | "week" | "month" | "item_day";
             /** Amount Tzs */
             amount_tzs: number;
+        };
+        /**
+         * BlockIn
+         * @description Inclusive EAT days `start_date..end_date`, or `start`/`end` times for time slots.
+         */
+        BlockIn: {
+            /** Start Date */
+            start_date?: string | null;
+            /** End Date */
+            end_date?: string | null;
+            /** Start */
+            start?: string | null;
+            /** End */
+            end?: string | null;
+            /**
+             * Quantity
+             * @default 1
+             */
+            quantity: number;
+            /** Note */
+            note?: string | null;
+        };
+        /** BlockOut */
+        BlockOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Listing Id
+             * Format: uuid
+             */
+            listing_id: string;
+            period: components["schemas"]["SpanOut"];
+            /** Quantity */
+            quantity: number;
+            /** Note */
+            note: string | null;
         };
         /** BookingCreate */
         BookingCreate: {
@@ -572,6 +1096,47 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /** Calendar */
+        Calendar: {
+            /** Listings */
+            listings: components["schemas"]["CalendarListing"][];
+            /** Bookings */
+            bookings: components["schemas"]["CalendarBooking"][];
+            /** Blocks */
+            blocks: components["schemas"]["BlockOut"][];
+        };
+        /** CalendarBooking */
+        CalendarBooking: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Code */
+            code: string;
+            /**
+             * Listing Id
+             * Format: uuid
+             */
+            listing_id: string;
+            /** Status */
+            status: string;
+            period: components["schemas"]["SpanOut"];
+            /** Quantity */
+            quantity: number;
+            /** Renter Name */
+            renter_name: string;
+        };
+        /** CalendarListing */
+        CalendarListing: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Title */
+            title: string;
         };
         /**
          * Can
@@ -715,6 +1280,16 @@ export interface components {
             /** Url 1280 */
             url_1280: string;
         };
+        /**
+         * DocumentLink
+         * @description `url` is a presigned GET valid for 5 minutes.
+         */
+        DocumentLink: {
+            /** Key */
+            key: string;
+            /** Url */
+            url: string;
+        };
         /** EventOut */
         EventOut: {
             /** From Status */
@@ -821,6 +1396,14 @@ export interface components {
             /** Total Tzs */
             total_tzs: number | null;
         };
+        /** ListingCreate */
+        ListingCreate: {
+            /**
+             * Category Id
+             * Format: uuid
+             */
+            category_id: string;
+        };
         /** ListingDetail */
         ListingDetail: {
             /**
@@ -893,6 +1476,61 @@ export interface components {
             owner: components["schemas"]["OwnerOut"];
             /** Reviews */
             reviews: components["schemas"]["ReviewOut"][];
+        };
+        /**
+         * ListingPatch
+         * @description Any subset of the listing's fields. On a live listing, material fields (texts,
+         *     attributes, location) wait in `pending_changes` for review; the rest apply at once.
+         */
+        ListingPatch: {
+            /** Category Id */
+            category_id?: string | null;
+            /** Title Sw */
+            title_sw?: string | null;
+            /** Title En */
+            title_en?: string | null;
+            /** Description Sw */
+            description_sw?: string | null;
+            /** Description En */
+            description_en?: string | null;
+            /** Attributes */
+            attributes?: {
+                [key: string]: unknown;
+            } | null;
+            /** Region Id */
+            region_id?: number | null;
+            /** District Id */
+            district_id?: number | null;
+            /** Ward Id */
+            ward_id?: number | null;
+            /** Address Hint */
+            address_hint?: string | null;
+            /** Lat */
+            lat?: number | null;
+            /** Lng */
+            lng?: number | null;
+            /** Stock */
+            stock?: number | null;
+            /** Deposit Tzs */
+            deposit_tzs?: number | null;
+            /** Delivery */
+            delivery?: ("none" | "optional" | "required") | null;
+            /** Delivery Fee Tzs */
+            delivery_fee_tzs?: number | null;
+            /** Delivery Area */
+            delivery_area?: number[] | null;
+            /** Min Duration */
+            min_duration?: number | null;
+            /** Max Duration */
+            max_duration?: number | null;
+            /** Slot Config */
+            slot_config?: {
+                [key: string]: unknown;
+            } | null;
+            /** Cancellation Policy */
+            cancellation_policy?: ("flexible" | "moderate" | "strict") | null;
+            /** Instant Book */
+            instant_book?: boolean | null;
         };
         /** LocalizedText */
         LocalizedText: {
@@ -1018,6 +1656,143 @@ export interface components {
             /** Is New */
             is_new: boolean;
         };
+        /** OwnerBrief */
+        OwnerBrief: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Display Name */
+            display_name: string;
+            /**
+             * Verification Status
+             * @enum {string}
+             */
+            verification_status: "draft" | "pending" | "verified" | "rejected";
+        };
+        /** OwnerCategory */
+        OwnerCategory: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /**
+             * Booking Mode
+             * @enum {string}
+             */
+            booking_mode: "DATE_RANGE" | "TIME_SLOT" | "LEASE" | "QUANTITY";
+            /** Price Units */
+            price_units: string[];
+            /** Default Unit */
+            default_unit: string;
+        };
+        /**
+         * OwnerListingOut
+         * @description The owner's editable view: raw bilingual fields, live values and pending changes.
+         */
+        OwnerListingOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "pending_review" | "active" | "paused" | "rejected" | "suspended" | "deleted";
+            /**
+             * Review State
+             * @enum {string}
+             */
+            review_state: "none" | "pending" | "rejected";
+            /** Rejection Reason */
+            rejection_reason: string | null;
+            /** Pending Changes */
+            pending_changes: {
+                [key: string]: unknown;
+            } | null;
+            category: components["schemas"]["OwnerCategory"];
+            /** Title Sw */
+            title_sw: string | null;
+            /** Title En */
+            title_en: string | null;
+            /** Description Sw */
+            description_sw: string | null;
+            /** Description En */
+            description_en: string | null;
+            /** Attributes */
+            attributes: {
+                [key: string]: unknown;
+            };
+            /** Region Id */
+            region_id: number | null;
+            /** District Id */
+            district_id: number | null;
+            /** Ward Id */
+            ward_id: number | null;
+            /** Address Hint */
+            address_hint: string | null;
+            /** Lat */
+            lat: number | null;
+            /** Lng */
+            lng: number | null;
+            /** Stock */
+            stock: number;
+            /** Deposit Tzs */
+            deposit_tzs: number;
+            /**
+             * Delivery
+             * @enum {string}
+             */
+            delivery: "none" | "optional" | "required";
+            /** Delivery Fee Tzs */
+            delivery_fee_tzs: number | null;
+            /** Delivery Area */
+            delivery_area: number[] | null;
+            /** Min Duration */
+            min_duration: number | null;
+            /** Max Duration */
+            max_duration: number | null;
+            /** Slot Config */
+            slot_config: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Cancellation Policy
+             * @enum {string}
+             */
+            cancellation_policy: "flexible" | "moderate" | "strict";
+            /** Instant Book */
+            instant_book: boolean;
+            /** Prices */
+            prices: components["schemas"]["PriceRow"][];
+            /** Photos */
+            photos: components["schemas"]["OwnerPhoto"][];
+            /** Base Price Tzs */
+            base_price_tzs: number | null;
+            /**
+             * Missing
+             * @description What still blocks submitting for review
+             */
+            missing: string[];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
         /** OwnerOut */
         OwnerOut: {
             /** Display Name */
@@ -1028,6 +1803,104 @@ export interface components {
             rating_count: number;
             /** Verified */
             verified: boolean;
+        };
+        /**
+         * OwnerPhoto
+         * @description `pending` photos were added to a live listing and wait for review.
+         */
+        OwnerPhoto: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Url 320 */
+            url_320: string;
+            /** Url 640 */
+            url_640: string;
+            /** Url 1280 */
+            url_1280: string;
+            /** Position */
+            position: number;
+            /** Alt Sw */
+            alt_sw: string | null;
+            /** Alt En */
+            alt_en: string | null;
+            /** Pending */
+            pending: boolean;
+        };
+        /**
+         * OwnerProfileCreate
+         * @description Individuals give their NIDA number; businesses their BRELA number and TIN.
+         */
+        OwnerProfileCreate: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "individual" | "business";
+            /** Display Name */
+            display_name: string;
+            /** Nida Number */
+            nida_number?: string | null;
+            /** Business Name */
+            business_name?: string | null;
+            /** Brela Reg No */
+            brela_reg_no?: string | null;
+            /** Tin */
+            tin?: string | null;
+        };
+        /**
+         * OwnerProfileOut
+         * @description The owner's own view: identity numbers are masked (`****0123`), never returned.
+         */
+        OwnerProfileOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "individual" | "business";
+            /** Display Name */
+            display_name: string;
+            /** Business Name */
+            business_name: string | null;
+            /** Brela Reg No */
+            brela_reg_no: string | null;
+            /** Nida Number Masked */
+            nida_number_masked: string | null;
+            /** Tin Masked */
+            tin_masked: string | null;
+            /** Documents */
+            documents: string[];
+            /**
+             * Verification Status
+             * @enum {string}
+             */
+            verification_status: "draft" | "pending" | "verified" | "rejected";
+            /** Rejection Reason */
+            rejection_reason: string | null;
+            /** Verified At */
+            verified_at: string | null;
+        };
+        /** OwnerProfilePatch */
+        OwnerProfilePatch: {
+            /** Display Name */
+            display_name?: string | null;
+            /** Nida Number */
+            nida_number?: string | null;
+            /** Business Name */
+            business_name?: string | null;
+            /** Brela Reg No */
+            brela_reg_no?: string | null;
+            /** Tin */
+            tin?: string | null;
+            /** Documents */
+            documents?: string[] | null;
         };
         /** OwnerProfileSummary */
         OwnerProfileSummary: {
@@ -1049,6 +1922,17 @@ export interface components {
              */
             verification_status: "draft" | "pending" | "verified" | "rejected";
         };
+        /** Page[AdminListingItem] */
+        Page_AdminListingItem_: {
+            /** Items */
+            items: components["schemas"]["AdminListingItem"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
         /** Page[BookingSummary] */
         Page_BookingSummary_: {
             /** Items */
@@ -1064,6 +1948,28 @@ export interface components {
         Page_ListingCard_: {
             /** Items */
             items: components["schemas"]["ListingCard"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
+        /** Page[OwnerListingOut] */
+        Page_OwnerListingOut_: {
+            /** Items */
+            items: components["schemas"]["OwnerListingOut"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
+        /** Page[VerificationItem] */
+        Page_VerificationItem_: {
+            /** Items */
+            items: components["schemas"]["VerificationItem"][];
             /** Page */
             page: number;
             /** Page Size */
@@ -1124,6 +2030,54 @@ export interface components {
             /** Confirmed At */
             confirmed_at: string | null;
         };
+        /** PayoutMethodIn */
+        PayoutMethodIn: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "mobile_money" | "bank";
+            /** Network */
+            network?: ("mpesa" | "mixx" | "airtel" | "halopesa" | "azampesa") | null;
+            /** Msisdn */
+            msisdn?: string | null;
+            /** Bank Name */
+            bank_name?: string | null;
+            /** Account Name */
+            account_name: string;
+            /** Account Number */
+            account_number?: string | null;
+            /**
+             * Is Default
+             * @default false
+             */
+            is_default: boolean;
+        };
+        /** PayoutMethodOut */
+        PayoutMethodOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "mobile_money" | "bank";
+            /** Network */
+            network: ("mpesa" | "mixx" | "airtel" | "halopesa" | "azampesa") | null;
+            /** Msisdn */
+            msisdn: string | null;
+            /** Bank Name */
+            bank_name: string | null;
+            /** Account Name */
+            account_name: string;
+            /** Account Number Masked */
+            account_number_masked: string | null;
+            /** Is Default */
+            is_default: boolean;
+        };
         /** PeriodOut */
         PeriodOut: {
             /**
@@ -1165,6 +2119,38 @@ export interface components {
             /** Alt */
             alt: string;
         };
+        /** PhotoPatch */
+        PhotoPatch: {
+            /** Confirmed */
+            confirmed?: boolean | null;
+            /** Position */
+            position?: number | null;
+            /** Alt Sw */
+            alt_sw?: string | null;
+            /** Alt En */
+            alt_en?: string | null;
+        };
+        /** PhotoUploadIn */
+        PhotoUploadIn: {
+            /** Content Type */
+            content_type: string;
+        };
+        /** PhotoUploadOut */
+        PhotoUploadOut: {
+            /**
+             * Photo Id
+             * Format: uuid
+             */
+            photo_id: string;
+            /** Upload Url */
+            upload_url: string;
+            /** Storage Key */
+            storage_key: string;
+            /** Headers */
+            headers: {
+                [key: string]: string;
+            };
+        };
         /** PriceOut */
         PriceOut: {
             /**
@@ -1178,6 +2164,20 @@ export interface components {
             season_start: string | null;
             /** Season End */
             season_end: string | null;
+        };
+        /** PriceRow */
+        PriceRow: {
+            /**
+             * Unit
+             * @enum {string}
+             */
+            unit: "hour" | "night" | "day" | "week" | "month" | "item_day";
+            /** Amount Tzs */
+            amount_tzs: number;
+            /** Season Start */
+            season_start?: string | null;
+            /** Season End */
+            season_end?: string | null;
         };
         /** Quote */
         Quote: {
@@ -1237,6 +2237,11 @@ export interface components {
             delivery: boolean;
             /** Delivery District Id */
             delivery_district_id?: number | null;
+        };
+        /** Reason */
+        Reason: {
+            /** Reason */
+            reason: string;
         };
         /** Receipt */
         Receipt: {
@@ -1312,10 +2317,42 @@ export interface components {
              */
             end: string;
         };
+        /** SpanOut */
+        SpanOut: {
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+        };
         /** UnreadCount */
         UnreadCount: {
             /** Unread Count */
             unread_count: number;
+        };
+        /** UploadIn */
+        UploadIn: {
+            /** Content Type */
+            content_type: string;
+        };
+        /**
+         * UploadOut
+         * @description Presigned PUT: send the file to `upload_url` with `headers`.
+         */
+        UploadOut: {
+            /** Upload Url */
+            upload_url: string;
+            /** Storage Key */
+            storage_key: string;
+            /** Headers */
+            headers: {
+                [key: string]: string;
+            };
         };
         /** UserOut */
         UserOut: {
@@ -1338,6 +2375,74 @@ export interface components {
             /** Roles */
             roles: ("renter" | "owner" | "admin")[];
             owner_profile: components["schemas"]["OwnerProfileSummary"] | null;
+        };
+        /** VerificationDecision */
+        VerificationDecision: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Verification Status
+             * @enum {string}
+             */
+            verification_status: "draft" | "pending" | "verified" | "rejected";
+            /** Rejection Reason */
+            rejection_reason: string | null;
+        };
+        /**
+         * VerificationItem
+         * @description Admins see the full identity numbers to check them against NIDA/BRELA/TRA.
+         */
+        VerificationItem: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            user: components["schemas"]["VerificationUser"];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "individual" | "business";
+            /** Display Name */
+            display_name: string;
+            /** Business Name */
+            business_name: string | null;
+            /** Brela Reg No */
+            brela_reg_no: string | null;
+            /** Nida Number */
+            nida_number: string | null;
+            /** Tin */
+            tin: string | null;
+            /** Documents */
+            documents: components["schemas"]["DocumentLink"][];
+            /**
+             * Verification Status
+             * @enum {string}
+             */
+            verification_status: "draft" | "pending" | "verified" | "rejected";
+            /** Rejection Reason */
+            rejection_reason: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** VerificationUser */
+        VerificationUser: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string | null;
+            /** Phone */
+            phone: string;
         };
         /** ErrorBody */
         ErrorBody: {
@@ -1976,6 +3081,1648 @@ export interface operations {
                 };
             };
             /** @description `SLOT_TAKEN`, `INSUFFICIENT_STOCK` or `PRICE_UNAVAILABLE` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_owner_profile_api_v1_owner_profile_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerProfileOut"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_owner_profile_api_v1_owner_profile_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OwnerProfileCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerProfileOut"];
+                };
+            };
+            /** @description The user already has an owner profile */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    patch_owner_profile_api_v1_owner_profile_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OwnerProfilePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerProfileOut"];
+                };
+            };
+            /** @description `INVALID_TRANSITION`: not editable in this state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    presign_owner_document_api_v1_owner_profile_documents_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UploadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadOut"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    submit_owner_profile_api_v1_owner_profile_submit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerProfileOut"];
+                };
+            };
+            /** @description `INVALID_TRANSITION`: not editable in this state */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_payout_methods_api_v1_owner_profile_payout_methods_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayoutMethodOut"][];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    add_payout_method_api_v1_owner_profile_payout_methods_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PayoutMethodIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayoutMethodOut"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_payout_method_api_v1_owner_profile_payout_methods__method_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                method_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_own_listings_api_v1_owner_listings_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_OwnerListingOut_"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_listing_api_v1_owner_listings_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ListingCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_own_listing_api_v1_owner_listings__listing_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_listing_api_v1_owner_listings__listing_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `LISTING_HAS_BOOKINGS` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    patch_listing_api_v1_owner_listings__listing_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ListingPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    replace_prices_api_v1_owner_listings__listing_id__prices_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PriceRow"][];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    submit_listing_api_v1_owner_listings__listing_id__submit_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    pause_listing_api_v1_owner_listings__listing_id__pause_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    resume_listing_api_v1_owner_listings__listing_id__resume_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    presign_photo_api_v1_owner_listings__listing_id__photos_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PhotoUploadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoUploadOut"];
+                };
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_photo_api_v1_owner_listings__listing_id__photos__photo_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                listing_id: string;
+                photo_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    patch_photo_api_v1_owner_listings__listing_id__photos__photo_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                listing_id: string;
+                photo_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PhotoPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerPhoto"];
+                };
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_blocks_api_v1_owner_listings__listing_id__blocks_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockOut"][];
+                };
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    add_block_api_v1_owner_listings__listing_id__blocks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BlockIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockOut"];
+                };
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `SLOT_TAKEN` or `INSUFFICIENT_STOCK` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_block_api_v1_owner_listings__listing_id__blocks__block_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                listing_id: string;
+                block_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not one of your listings */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    owner_calendar_api_v1_owner_calendar_get: {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Calendar"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    owner_verifications_api_v1_admin_owner_verifications_get: {
+        parameters: {
+            query?: {
+                status?: "draft" | "pending" | "verified" | "rejected";
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_VerificationItem_"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    approve_owner_api_v1_admin_owner_verifications__profile_id__approve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profile_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerificationDecision"];
+                };
+            };
+            /** @description Unknown profile or listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    reject_owner_api_v1_admin_owner_verifications__profile_id__reject_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                profile_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Reason"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerificationDecision"];
+                };
+            };
+            /** @description Unknown profile or listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    admin_listings_api_v1_admin_listings_get: {
+        parameters: {
+            query?: {
+                status?: ("draft" | "pending_review" | "active" | "paused" | "rejected" | "suspended") | null;
+                page?: number;
+                page_size?: number;
+            };
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminListingItem_"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    approve_listing_api_v1_admin_listings__listing_id__approve_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Unknown profile or listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    reject_listing_api_v1_admin_listings__listing_id__reject_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Reason"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Unknown profile or listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    suspend_listing_api_v1_admin_listings__listing_id__suspend_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Reason"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Unknown profile or listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    unsuspend_listing_api_v1_admin_listings__listing_id__unsuspend_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OwnerListingOut"];
+                };
+            };
+            /** @description Unknown profile or listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` */
             409: {
                 headers: {
                     [name: string]: unknown;

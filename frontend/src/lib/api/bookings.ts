@@ -32,10 +32,11 @@ export async function listBookings(
   role: "renter" | "owner",
   page: number,
   pageSize: number,
+  status?: BookingStatus,
 ): Promise<BookingPage | null> {
   const api = await serverApi();
   const { data } = await api.GET("/api/v1/bookings", {
-    params: { query: { role, page, page_size: pageSize } },
+    params: { query: { role, page, page_size: pageSize, status } },
   });
   return data ?? null;
 }

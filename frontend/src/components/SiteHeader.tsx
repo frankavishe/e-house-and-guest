@@ -21,8 +21,8 @@ export async function SiteHeader() {
             <>
               <NotificationBell />
               <Link
-                href="/account/bookings"
-                title={t("nav.myBookings")}
+                href="/account"
+                title={t("nav.account")}
                 className="max-w-32 truncate rounded-md px-2 py-1 text-sm text-ink hover:bg-canvas"
               >
                 {user.name ?? t("nav.account")}

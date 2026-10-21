@@ -223,12 +223,12 @@ on its own.
 - [x] T100 [US3] Implement owner listing endpoints and owner blocks/calendar endpoints in `backend/app/listings/owner_router.py`
 - [x] T101 [US3] Implement minimal admin moderation: verification queue approve/reject with reason + notification (US7-AS2) and listing review (new listings and `pending_changes`) approve/reject/suspend with diff, all writing `admin_audit_log`, in `backend/app/admin/moderation.py`, `backend/app/admin/router.py` and `backend/alembic/versions/0008_admin_audit.py`
 - [x] T102 [US3] Add owner/moderation notification templates to `backend/app/i18n/{sw,en}.json`
-- [ ] T103 [US3] Build owner onboarding pages (become an owner, individual/business form, document upload, status) in `frontend/src/app/[locale]/owner/onboarding/page.tsx`
-- [ ] T104 [P] [US3] Build `AttributeForm` rendered from a category `attribute_schema` (all field types, groups, sw/en labels, client-side hints mirroring server rules) in `frontend/src/components/AttributeForm.tsx`
-- [ ] T105 [US3] Build the step-by-step listing wizard (category → details via AttributeForm → location pickers + map pin → photos uploader → prices/seasons/deposit/delivery → policies/instant book/slot config → review & submit) in `frontend/src/app/[locale]/owner/listings/[id]/edit/page.tsx` and `frontend/src/app/[locale]/owner/listings/page.tsx`
-- [ ] T106 [US3] Build the owner calendar (bookings + blocks, add/remove blocks incl. quantity) and requests inbox with accept/decline in `frontend/src/app/[locale]/owner/calendar/page.tsx` and `frontend/src/app/[locale]/owner/requests/page.tsx`
-- [ ] T107 [US3] Build the admin verification and listing review screens in `frontend/src/app/[locale]/admin/verifications/page.tsx` and `frontend/src/app/[locale]/admin/listings/page.tsx` (role-guarded admin layout in `frontend/src/app/[locale]/admin/layout.tsx`)
-- [ ] T108 [US3] Add US3 strings to `frontend/messages/{sw,en}.json` and a Playwright smoke test (owner creates a warehouse listing, admin approves, it appears in search) in `frontend/tests/e2e/owner-listing.spec.ts`
+- [x] T103 [US3] Build owner onboarding pages (become an owner, individual/business form, document upload, status) in `frontend/src/app/[locale]/owner/onboarding/page.tsx`
+- [x] T104 [P] [US3] Build `AttributeForm` rendered from a category `attribute_schema` (all field types, groups, sw/en labels, client-side hints mirroring server rules) in `frontend/src/components/AttributeForm.tsx`
+- [x] T105 [US3] Build the step-by-step listing wizard (category → details via AttributeForm → location pickers + map pin → photos uploader → prices/seasons/deposit/delivery → policies/instant book/slot config → review & submit) in `frontend/src/app/[locale]/owner/listings/[id]/edit/page.tsx` and `frontend/src/app/[locale]/owner/listings/page.tsx`
+- [x] T106 [US3] Build the owner calendar (bookings + blocks, add/remove blocks incl. quantity) and requests inbox with accept/decline in `frontend/src/app/[locale]/owner/calendar/page.tsx` and `frontend/src/app/[locale]/owner/requests/page.tsx`
+- [x] T107 [US3] Build the admin verification and listing review screens in `frontend/src/app/[locale]/admin/verifications/page.tsx` and `frontend/src/app/[locale]/admin/listings/page.tsx` (role-guarded admin layout in `frontend/src/app/[locale]/admin/layout.tsx`)
+- [x] T108 [US3] Add US3 strings to `frontend/messages/{sw,en}.json` and a Playwright smoke test (owner creates a warehouse listing, admin approves, it appears in search) in `frontend/tests/e2e/owner-listing.spec.ts`
 
 **Checkpoint**: Quickstart V10–V11 pass, and V9 works end-to-end through the owner requests inbox, with self-service supply.
 
