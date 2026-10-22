@@ -103,11 +103,17 @@ export function NotificationBell() {
                     <p className="text-xs text-muted">{formatDateTime(n.created_at, locale)}</p>
                   </>
                 );
+                const href =
+                  n.event === "message.received"
+                    ? "/account/messages"
+                    : n.booking_id
+                      ? `/book/${n.booking_id}`
+                      : null;
                 return (
                   <li key={n.id} className="py-2">
-                    {n.booking_id ? (
+                    {href ? (
                       <Link
-                        href={`/book/${n.booking_id}`}
+                        href={href}
                         onClick={() => setOpen(false)}
                         className="block hover:underline"
                       >

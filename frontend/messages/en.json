@@ -17,7 +17,8 @@
     "language": "Language",
     "switchTo": "Kiswahili",
     "switchToLabel": "Switch language to Swahili",
-    "myBookings": "My bookings"
+    "myBookings": "My bookings",
+    "messages": "Messages"
   },
   "home": {
     "title": "Rent rooms, cars, halls and equipment",
@@ -278,7 +279,9 @@
     "requests": "Booking requests",
     "requestsHint": "Accept or decline requests within 24 hours.",
     "admin": "Admin",
-    "adminHint": "Verify owners and review listings."
+    "adminHint": "Verify owners and review listings.",
+    "messages": "Messages",
+    "messagesHint": "Your conversations with owners and renters"
   },
   "owner": {
     "title": "Owner account",
@@ -627,5 +630,47 @@
     "awardHint": "The rest of the deposit is refunded to the renter.",
     "note": "Note (optional)",
     "resolve": "Resolve claim"
+  },
+  "messages": {
+    "title": "Messages",
+    "empty": "No messages yet. Ask an owner a question from a listing page.",
+    "noMessages": "No messages yet.",
+    "messageOwner": "Message the owner",
+    "askOwner": "Your question for the owner",
+    "askPlaceholder": "E.g. Is it available on these dates?",
+    "maskNote": "Phone numbers are hidden until a booking is confirmed. Keep payments in the app.",
+    "send": "Send",
+    "cancel": "Cancel",
+    "reply": "Reply",
+    "placeholder": "Write a message…",
+    "masked": "number hidden",
+    "read": "read",
+    "aboutListing": "About: {title}",
+    "yourListing": "Your listing: {title}",
+    "aboutLabel": "About:",
+    "yourListingLabel": "Your listing:",
+    "viewBooking": "View booking"
+  },
+  "reviews": {
+    "title": "Leave a review",
+    "promptListing": "How was the rental? Your review helps other renters.",
+    "promptRenter": "How was this renter? Your review helps other owners.",
+    "rating": "Rating",
+    "stars": "{count, plural, one {# star} other {# stars}}",
+    "comment": "Comment (optional)",
+    "submit": "Submit review",
+    "asOwner": "Owner {stars}",
+    "asRenter": "Renter {stars}",
+    "aboutOwner": "as owner",
+    "aboutRenter": "as renter",
+    "allOwnerReviews": "See all {count} reviews of this owner"
+  },
+  "report": {
+    "listing": "Report this listing",
+    "user": "Report this user",
+    "reason": "What is wrong?",
+    "submit": "Send report",
+    "cancel": "Cancel",
+    "thanks": "Thank you. Our team will review your report."
   }
 }

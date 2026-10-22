@@ -290,16 +290,16 @@ on its own.
 
 ### Tests for User Story 6 ⚠️ (write first, must fail)
 
-- [ ] T125 [P] [US6] Messaging tests in `backend/tests/integration/test_messaging.py`: renter starts/reuses a conversation, only participants can read, phone-like numbers masked until a confirmed booking exists, unread counts, polling with `after`
-- [ ] T126 [P] [US6] Review and report tests in `backend/tests/integration/test_reviews.py` covering US6 acceptance scenarios 1–2: review only for completed bookings by a party, one per author per booking, averages update on listing/owner/renter; abuse report creation
-- [ ] T127 [P] [US6] Contract tests for `/conversations*`, `/bookings/{id}/reviews`, `/listings/{id}/reviews`, `/users/{id}/reviews`, `/reports`, `/notifications*` in `backend/tests/contract/test_social_contract.py`
+- [x] T125 [P] [US6] Messaging tests in `backend/tests/integration/test_messaging.py`: renter starts/reuses a conversation, only participants can read, phone-like numbers masked until a confirmed booking exists, unread counts, polling with `after`
+- [x] T126 [P] [US6] Review and report tests in `backend/tests/integration/test_reviews.py` covering US6 acceptance scenarios 1–2: review only for completed bookings by a party, one per author per booking, averages update on listing/owner/renter; abuse report creation
+- [x] T127 [P] [US6] Contract tests for `/conversations*`, `/bookings/{id}/reviews`, `/listings/{id}/reviews`, `/users/{id}/reviews`, `/reports`, `/notifications*` in `backend/tests/contract/test_social_contract.py`
 
 ### Implementation for User Story 6
 
-- [ ] T128 [US6] Create `conversations`, `messages`, `reviews`, `abuse_reports` models + migration in `backend/app/messaging/models.py`, `backend/app/reviews/models.py` and `backend/alembic/versions/0011_social.py`
-- [ ] T129 [US6] Implement the messaging service + router with phone masking in `backend/app/messaging/service.py` and `backend/app/messaging/router.py`
-- [ ] T130 [US6] Implement the reviews service + router (eligibility, rating aggregates) and abuse reports in `backend/app/reviews/service.py` and `backend/app/reviews/router.py`
-- [ ] T131 [US6] Build inbox/conversation pages (10 s polling), "Message owner" on listing page, review form on completed bookings, reviews on listing and profile pages, and report button in `frontend/src/app/[locale]/account/messages/` and `frontend/src/components/`, with sw/en strings
+- [x] T128 [US6] Create `conversations`, `messages`, `reviews`, `abuse_reports` models + migration in `backend/app/messaging/models.py`, `backend/app/reviews/models.py` and `backend/alembic/versions/0011_social.py`
+- [x] T129 [US6] Implement the messaging service + router with phone masking in `backend/app/messaging/service.py` and `backend/app/messaging/router.py`
+- [x] T130 [US6] Implement the reviews service + router (eligibility, rating aggregates) and abuse reports in `backend/app/reviews/service.py` and `backend/app/reviews/router.py`
+- [x] T131 [US6] Build inbox/conversation pages (10 s polling), "Message owner" on listing page, review form on completed bookings, reviews on listing and profile pages, and report button in `frontend/src/app/[locale]/account/messages/` and `frontend/src/components/`, with sw/en strings
 
 **Checkpoint**: Quickstart V15 passes.
 

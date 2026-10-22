@@ -24,12 +24,14 @@ export default async function AccountPage({ params }: Props) {
   const t = await getTranslations("account");
   const links: [string, string, string][] = [
     ["/account/bookings", t("bookings"), t("bookingsHint")],
+    ["/account/messages", t("messages"), t("messagesHint")],
     user.owner_profile
       ? ["/owner/listings", t("ownerArea"), t("ownerAreaHint")]
       : ["/owner/onboarding", t("becomeOwner"), t("becomeOwnerHint")],
   ];
   if (user.owner_profile) links.push(["/owner/requests", t("requests"), t("requestsHint")]);
-  if (user.roles.includes("admin")) links.push(["/admin/verifications", t("admin"), t("adminHint")]);
+  if (user.roles.includes("admin"))
+    links.push(["/admin/verifications", t("admin"), t("adminHint")]);
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-4">

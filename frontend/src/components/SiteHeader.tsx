@@ -19,6 +19,27 @@ export async function SiteHeader() {
           </Suspense>
           {user ? (
             <>
+              <Link
+                href="/account/messages"
+                title={t("nav.messages")}
+                aria-label={t("nav.messages")}
+                className="rounded-md p-2 text-ink hover:bg-canvas"
+              >
+                <svg
+                  aria-hidden
+                  viewBox="0 0 24 24"
+                  className="size-5"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                  />
+                </svg>
+              </Link>
               <NotificationBell />
               <Link
                 href="/account"

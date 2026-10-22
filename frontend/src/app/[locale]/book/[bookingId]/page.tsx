@@ -8,6 +8,7 @@ import { CancelBooking } from "@/components/CancelBooking";
 import { Checkout } from "@/components/Checkout";
 import { ClaimForm } from "@/components/ClaimForm";
 import { RefundActions } from "@/components/RefundActions";
+import { ReviewForm } from "@/components/ReviewForm";
 import { buttonClasses } from "@/components/ui/Button";
 import { Link, redirect } from "@/i18n/navigation";
 import { getBooking } from "@/lib/api/bookings";
@@ -253,6 +254,15 @@ export default async function BookingPage({ params }: Props) {
           )}
         </p>
       </Section>
+
+      {booking.can.review && booking.role !== "admin" && (
+        <Section title={t("reviews.title")}>
+          <ReviewForm
+            bookingId={booking.id}
+            about={booking.role === "renter" ? "listing" : "renter"}
+          />
+        </Section>
+      )}
 
       {booking.can.cancel && booking.role !== "admin" && (
         <Section title={t("cancel.title")}>

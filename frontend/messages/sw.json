@@ -17,7 +17,8 @@
     "language": "Lugha",
     "switchTo": "English",
     "switchToLabel": "Badili lugha kuwa Kiingereza",
-    "myBookings": "Uhifadhi wangu"
+    "myBookings": "Uhifadhi wangu",
+    "messages": "Ujumbe"
   },
   "home": {
     "title": "Kodisha vyumba, magari, kumbi na vifaa",
@@ -278,7 +279,9 @@
     "requests": "Maombi ya uhifadhi",
     "requestsHint": "Kubali au kataa maombi ndani ya saa 24.",
     "admin": "Usimamizi",
-    "adminHint": "Thibitisha wamiliki na kagua matangazo."
+    "adminHint": "Thibitisha wamiliki na kagua matangazo.",
+    "messages": "Ujumbe",
+    "messagesHint": "Mazungumzo yako na wamiliki na wapangaji"
   },
   "owner": {
     "title": "Akaunti ya mmiliki",
@@ -627,5 +630,47 @@
     "awardHint": "Kilichobaki cha amana kinarejeshwa kwa mkodishaji.",
     "note": "Maelezo (si lazima)",
     "resolve": "Amua dai"
+  },
+  "messages": {
+    "title": "Ujumbe",
+    "empty": "Bado hakuna ujumbe. Muulize mmiliki swali kutoka ukurasa wa tangazo.",
+    "noMessages": "Bado hakuna ujumbe.",
+    "messageOwner": "Mtumie mmiliki ujumbe",
+    "askOwner": "Swali lako kwa mmiliki",
+    "askPlaceholder": "Mf. Inapatikana tarehe hizi?",
+    "maskNote": "Namba za simu zimefichwa hadi uhifadhi uthibitishwe. Lipa ndani ya programu.",
+    "send": "Tuma",
+    "cancel": "Ghairi",
+    "reply": "Jibu",
+    "placeholder": "Andika ujumbe…",
+    "masked": "namba imefichwa",
+    "read": "imesomwa",
+    "aboutListing": "Kuhusu: {title}",
+    "yourListing": "Tangazo lako: {title}",
+    "aboutLabel": "Kuhusu:",
+    "yourListingLabel": "Tangazo lako:",
+    "viewBooking": "Angalia uhifadhi"
+  },
+  "reviews": {
+    "title": "Toa tathmini",
+    "promptListing": "Ukodishaji ulikuwaje? Tathmini yako inawasaidia wapangaji wengine.",
+    "promptRenter": "Mpangaji huyu alikuwaje? Tathmini yako inawasaidia wamiliki wengine.",
+    "rating": "Ukadiriaji",
+    "stars": "nyota {count}",
+    "comment": "Maoni (si lazima)",
+    "submit": "Tuma tathmini",
+    "asOwner": "Mmiliki {stars}",
+    "asRenter": "Mpangaji {stars}",
+    "aboutOwner": "kama mmiliki",
+    "aboutRenter": "kama mpangaji",
+    "allOwnerReviews": "Angalia tathmini zote {count} za mmiliki huyu"
+  },
+  "report": {
+    "listing": "Ripoti tangazo hili",
+    "user": "Ripoti mtumiaji huyu",
+    "reason": "Kuna tatizo gani?",
+    "submit": "Tuma ripoti",
+    "cancel": "Ghairi",
+    "thanks": "Asante. Timu yetu itapitia ripoti yako."
   }
 }

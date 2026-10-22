@@ -6,7 +6,10 @@ import type { ReactNode } from "react";
 import { BookingWidget } from "@/components/BookingWidget";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { addDays, ListingAvailability } from "@/components/ListingAvailability";
+import { MessageOwnerButton } from "@/components/MessageOwnerButton";
 import { Money } from "@/components/Money";
+import { ReportButton } from "@/components/ReportButton";
+import { ReviewList } from "@/components/ReviewList";
 import { ShareLinks } from "@/components/ShareLinks";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
@@ -80,6 +83,7 @@ export default async function ListingPage({ params, searchParams }: Props) {
   const host = head.get("x-forwarded-host") ?? head.get("host") ?? "localhost";
   const proto = head.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const shareUrl = `${proto}://${host}/${locale}/l/${listing.id}`;
+  const isOwner = user?.id === listing.owner.user_id;
 
   const groups = new Map<string, typeof listing.attributes>();
   for (const attr of listing.attributes) {
@@ -150,19 +154,25 @@ export default async function ListingPage({ params, searchParams }: Props) {
         initial={Object.fromEntries(pairs)}
       />
 
-      <div className="flex items-center gap-3 rounded-xl border border-line bg-surface p-3">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 font-semibold text-brand-800">
-          {listing.owner.display_name.slice(0, 1).toUpperCase()}
-        </div>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-ink">{listing.owner.display_name}</p>
-          <p className="text-xs text-muted">
-            {listing.owner.verified ? t("listing.verifiedOwner") : t("listing.owner")}
-            {listing.owner.rating_count > 0 && listing.owner.rating_avg != null
-              ? ` · ★ ${listing.owner.rating_avg.toFixed(1)}`
-              : ""}
-          </p>
-        </div>
+      <div className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-3">
+        <Link
+          href={`/u/${listing.owner.user_id}`}
+          className="flex items-center gap-3 hover:underline"
+        >
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 font-semibold text-brand-800">
+            {listing.owner.display_name.slice(0, 1).toUpperCase()}
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-ink">{listing.owner.display_name}</p>
+            <p className="text-xs text-muted">
+              {listing.owner.verified ? t("listing.verifiedOwner") : t("listing.owner")}
+              {listing.owner.rating_count > 0 && listing.owner.rating_avg != null
+                ? ` · ★ ${listing.owner.rating_avg.toFixed(1)}`
+                : ""}
+            </p>
+          </div>
+        </Link>
+        {!isOwner && <MessageOwnerButton listingId={listing.id} signedIn={Boolean(user)} />}
       </div>
 
       <p className="whitespace-pre-line text-ink">{listing.description}</p>
@@ -264,16 +274,15 @@ export default async function ListingPage({ params, searchParams }: Props) {
         {listing.reviews.length === 0 ? (
           <p className="text-sm text-muted">{t("listing.noReviews")}</p>
         ) : (
-          <ul className="flex flex-col gap-3">
-            {listing.reviews.map((r) => (
-              <li key={`${r.author}-${r.created_at}`} className="text-sm">
-                <p className="font-medium">
-                  {"★".repeat(r.rating)} · {r.author}
-                </p>
-                {r.comment && <p className="text-ink">{r.comment}</p>}
-              </li>
-            ))}
-          </ul>
+          <ReviewList reviews={listing.reviews} locale={locale} />
+        )}
+        {listing.rating_count > listing.reviews.length && (
+          <Link
+            href={`/u/${listing.owner.user_id}`}
+            className="text-sm text-brand-700 hover:underline"
+          >
+            {t("reviews.allOwnerReviews", { count: listing.owner.rating_count })}
+          </Link>
         )}
       </Section>
 
@@ -288,6 +297,15 @@ export default async function ListingPage({ params, searchParams }: Props) {
           }}
         />
       </Section>
+
+      {!isOwner && (
+        <ReportButton
+          targetKind="listing"
+          targetId={listing.id}
+          signedIn={Boolean(user)}
+          returnTo={`/l/${listing.id}`}
+        />
+      )}
     </article>
   );
 }

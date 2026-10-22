@@ -1191,6 +1191,150 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Conversations
+         * @description The inbox, newest activity first, with unread counts.
+         */
+        get: operations["list_conversations_api_v1_conversations_get"];
+        put?: never;
+        /**
+         * Start Conversation
+         * @description Message a listing's owner. A renter has one conversation per listing; starting again
+         *     adds the message to it (`200`).
+         */
+        post: operations["start_conversation_api_v1_conversations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/conversations/{conversation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Conversation */
+        get: operations["get_conversation_api_v1_conversations__conversation_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/conversations/{conversation_id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Messages
+         * @description Oldest first. Poll with `after=<last seq>` every 10 s while the thread is open.
+         *     Marks the counterpart's messages read.
+         */
+        get: operations["list_messages_api_v1_conversations__conversation_id__messages_get"];
+        put?: never;
+        /**
+         * Send Message
+         * @description Phone numbers are masked until the renter has a confirmed booking of the listing.
+         */
+        post: operations["send_message_api_v1_conversations__conversation_id__messages_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Review
+         * @description The renter rates the listing, the owner rates the renter; once each per booking.
+         */
+        post: operations["create_review_api_v1_bookings__booking_id__reviews_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/listings/{listing_id}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Listing Reviews */
+        get: operations["listing_reviews_api_v1_listings__listing_id__reviews_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{user_id}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * User Reviews
+         * @description A user's public profile and the reviews about them.
+         */
+        get: operations["user_reviews_api_v1_users__user_id__reviews_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Report
+         * @description Report a listing or user to the admins (FR-030).
+         */
+        post: operations["create_report_api_v1_reports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/notifications": {
         parameters: {
             query?: never;
@@ -1827,6 +1971,59 @@ export interface components {
             /** Resolved At */
             resolved_at: string | null;
         };
+        /** ConversationListing */
+        ConversationListing: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Title */
+            title: string;
+            /** Photo Url */
+            photo_url: string | null;
+        };
+        /**
+         * ConversationOut
+         * @description `role` is the viewer's side; `booking_id` is set once a booking reveals phones.
+         */
+        ConversationOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            listing: components["schemas"]["ConversationListing"];
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "renter" | "owner";
+            counterpart: components["schemas"]["ConversationParty"];
+            /** Booking Id */
+            booking_id: string | null;
+            /** Last Message */
+            last_message: string | null;
+            /** Last Message At */
+            last_message_at: string | null;
+            /** Unread Count */
+            unread_count: number;
+        };
+        /** ConversationParty */
+        ConversationParty: {
+            /** Name */
+            name: string;
+        };
+        /** ConversationStart */
+        ConversationStart: {
+            /**
+             * Listing Id
+             * Format: uuid
+             */
+            listing_id: string;
+            /** Body */
+            body: string;
+        };
         /**
          * Counterpart
          * @description The other party. `phone` only once the booking is confirmed (R18).
@@ -1999,6 +2196,19 @@ export interface components {
             label: string;
             /** Value */
             value: string;
+        };
+        /** Inbox */
+        Inbox: {
+            /** Items */
+            items: components["schemas"]["ConversationOut"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+            /** Unread Total */
+            unread_total: number;
         };
         /** InstallmentOut */
         InstallmentOut: {
@@ -2263,6 +2473,42 @@ export interface components {
             /** Language */
             language?: ("sw" | "en") | null;
         };
+        /** MessageIn */
+        MessageIn: {
+            /** Body */
+            body: string;
+        };
+        /** MessageList */
+        MessageList: {
+            /** Items */
+            items: components["schemas"]["MessageOut"][];
+        };
+        /**
+         * MessageOut
+         * @description `seq` is the polling cursor; `masked`: phone numbers were hidden (R18).
+         */
+        MessageOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Seq */
+            seq: number;
+            /** Mine */
+            mine: boolean;
+            /** Body */
+            body: string;
+            /** Masked */
+            masked: boolean;
+            /** Read At */
+            read_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** NotificationOut */
         NotificationOut: {
             /**
@@ -2468,7 +2714,10 @@ export interface components {
              */
             updated_at: string;
         };
-        /** OwnerOut */
+        /**
+         * OwnerOut
+         * @description `user_id` links to the owner's public profile (`GET /users/{id}/reviews`).
+         */
         OwnerOut: {
             /** Display Name */
             display_name: string;
@@ -2478,6 +2727,11 @@ export interface components {
             rating_count: number;
             /** Verified */
             verified: boolean;
+            /**
+             * User Id
+             * Format: uuid
+             */
+            user_id: string;
         };
         /**
          * OwnerPhoto
@@ -2597,6 +2851,17 @@ export interface components {
              */
             verification_status: "draft" | "pending" | "verified" | "rejected";
         };
+        /** OwnerRating */
+        OwnerRating: {
+            /** Display Name */
+            display_name: string;
+            /** Rating Avg */
+            rating_avg: number | null;
+            /** Rating Count */
+            rating_count: number;
+            /** Verified */
+            verified: boolean;
+        };
         /** Page[AdminBookingSummary] */
         Page_AdminBookingSummary_: {
             /** Items */
@@ -2678,6 +2943,17 @@ export interface components {
         Page_PayoutOut_: {
             /** Items */
             items: components["schemas"]["PayoutOut"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
+        /** Page[ReviewOut] */
+        Page_ReviewOut_: {
+            /** Items */
+            items: components["schemas"]["ReviewOut"][];
             /** Page */
             page: number;
             /** Page Size */
@@ -3098,6 +3374,51 @@ export interface components {
              */
             created_at: string;
         };
+        /** ReportIn */
+        ReportIn: {
+            /**
+             * Target Kind
+             * @enum {string}
+             */
+            target_kind: "listing" | "user";
+            /**
+             * Target Id
+             * Format: uuid
+             */
+            target_id: string;
+            /** Reason */
+            reason: string;
+        };
+        /** ReportOut */
+        ReportOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Target Kind
+             * @enum {string}
+             */
+            target_kind: "listing" | "user";
+            /**
+             * Target Id
+             * Format: uuid
+             */
+            target_id: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "actioned" | "dismissed";
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /**
          * ResolveClaimIn
          * @description `amount_awarded_tzs` is the part of the deposit the owner receives: the whole deposit
@@ -3113,6 +3434,13 @@ export interface components {
             amount_awarded_tzs?: number | null;
             /** Note */
             note?: string | null;
+        };
+        /** ReviewIn */
+        ReviewIn: {
+            /** Rating */
+            rating: number;
+            /** Body */
+            body?: string | null;
         };
         /** ReviewOut */
         ReviewOut: {
@@ -3199,6 +3527,58 @@ export interface components {
             /** Roles */
             roles: ("renter" | "owner" | "admin")[];
             owner_profile: components["schemas"]["OwnerProfileSummary"] | null;
+        };
+        /**
+         * UserProfile
+         * @description A public profile: first name, renter rating and, for owners, the owner rating.
+         */
+        UserProfile: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Renter Rating Avg */
+            renter_rating_avg: number | null;
+            /** Renter Rating Count */
+            renter_rating_count: number;
+            owner: components["schemas"]["OwnerRating"] | null;
+        };
+        /**
+         * UserReviewOut
+         * @description `about`: whether the review rates the user as a renter or as an owner (their listing).
+         */
+        UserReviewOut: {
+            /** Rating */
+            rating: number;
+            /** Comment */
+            comment: string | null;
+            /** Author */
+            author: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * About
+             * @enum {string}
+             */
+            about: "renter" | "owner";
+        };
+        /** UserReviews */
+        UserReviews: {
+            /** Items */
+            items: components["schemas"]["UserReviewOut"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+            profile: components["schemas"]["UserProfile"];
         };
         /** VerificationDecision */
         VerificationDecision: {
@@ -6979,6 +7359,501 @@ export interface operations {
                 };
             };
             /** @description `INVALID_TRANSITION` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_conversations_api_v1_conversations_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Inbox"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    start_conversation_api_v1_conversations_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConversationStart"];
+            };
+        };
+        responses: {
+            /** @description Existing conversation reused */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationOut"];
+                };
+            };
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationOut"];
+                };
+            };
+            /** @description Unknown or non-public listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_conversation_api_v1_conversations__conversation_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConversationOut"];
+                };
+            };
+            /** @description Unknown conversation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_messages_api_v1_conversations__conversation_id__messages_get: {
+        parameters: {
+            query?: {
+                after?: number | null;
+            };
+            header?: never;
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageList"];
+                };
+            };
+            /** @description Unknown conversation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    send_message_api_v1_conversations__conversation_id__messages_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MessageIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MessageOut"];
+                };
+            };
+            /** @description Unknown conversation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_review_api_v1_bookings__booking_id__reviews_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewOut"];
+                };
+            };
+            /** @description `REVIEW_NOT_ALLOWED`: the booking is not completed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unknown booking */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `ALREADY_REVIEWED` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    listing_reviews_api_v1_listings__listing_id__reviews_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path: {
+                listing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ReviewOut_"];
+                };
+            };
+            /** @description Unknown or non-public listing */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    user_reviews_api_v1_users__user_id__reviews_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserReviews"];
+                };
+            };
+            /** @description Unknown or suspended user */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_report_api_v1_reports_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReportIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportOut"];
+                };
+            };
+            /** @description Unknown listing or user */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `ALREADY_REPORTED` */
             409: {
                 headers: {
                     [name: string]: unknown;
