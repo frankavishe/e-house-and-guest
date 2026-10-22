@@ -3,7 +3,18 @@
 from functools import lru_cache
 from typing import Literal
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Must be set to real values outside dev/test; their defaults are public in this repo.
+_SECRETS = (
+    "jwt_secret",
+    "otp_hmac_key",
+    "fernet_key",
+    "payment_callback_secret",
+    "s3_access_key",
+    "s3_secret_key",
+)
 
 
 class Settings(BaseSettings):
@@ -76,6 +87,31 @@ class Settings(BaseSettings):
     # Business
     business_timezone: str = "Africa/Dar_es_Salaam"
     default_language: Literal["sw", "en"] = "sw"
+
+    @model_validator(mode="after")
+    def _refuse_dev_values_outside_dev(self) -> "Settings":
+        """Staging and prod do not start with a dev default secret, insecure cookies, or (prod)
+        the console SMS / mock payment providers (docs/security.md)."""
+        if self.env not in ("staging", "prod"):
+            return self
+        fields = type(self).model_fields
+        problems = [
+            f"{name} is the dev default"
+            for name in _SECRETS
+            if getattr(self, name) == fields[name].default
+        ]
+        if len(self.jwt_secret) < 32:
+            problems.append("jwt_secret is shorter than 32 characters")
+        if not self.cookie_secure:
+            problems.append("cookie_secure must be true")
+        if self.env == "prod":
+            if self.sms_provider == "console":
+                problems.append("sms_provider is console")
+            if self.payment_provider == "mock" or self.payout_provider == "mock":
+                problems.append("payment_provider/payout_provider is mock")
+        if problems:
+            raise ValueError(f"unsafe settings for env={self.env}: " + "; ".join(problems))
+        return self
 
     @property
     def is_dev_like(self) -> bool:

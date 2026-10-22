@@ -18,6 +18,7 @@ from app.integrations import get_storage
 from app.jobs.models import Job
 from app.listings.jobs import process_image
 from app.listings.models import Listing, ListingPhoto
+from app.listings.photos import PHOTO_MAX_BYTES
 from tests.factories import (
     WAREHOUSE_SCHEMA,
     day_range,
@@ -579,3 +580,22 @@ async def test_calendar_lists_bookings_and_blocks(
     assert [entry["code"] for entry in cal["bookings"]] == [booking.code]
     assert cal["bookings"][0]["renter_name"] == "Renter Person"
     assert len(cal["blocks"]) == 1 and cal["blocks"][0]["listing_id"] == str(b.listing.id)
+
+
+async def test_photo_confirm_checks_the_upload(client: httpx.AsyncClient, db: AsyncSession) -> None:
+    listing = await _draft(client, await _world(db))
+    r = await client.post(
+        f"/api/v1/owner/listings/{listing['id']}/photos", json={"content_type": "image/jpeg"}
+    )
+    upload = r.json()
+    confirm = f"/api/v1/owner/listings/{listing['id']}/photos/{upload['photo_id']}"
+    r = await client.patch(confirm, json={"confirmed": True})
+    assert r.status_code == 422 and r.json()["error"]["code"] == "PHOTO_NOT_UPLOADED"
+
+    storage = get_storage()
+    big = b"x" * (PHOTO_MAX_BYTES + 1)
+    await storage.put(upload["storage_key"], big, "image/jpeg", private=True)
+    r = await client.patch(confirm, json={"confirmed": True})
+    assert r.status_code == 422 and r.json()["error"]["code"] == "FILE_TOO_LARGE"
+    assert r.json()["error"]["details"] == {"max_mb": 15}
+    assert await storage.size(upload["storage_key"], private=True) is None

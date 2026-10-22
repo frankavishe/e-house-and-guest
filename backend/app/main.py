@@ -18,6 +18,7 @@ from app.bookings.router import router as bookings_router
 from app.catalog.router import router as catalog_router
 from app.core.config import get_settings
 from app.core.db import dispose_engine, get_session
+from app.core.deps import require_api_request
 from app.core.errors import install_error_handlers, install_error_openapi
 from app.core.logging import configure_logging
 from app.listings.owner_router import router as owner_listings_router
@@ -52,6 +53,15 @@ async def health(session: Annotated[AsyncSession, Depends(get_session)]) -> JSON
 
 def api_router() -> APIRouter:
     router = APIRouter(prefix=API_PREFIX)
+    # Browser-facing routes require the CSRF header on mutations; provider webhooks are
+    # server-to-server and authenticated by the secret in their URL.
+    router.include_router(_browser_routes(), dependencies=[Depends(require_api_request)])
+    router.include_router(webhook_router)
+    return router
+
+
+def _browser_routes() -> APIRouter:
+    router = APIRouter()
     router.include_router(health_router)
     router.include_router(accounts_router)
     router.include_router(catalog_router)
@@ -66,7 +76,6 @@ def api_router() -> APIRouter:
     router.include_router(messaging_router)
     router.include_router(reviews_router)
     router.include_router(notifications_router)
-    router.include_router(webhook_router)
     if get_settings().is_dev_like:
         from app.payments.dev_router import router as dev_router
 

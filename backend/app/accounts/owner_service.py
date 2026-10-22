@@ -27,6 +27,7 @@ from app.core.db import uuid7
 from app.core.errors import AppError, not_found
 from app.core.security import decrypt, encrypt, mask_tail, normalize_phone
 from app.integrations import get_storage
+from app.integrations.uploads import check_uploads
 
 EDITABLE = {VerificationStatus.DRAFT, VerificationStatus.REJECTED}
 DOCUMENT_TYPES = {"image/jpeg": "jpg", "image/png": "png", "application/pdf": "pdf"}
@@ -106,6 +107,8 @@ async def patch_profile(
         foreign = [key for key in patch.documents if not key.startswith(prefix)]
         if foreign:
             raise AppError("VALIDATION_ERROR", 422, {"documents": foreign})
+        added = [key for key in patch.documents if key not in (profile.documents or [])]
+        await check_uploads(added, max_bytes=DOCUMENT_MAX_BYTES, field="documents")
         profile.documents = list(dict.fromkeys(patch.documents))
     await session.flush()
     return profile

@@ -188,7 +188,9 @@ async def test_refresh_reuse_revokes_family(client: httpx.AsyncClient, db: Async
     current = client.cookies.get(security.REFRESH_COOKIE)
 
     # Attacker replays the old token → whole family revoked.
-    attacker = httpx.AsyncClient(transport=client._transport, base_url="http://test")
+    attacker = httpx.AsyncClient(
+        transport=client._transport, base_url="http://test", headers=client.headers
+    )
     attacker.cookies.set(security.REFRESH_COOKIE, stolen)
     assert (await attacker.post("/api/v1/auth/refresh")).status_code == 401
     await attacker.aclose()
@@ -257,3 +259,20 @@ async def test_email_must_be_unique_case_insensitive(
     res = await client.patch("/api/v1/me", json={"email": "TAKEN@example.com"})
     assert res.status_code == 409
     assert res.json()["error"]["code"] == "EMAIL_TAKEN"
+
+
+async def test_mutations_need_the_csrf_header(client: httpx.AsyncClient) -> None:
+    """A cross-site HTML form cannot set custom headers, so it cannot reach a mutation even in
+    a browser that ignores SameSite (docs/security.md)."""
+    assert (await sign_in(client)).status_code == 200
+    bare = httpx.AsyncClient(transport=client._transport, base_url="http://test")
+    bare.cookies = client.cookies
+    for method, path in (("POST", "/api/v1/auth/logout"), ("DELETE", "/api/v1/me")):
+        res = await bare.request(method, path)
+        assert res.status_code == 403 and res.json()["error"]["code"] == "FORBIDDEN", path
+    assert (await bare.get("/api/v1/me")).status_code == 200  # reads are not affected
+    # Provider webhooks are server-to-server: no header, authenticated by their URL secret.
+    res = await bare.post("/api/v1/webhooks/payments/mock/wrong-secret", json={})
+    assert res.status_code == 404  # reached the handler: wrong secret, not refused by the guard
+    await bare.aclose()
+    assert (await client.post("/api/v1/auth/logout")).status_code == 204

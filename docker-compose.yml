@@ -95,7 +95,9 @@ services:
 
   api:
     <<: *backend
-    command: ["uv", "run", "--frozen", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    # Browsers reach the API through the web container's /api proxy; trusting its
+    # X-Forwarded-For lets rate limits see the visitor's address (docs/operations.md).
+    command: ["uv", "run", "--frozen", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--forwarded-allow-ips", "*"]
     ports:
       - "${API_PORT:-8000}:8000"
 

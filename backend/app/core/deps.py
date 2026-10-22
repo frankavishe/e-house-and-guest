@@ -82,3 +82,20 @@ async def require_verified_owner(profile: Owner) -> OwnerProfile:
 
 
 VerifiedOwner = Annotated[OwnerProfile, Depends(require_verified_owner)]
+
+
+# --- CSRF ---------------------------------------------------------------------------------
+
+UNSAFE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
+CSRF_HEADER = "X-Requested-With"
+
+
+async def require_api_request(request: Request) -> None:
+    """State-changing calls must carry `X-Requested-With` (docs/security.md).
+
+    SameSite=Lax cookies already keep cross-site form posts unauthenticated in current
+    browsers; this covers older ones that ignore SameSite. A cross-site HTML form cannot set
+    custom headers, and a cross-origin `fetch` that does is preflighted and refused (no CORS).
+    """
+    if request.method in UNSAFE_METHODS and CSRF_HEADER not in request.headers:
+        raise AppError("FORBIDDEN", 403, {"reason": f"missing {CSRF_HEADER} header"})

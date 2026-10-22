@@ -10,12 +10,19 @@ export type ApiError = { code: string; message: string; details: Record<string, 
 
 const REFRESH_PATH = "/api/v1/auth/refresh";
 const NO_RETRY = ["/api/v1/auth/"];
+// The API refuses mutations without it: a cross-site form cannot send custom headers
+// (docs/security.md).
+const CSRF_HEADERS = { "X-Requested-With": "fetch" };
 
 let refreshing: Promise<boolean> | null = null;
 
 /** Rotate the refresh cookie once, sharing the call between concurrent 401s. */
 export function refreshSession(): Promise<boolean> {
-  refreshing ??= fetch(REFRESH_PATH, { method: "POST", credentials: "same-origin" })
+  refreshing ??= fetch(REFRESH_PATH, {
+    method: "POST",
+    credentials: "same-origin",
+    headers: CSRF_HEADERS,
+  })
     .then((res) => res.ok)
     .catch(() => false)
     .finally(() => {
@@ -39,7 +46,11 @@ function currentLocale(): string {
   return document.documentElement.lang === "en" ? "en" : "sw";
 }
 
-export const api = createClient<paths>({ baseUrl: "", credentials: "same-origin" });
+export const api = createClient<paths>({
+  baseUrl: "",
+  credentials: "same-origin",
+  headers: CSRF_HEADERS,
+});
 api.use(retryOn401);
 api.use({
   onRequest({ request }) {

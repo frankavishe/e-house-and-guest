@@ -42,6 +42,7 @@ from app.core.db import uuid7
 from app.core.errors import AppError, not_found
 from app.core.i18n import money
 from app.integrations import get_storage
+from app.integrations.uploads import check_uploads
 from app.ledger import service as ledger
 from app.listings.schemas import Page
 from app.payments import refunds
@@ -159,6 +160,7 @@ async def open_claim(
     prefix = evidence_prefix(booking)
     if any(not key.startswith(prefix) for key in body.evidence_keys):
         raise AppError("VALIDATION_ERROR", 422, {"evidence_keys": "unknown upload"})
+    await check_uploads(body.evidence_keys, max_bytes=EVIDENCE_MAX_BYTES, field="evidence_keys")
     claim = Claim(
         booking_id=booking.id,
         opened_by=user.id,

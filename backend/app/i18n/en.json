@@ -35,6 +35,7 @@
     "PRICE_UNIT_NOT_ALLOWED": "That price unit is not used in this category.",
     "SEASON_OVERLAP": "Seasonal prices for the same unit cannot overlap.",
     "LISTING_HAS_BOOKINGS": "This listing has upcoming confirmed bookings, so it cannot be deleted. Pause it instead.",
+    "FILE_TOO_LARGE": "The file is too large. The limit is {max_mb} MB.",
     "PHOTO_NOT_UPLOADED": "The photo has not finished uploading. Try again.",
     "CLAIM_OPEN": "This booking already has an open claim.",
     "CLAIM_WINDOW_CLOSED": "Claims can only be opened during the rental or up to 48 hours after it ends.",

@@ -18,7 +18,7 @@ async function renewSession(req: NextRequest): Promise<NextResponse | null> {
   try {
     const res = await fetch(`${apiTarget}/api/v1/auth/refresh`, {
       method: "POST",
-      headers: { cookie: `${REFRESH}=${refresh}` },
+      headers: { cookie: `${REFRESH}=${refresh}`, "X-Requested-With": "fetch" },
       cache: "no-store",
     });
     const redirect = NextResponse.redirect(req.nextUrl, 307);

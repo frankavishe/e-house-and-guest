@@ -35,6 +35,7 @@ from sqlalchemy.ext.asyncio import (
 from app.core import clock
 from app.core.config import get_settings
 from app.core.db import Base, get_session
+from app.core.deps import CSRF_HEADER
 
 get_settings.cache_clear()
 
@@ -84,7 +85,9 @@ async def client(db: AsyncSession) -> AsyncIterator[httpx.AsyncClient]:
 
     app.dependency_overrides[get_session] = _session
     transport = httpx.ASGITransport(app=app)
-    async with httpx.AsyncClient(transport=transport, base_url="http://test") as c:
+    # Like the web app's API client: mutations carry the CSRF header (core/deps.py).
+    headers = {CSRF_HEADER: "fetch"}
+    async with httpx.AsyncClient(transport=transport, base_url="http://test", headers=headers) as c:
         yield c
     app.dependency_overrides.clear()
 

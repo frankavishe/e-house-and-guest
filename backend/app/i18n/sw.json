@@ -35,6 +35,7 @@
     "PRICE_UNIT_NOT_ALLOWED": "Kipimo hicho cha bei hakitumiki katika kundi hili.",
     "SEASON_OVERLAP": "Bei za msimu za kipimo kimoja haziwezi kuingiliana.",
     "LISTING_HAS_BOOKINGS": "Tangazo hili lina uhifadhi uliothibitishwa unaokuja, hivyo haliwezi kufutwa. Lisimamishe badala yake.",
+    "FILE_TOO_LARGE": "Faili ni kubwa mno. Kikomo ni MB {max_mb}.",
     "PHOTO_NOT_UPLOADED": "Picha haijamaliza kupakiwa. Jaribu tena.",
     "CLAIM_OPEN": "Uhifadhi huu tayari una dai lililo wazi.",
     "CLAIM_WINDOW_CLOSED": "Dai linaweza kufunguliwa wakati wa ukodishaji au hadi saa 48 baada ya kumalizika.",

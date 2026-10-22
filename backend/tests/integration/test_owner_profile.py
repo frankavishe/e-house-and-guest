@@ -7,8 +7,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.accounts.models import OwnerProfile, PayoutMethod, User, VerificationStatus
+from app.accounts.owner_service import DOCUMENT_MAX_BYTES
 from app.admin.models import AdminAuditLog
 from app.core.security import decrypt
+from app.integrations import get_storage
 from app.notifications.models import Notification
 from tests.factories import make_admin, make_owner, make_user, sign_in
 
@@ -101,8 +103,20 @@ async def test_documents_are_presigned_to_the_private_bucket(
     assert "/private/" in upload["upload_url"]
     assert upload["storage_key"].startswith(f"owner-docs/{profile['id']}/")
 
-    r = await client.patch("/api/v1/owner-profile", json={"documents": [upload["storage_key"]]})
-    assert r.status_code == 200 and r.json()["documents"] == [upload["storage_key"]]
+    key = upload["storage_key"]
+    r = await client.patch("/api/v1/owner-profile", json={"documents": [key]})
+    assert r.status_code == 422  # not uploaded yet
+
+    # An oversized upload is refused and deleted (a presigned PUT cannot limit the size).
+    storage = get_storage()
+    await storage.put(key, b"x" * (DOCUMENT_MAX_BYTES + 1), "image/jpeg", private=True)
+    r = await client.patch("/api/v1/owner-profile", json={"documents": [key]})
+    assert r.status_code == 422 and r.json()["error"]["code"] == "FILE_TOO_LARGE"
+    assert await storage.size(key, private=True) is None
+
+    await storage.put(key, b"jpeg", "image/jpeg", private=True)
+    r = await client.patch("/api/v1/owner-profile", json={"documents": [key]})
+    assert r.status_code == 200 and r.json()["documents"] == [key]
 
     r = await client.patch("/api/v1/owner-profile", json={"documents": ["owner-docs/other/x"]})
     assert r.status_code == 422

@@ -15,7 +15,11 @@ export async function serverApi() {
     .join("; ");
   return createClient<paths>({
     baseUrl,
-    headers: { "Accept-Language": locale, ...(cookie ? { Cookie: cookie } : {}) },
+    headers: {
+      "Accept-Language": locale,
+      "X-Requested-With": "fetch", // required on mutations (docs/security.md)
+      ...(cookie ? { Cookie: cookie } : {}),
+    },
     cache: "no-store",
   });
 }

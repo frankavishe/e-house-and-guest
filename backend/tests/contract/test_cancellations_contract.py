@@ -7,6 +7,8 @@ import httpx
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.bookings.claims import EVIDENCE_MAX_BYTES
+from app.integrations import get_storage
 from app.main import app
 from tests.factories import (
     day_range,
@@ -155,10 +157,17 @@ async def test_claim_shapes_and_validation(client: httpx.AsyncClient, db: AsyncS
     ):
         assert (await client.post(base, json=body)).status_code == 422, body
 
-    res = await client.post(
-        base,
-        json={"kind": "damage", "description": "Cracked screen", "evidence_keys": [key]},
-    )
+    # The key must point at a finished upload within the size limit (a PUT URL can't limit it).
+    damage = {"kind": "damage", "description": "Cracked screen", "evidence_keys": [key]}
+    assert (await client.post(base, json=damage)).status_code == 422  # not uploaded yet
+    storage = get_storage()
+    await storage.put(key, b"x" * (EVIDENCE_MAX_BYTES + 1), "image/jpeg", private=True)
+    too_big = await client.post(base, json=damage)
+    assert too_big.status_code == 422 and too_big.json()["error"]["code"] == "FILE_TOO_LARGE"
+    assert await storage.size(key, private=True) is None  # deleted
+    await storage.put(key, b"jpeg", "image/jpeg", private=True)
+
+    res = await client.post(base, json=damage)
     assert res.status_code == 201, res.text
     assert set(res.json()) == CLAIM_KEYS
     assert res.json()["evidence_keys"] == [key]

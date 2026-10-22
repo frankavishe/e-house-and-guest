@@ -15,6 +15,7 @@ from app.core import clock
 from app.core.db import uuid7
 from app.core.errors import AppError, not_found
 from app.integrations import get_storage
+from app.integrations.uploads import too_large
 from app.jobs import service as jobs
 from app.listings import manage
 from app.listings.models import Listing, ListingPhoto
@@ -82,6 +83,9 @@ async def update(
         size = await get_storage().size(photo.storage_key, private=True)
         if not size:
             raise AppError("PHOTO_NOT_UPLOADED", 422)
+        if size > PHOTO_MAX_BYTES:  # a presigned PUT cannot enforce the limit
+            await get_storage().delete(photo.storage_key, private=True)
+            raise too_large(PHOTO_MAX_BYTES)
         photo.confirmed_at = clock.now()
         if listing.status in manage.LIVE:
             photo.pending = True
