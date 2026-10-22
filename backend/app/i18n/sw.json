@@ -40,7 +40,12 @@
     "REFUND_EXCEEDS_BALANCE": "Marejesho ni makubwa kuliko kilichobaki kurejeshwa kwa uhifadhi huu.",
     "REVIEW_NOT_ALLOWED": "Unaweza kutoa tathmini baada ya uhifadhi kukamilika tu.",
     "ALREADY_REVIEWED": "Tayari umetoa tathmini kwa uhifadhi huu.",
-    "ALREADY_REPORTED": "Tayari umeripoti hili. Timu yetu inalipitia."
+    "ALREADY_REPORTED": "Tayari umeripoti hili. Timu yetu inalipitia.",
+    "INVALID_SCHEMA": "Maelezo ya sehemu si sahihi. Angalia matatizo yaliyoorodheshwa.",
+    "INVALID_CATEGORY": "Mipangilio hii ya kundi hailingani. Angalia vipimo vya bei na sehemu.",
+    "SLUG_TAKEN": "Kundi lingine tayari linatumia slug hii.",
+    "SCHEMA_FIELD_IN_USE": "Matangazo bado yanatumia sehemu au chaguo hili, kwa hiyo haliwezi kubadilishwa au kuondolewa.",
+    "PRICE_UNIT_IN_USE": "Matangazo bado yana bei kwa kipimo hiki, kwa hiyo hakiwezi kuondolewa."
   },
   "sms": {
     "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."
@@ -170,6 +175,14 @@
     "review": {
       "received": {
         "sms": "Umepokea tathmini ya nyota {rating} kwa uhifadhi {code} (\"{title}\")."
+      }
+    },
+    "account": {
+      "suspended": {
+        "sms": "Akaunti yako imesimamishwa: {reason}. Wasiliana na huduma kwa wateja kwa msaada."
+      },
+      "unsuspended": {
+        "sms": "Akaunti yako inatumika tena. Karibu tena."
       }
     }
   }

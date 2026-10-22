@@ -718,7 +718,8 @@ export interface paths {
         };
         /**
          * List Admin Bookings
-         * @description Newest first; `q` matches the booking code or a party's phone number.
+         * @description Newest first; `q` matches the booking code or a party's phone number. `attention`
+         *     keeps future bookings whose listing or one of whose parties is suspended.
          */
         get: operations["list_admin_bookings_api_v1_admin_bookings_get"];
         put?: never;
@@ -860,6 +861,165 @@ export interface paths {
          * @description Decide the deposit: the award goes to the owner, the rest back to the renter.
          */
         post: operations["resolve_claim_api_v1_admin_claims__claim_id__resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Admin Categories
+         * @description Every category, inactive ones too, in tree order (by `path`).
+         */
+        get: operations["list_admin_categories_api_v1_admin_categories_get"];
+        put?: never;
+        /**
+         * Create Admin Category
+         * @description A new group or rental type; a leaf is listable and filterable at once.
+         */
+        post: operations["create_admin_category_api_v1_admin_categories_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/categories/{category_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update Admin Category
+         * @description Labels, new fields and new options are always allowed; removing a field hides it.
+         */
+        patch: operations["update_admin_category_api_v1_admin_categories__category_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Admin Users
+         * @description Newest first; `q` matches the phone, name or email.
+         */
+        get: operations["list_admin_users_api_v1_admin_users_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{user_id}/suspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Suspend User
+         * @description Signs the user out and blocks sign-in; bookings are kept for admin follow-up.
+         */
+        post: operations["suspend_user_api_v1_admin_users__user_id__suspend_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{user_id}/unsuspend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Unsuspend User */
+        post: operations["unsuspend_user_api_v1_admin_users__user_id__unsuspend_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/reports-abuse": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Abuse Reports
+         * @description Open reports oldest first (handled ones newest first), with the target's status.
+         */
+        get: operations["list_abuse_reports_api_v1_admin_reports_abuse_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/reports-abuse/{report_id}/action": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Action Abuse Report */
+        post: operations["action_abuse_report_api_v1_admin_reports_abuse__report_id__action_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Stats
+         * @description Totals by month, top-level category or region for `[from, to]` (EAT dates, `to`
+         *     inclusive; default: this year so far). `format=csv` downloads the rows and totals.
+         */
+        get: operations["get_stats_api_v1_admin_stats_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1404,11 +1564,123 @@ export interface components {
             owner: components["schemas"]["AdminParty"];
             /** Open Claim */
             open_claim: boolean;
+            /** Attention */
+            attention: boolean;
             /**
              * Created At
              * Format: date-time
              */
             created_at: string;
+        };
+        /**
+         * AdminCategoryIn
+         * @description A group (no `booking_mode`, no fields) or a leaf that holds listings. `slug`,
+         *     `parent_id` and `booking_mode` are fixed once created.
+         */
+        AdminCategoryIn: {
+            /** Parent Id */
+            parent_id?: string | null;
+            /** Slug */
+            slug: string;
+            name: components["schemas"]["Localized"];
+            /** Booking Mode */
+            booking_mode?: ("DATE_RANGE" | "TIME_SLOT" | "LEASE" | "QUANTITY") | null;
+            /** Price Units */
+            price_units?: ("hour" | "night" | "day" | "week" | "month" | "item_day")[];
+            /** Default Unit */
+            default_unit?: ("hour" | "night" | "day" | "week" | "month" | "item_day") | null;
+            /** Attribute Schema */
+            attribute_schema?: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Commission Bps
+             * @default 1000
+             */
+            commission_bps: number;
+            /**
+             * Renter Fee Bps
+             * @default 0
+             */
+            renter_fee_bps: number;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+            /**
+             * Sort Order
+             * @default 0
+             */
+            sort_order: number;
+        };
+        /** AdminCategoryOut */
+        AdminCategoryOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Parent Id */
+            parent_id: string | null;
+            /** Path */
+            path: string;
+            /** Slug */
+            slug: string;
+            name: components["schemas"]["LocalizedText"];
+            /** Booking Mode */
+            booking_mode: ("DATE_RANGE" | "TIME_SLOT" | "LEASE" | "QUANTITY") | null;
+            /** Price Units */
+            price_units: string[];
+            /** Default Unit */
+            default_unit: string | null;
+            /** Attribute Schema */
+            attribute_schema: {
+                [key: string]: unknown;
+            }[];
+            /** Schema Version */
+            schema_version: number;
+            /** Commission Bps */
+            commission_bps: number;
+            /** Renter Fee Bps */
+            renter_fee_bps: number;
+            /** Is Active */
+            is_active: boolean;
+            /** Sort Order */
+            sort_order: number;
+            /** Is Leaf */
+            is_leaf: boolean;
+            /** Listing Count */
+            listing_count: number;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /**
+         * AdminCategoryPatch
+         * @description Only the fields sent change. A changed `attribute_schema` bumps `schema_version`;
+         *     commission and fee changes apply to bookings made afterwards.
+         */
+        AdminCategoryPatch: {
+            name?: components["schemas"]["Localized"] | null;
+            /** Price Units */
+            price_units?: ("hour" | "night" | "day" | "week" | "month" | "item_day")[] | null;
+            /** Default Unit */
+            default_unit?: ("hour" | "night" | "day" | "week" | "month" | "item_day") | null;
+            /** Attribute Schema */
+            attribute_schema?: {
+                [key: string]: unknown;
+            }[] | null;
+            /** Commission Bps */
+            commission_bps?: number | null;
+            /** Renter Fee Bps */
+            renter_fee_bps?: number | null;
+            /** Is Active */
+            is_active?: boolean | null;
+            /** Sort Order */
+            sort_order?: number | null;
         };
         /** AdminClaimOut */
         AdminClaimOut: {
@@ -1484,6 +1756,21 @@ export interface components {
                 };
             } | null;
         };
+        /** AdminOwnerBrief */
+        AdminOwnerBrief: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Display Name */
+            display_name: string;
+            /**
+             * Verification Status
+             * @enum {string}
+             */
+            verification_status: "draft" | "pending" | "verified" | "rejected";
+        };
         /** AdminParty */
         AdminParty: {
             /**
@@ -1545,6 +1832,72 @@ export interface components {
             source: "owner" | "platform";
             /** Reason */
             reason: string;
+        };
+        /** AdminReportOut */
+        AdminReportOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Target Kind
+             * @enum {string}
+             */
+            target_kind: "listing" | "user";
+            /**
+             * Target Id
+             * Format: uuid
+             */
+            target_id: string;
+            /** Target Label */
+            target_label: string;
+            /** Target Status */
+            target_status: string;
+            /** Reason */
+            reason: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "actioned" | "dismissed";
+            reporter: components["schemas"]["AdminParty"];
+            /** Open Reports On Target */
+            open_reports_on_target: number;
+            /** Handled At */
+            handled_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** AdminUserOut */
+        AdminUserOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string | null;
+            /** Phone */
+            phone: string;
+            /** Email */
+            email: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "active" | "suspended" | "deleted";
+            /** Is Admin */
+            is_admin: boolean;
+            owner: components["schemas"]["AdminOwnerBrief"] | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
         };
         /** AttributeOut */
         AttributeOut: {
@@ -2407,6 +2760,13 @@ export interface components {
             /** Instant Book */
             instant_book?: boolean | null;
         };
+        /** Localized */
+        Localized: {
+            /** Sw */
+            sw: string;
+            /** En */
+            en: string;
+        };
         /** LocalizedText */
         LocalizedText: {
             /** Sw */
@@ -2906,6 +3266,28 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** Page[AdminReportOut] */
+        Page_AdminReportOut_: {
+            /** Items */
+            items: components["schemas"]["AdminReportOut"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
+        /** Page[AdminUserOut] */
+        Page_AdminUserOut_: {
+            /** Items */
+            items: components["schemas"]["AdminUserOut"][];
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+            /** Total */
+            total: number;
+        };
         /** Page[BookingSummary] */
         Page_BookingSummary_: {
             /** Items */
@@ -3374,6 +3756,25 @@ export interface components {
              */
             created_at: string;
         };
+        /**
+         * ReportActionIn
+         * @description `actioned` closes every open report on the target; `suspend_target` also suspends the
+         *     listing or user (the `note`, else the report's reason, is the suspension reason).
+         */
+        ReportActionIn: {
+            /**
+             * Decision
+             * @enum {string}
+             */
+            decision: "actioned" | "dismissed";
+            /**
+             * Suspend Target
+             * @default false
+             */
+            suspend_target: boolean;
+            /** Note */
+            note?: string | null;
+        };
         /** ReportIn */
         ReportIn: {
             /**
@@ -3481,6 +3882,49 @@ export interface components {
              * Format: date-time
              */
             end: string;
+        };
+        /** StatsOut */
+        StatsOut: {
+            /**
+             * From
+             * Format: date
+             */
+            from: string;
+            /**
+             * To
+             * Format: date
+             */
+            to: string;
+            /**
+             * Group By
+             * @enum {string}
+             */
+            group_by: "month" | "category" | "region";
+            /** Rows */
+            rows: components["schemas"]["StatsRow"][];
+            totals: components["schemas"]["StatsRow"];
+        };
+        /**
+         * StatsRow
+         * @description Money moved in the period. `gbv_tzs` is rental + delivery + service fee paid (no
+         *     deposits); `commission_tzs` is net platform revenue (commission and service fees, less
+         *     what was handed back or refunded from it); `refunds_tzs` and `payouts_tzs` are money sent.
+         */
+        StatsRow: {
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Bookings */
+            bookings: number;
+            /** Gbv Tzs */
+            gbv_tzs: number;
+            /** Commission Tzs */
+            commission_tzs: number;
+            /** Refunds Tzs */
+            refunds_tzs: number;
+            /** Payouts Tzs */
+            payouts_tzs: number;
         };
         /** UnreadCount */
         UnreadCount: {
@@ -5960,6 +6404,7 @@ export interface operations {
             query?: {
                 status?: ("requested" | "awaiting_payment" | "confirmed" | "in_progress" | "completed" | "cancelled" | "disputed") | null;
                 q?: string | null;
+                attention?: boolean;
                 page?: number;
                 page_size?: number;
             };
@@ -6379,6 +6824,472 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_admin_categories_api_v1_admin_categories_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategoryOut"][];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_admin_category_api_v1_admin_categories_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminCategoryIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategoryOut"];
+                };
+            };
+            /** @description Unknown category (or parent) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `SLUG_TAKEN`, `SCHEMA_FIELD_IN_USE` (type change or removed option still used by listings) or `PRICE_UNIT_IN_USE` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_admin_category_api_v1_admin_categories__category_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                category_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminCategoryPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategoryOut"];
+                };
+            };
+            /** @description Unknown category (or parent) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `SLUG_TAKEN`, `SCHEMA_FIELD_IN_USE` (type change or removed option still used by listings) or `PRICE_UNIT_IN_USE` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_admin_users_api_v1_admin_users_get: {
+        parameters: {
+            query?: {
+                q?: string | null;
+                status?: ("active" | "suspended") | null;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminUserOut_"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    suspend_user_api_v1_admin_users__user_id__suspend_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Reason"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserOut"];
+                };
+            };
+            /** @description Unknown user */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` (already in that state, or an admin) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    unsuspend_user_api_v1_admin_users__user_id__unsuspend_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserOut"];
+                };
+            };
+            /** @description Unknown user */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION` (already in that state, or an admin) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_abuse_reports_api_v1_admin_reports_abuse_get: {
+        parameters: {
+            query?: {
+                status?: ("open" | "actioned" | "dismissed") | null;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AdminReportOut_"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    action_abuse_report_api_v1_admin_reports_abuse__report_id__action_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path: {
+                report_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReportActionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminReportOut"];
+                };
+            };
+            /** @description Unknown report */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description `INVALID_TRANSITION`: already handled */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_stats_api_v1_admin_stats_get: {
+        parameters: {
+            query?: {
+                from?: string | null;
+                to?: string | null;
+                group_by?: "month" | "category" | "region";
+                format?: "json" | "csv";
+            };
+            header?: {
+                "accept-language"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StatsOut"];
+                    "text/csv": unknown;
                 };
             };
             /** @description Validation error */

@@ -89,6 +89,7 @@ ADMIN_BOOKING_KEYS = {
     "renter",
     "owner",
     "open_claim",
+    "attention",
     "created_at",
 }
 UPLOAD_KEYS = {"upload_url", "storage_key", "headers"}

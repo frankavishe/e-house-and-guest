@@ -1,20 +1,31 @@
-"""`/admin/owner-verifications*`, `/admin/listings*`, `/admin/bookings*`, `/admin/refunds*`
-and `/admin/claims*` (contracts/rest-api.md "Admin")."""
+"""`/admin/owner-verifications*`, `/admin/listings*`, `/admin/bookings*`, `/admin/refunds*`,
+`/admin/claims*`, `/admin/categories*`, `/admin/users*`, `/admin/reports-abuse*` and
+`/admin/stats` (contracts/rest-api.md "Admin")."""
 
 import uuid
+from datetime import date
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response, status
 
-from app.accounts.models import VerificationStatus
+from app.accounts.models import UserStatus, VerificationStatus
 from app.admin import bookings as admin_bookings
-from app.admin import moderation
+from app.admin import categories, moderation
+from app.admin import stats as admin_stats
 from app.admin.schemas import (
     AdminBookingSummary,
+    AdminCategoryIn,
+    AdminCategoryOut,
+    AdminCategoryPatch,
     AdminClaimOut,
     AdminRefundIn,
+    AdminReportOut,
+    AdminUserOut,
     MarkRefundSentIn,
+    ReportActionIn,
     ResolveClaimIn,
+    StatsGroupT,
+    StatsOut,
     VerificationDecision,
     VerificationItem,
 )
@@ -22,12 +33,15 @@ from app.bookings import claims
 from app.bookings import service as bookings
 from app.bookings.models import BookingStatus, ClaimResolution, ClaimStatus
 from app.bookings.schemas import BookingOut, BookingStatusT, CancelBody, RefundOut
+from app.core import clock
 from app.core.deps import AdminUser, Session
+from app.core.errors import AppError
 from app.core.i18n import Locale, get_locale
 from app.listings.models import ListingStatus
 from app.listings.owner_schemas import AdminListingItem, OwnerListingOut, Reason
 from app.listings.schemas import Page
 from app.payments import refunds
+from app.reviews.models import ReportStatus
 
 router = APIRouter(tags=["admin"])
 
@@ -174,12 +188,20 @@ async def list_admin_bookings(
     locale: LocaleDep,
     status: BookingStatusT | None = None,
     q: Annotated[str | None, Query(max_length=50)] = None,
+    attention: bool = False,
     page: PageNo = 1,
     page_size: PageSize = 20,
 ) -> Page[AdminBookingSummary]:
-    """Newest first; `q` matches the booking code or a party's phone number."""
+    """Newest first; `q` matches the booking code or a party's phone number. `attention`
+    keeps future bookings whose listing or one of whose parties is suspended."""
     return await admin_bookings.admin_bookings(
-        session, BookingStatus(status) if status else None, q, page, page_size, locale
+        session,
+        BookingStatus(status) if status else None,
+        q,
+        page,
+        page_size,
+        locale,
+        attention_only=attention,
     )
 
 
@@ -289,4 +311,159 @@ async def resolve_claim(
     )
     out = await claims.admin_claim_out(session, claim)
     await session.commit()
+    return out
+
+
+# --- categories (US7-AS1) -----------------------------------------------------------------
+
+CATEGORY_ERRORS: dict[int | str, dict[str, Any]] = {
+    404: {"description": "Unknown category (or parent)"},
+    409: {
+        "description": "`SLUG_TAKEN`, `SCHEMA_FIELD_IN_USE` (type change or removed option "
+        "still used by listings) or `PRICE_UNIT_IN_USE`"
+    },
+    422: {"description": "`INVALID_SCHEMA` (with `problems`) or `INVALID_CATEGORY`"},
+}
+
+
+@router.get("/admin/categories", response_model=list[AdminCategoryOut])
+async def list_admin_categories(admin: AdminUser, session: Session) -> list[AdminCategoryOut]:
+    """Every category, inactive ones too, in tree order (by `path`)."""
+    return await categories.list_categories(session)
+
+
+@router.post(
+    "/admin/categories",
+    response_model=AdminCategoryOut,
+    status_code=status.HTTP_201_CREATED,
+    responses=CATEGORY_ERRORS,
+)
+async def create_admin_category(
+    body: AdminCategoryIn, admin: AdminUser, session: Session
+) -> AdminCategoryOut:
+    """A new group or rental type; a leaf is listable and filterable at once."""
+    out = await categories.create_category(session, admin, body)
+    await session.commit()
+    return out
+
+
+@router.patch(
+    "/admin/categories/{category_id}", response_model=AdminCategoryOut, responses=CATEGORY_ERRORS
+)
+async def update_admin_category(
+    category_id: uuid.UUID, body: AdminCategoryPatch, admin: AdminUser, session: Session
+) -> AdminCategoryOut:
+    """Labels, new fields and new options are always allowed; removing a field hides it."""
+    out = await categories.update_category(session, admin, category_id, body)
+    await session.commit()
+    return out
+
+
+# --- users and abuse reports (FR-030) -----------------------------------------------------
+
+USER: dict[int | str, dict[str, Any]] = {
+    404: {"description": "Unknown user"},
+    409: {"description": "`INVALID_TRANSITION` (already in that state, or an admin)"},
+}
+
+
+@router.get("/admin/users", response_model=Page[AdminUserOut])
+async def list_admin_users(
+    admin: AdminUser,
+    session: Session,
+    q: Annotated[str | None, Query(max_length=50)] = None,
+    status: Literal["active", "suspended"] | None = None,
+    page: PageNo = 1,
+    page_size: PageSize = 20,
+) -> Page[AdminUserOut]:
+    """Newest first; `q` matches the phone, name or email."""
+    return await moderation.users(
+        session, q, UserStatus(status) if status else None, page, page_size
+    )
+
+
+@router.post("/admin/users/{user_id}/suspend", response_model=AdminUserOut, responses=USER)
+async def suspend_user(
+    user_id: uuid.UUID, body: Reason, admin: AdminUser, session: Session
+) -> AdminUserOut:
+    """Signs the user out and blocks sign-in; bookings are kept for admin follow-up."""
+    out = await moderation.set_user_status(session, admin, user_id, True, body.reason)
+    await session.commit()
+    return out
+
+
+@router.post("/admin/users/{user_id}/unsuspend", response_model=AdminUserOut, responses=USER)
+async def unsuspend_user(user_id: uuid.UUID, admin: AdminUser, session: Session) -> AdminUserOut:
+    out = await moderation.set_user_status(session, admin, user_id, False, None)
+    await session.commit()
+    return out
+
+
+@router.get("/admin/reports-abuse", response_model=Page[AdminReportOut])
+async def list_abuse_reports(
+    admin: AdminUser,
+    session: Session,
+    status: Literal["open", "actioned", "dismissed"] | None = "open",
+    page: PageNo = 1,
+    page_size: PageSize = 20,
+) -> Page[AdminReportOut]:
+    """Open reports oldest first (handled ones newest first), with the target's status."""
+    return await moderation.report_queue(
+        session, ReportStatus(status) if status else None, page, page_size
+    )
+
+
+@router.post(
+    "/admin/reports-abuse/{report_id}/action",
+    response_model=AdminReportOut,
+    responses={
+        404: {"description": "Unknown report"},
+        409: {"description": "`INVALID_TRANSITION`: already handled"},
+    },
+)
+async def action_abuse_report(
+    report_id: uuid.UUID,
+    body: ReportActionIn,
+    admin: AdminUser,
+    session: Session,
+    locale: LocaleDep,
+) -> AdminReportOut:
+    out = await moderation.action_report(
+        session, admin, report_id, body.decision, body.suspend_target, body.note, locale
+    )
+    await session.commit()
+    return out
+
+
+# --- stats (FR-032) -----------------------------------------------------------------------
+
+
+@router.get(
+    "/admin/stats",
+    response_model=StatsOut,
+    responses={200: {"content": {"text/csv": {}}}, 422: {"description": "`from` after `to`"}},
+)
+async def get_stats(
+    admin: AdminUser,
+    session: Session,
+    locale: LocaleDep,
+    from_: Annotated[date | None, Query(alias="from")] = None,
+    to: date | None = None,
+    group_by: StatsGroupT = "month",
+    format: Literal["json", "csv"] = "json",
+) -> StatsOut | Response:
+    """Totals by month, top-level category or region for `[from, to]` (EAT dates, `to`
+    inclusive; default: this year so far). `format=csv` downloads the rows and totals."""
+    end = to or clock.today_eat()
+    start = from_ or end.replace(month=1, day=1)
+    if start > end:
+        raise AppError("VALIDATION_ERROR", 422, {"from": "must not be after `to`"})
+    out = await admin_stats.stats(session, start, end, group_by, locale)
+    if format == "csv":
+        filename = admin_stats.csv_filename(out)
+        return Response(
+            admin_stats.to_csv(out),
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
     return out

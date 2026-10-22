@@ -6,6 +6,18 @@ import { getCurrentUser } from "@/lib/api/server";
 
 type Props = { children: ReactNode; params: Promise<{ locale: string }> };
 
+const SECTIONS = [
+  "verifications",
+  "listings",
+  "bookings",
+  "claims",
+  "payouts",
+  "reports",
+  "users",
+  "categories",
+  "stats",
+] as const;
+
 /** Admin area: signed-out visitors go to sign-in; signed-in non-admins get a 404. The API
  * enforces the same rule on every admin route. */
 export default async function AdminLayout({ children, params }: Props) {
@@ -22,18 +34,15 @@ export default async function AdminLayout({ children, params }: Props) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
       <nav aria-label={t("title")} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
-        <Link href="/admin/verifications" className="shrink-0 rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
-          {t("verifications")}
-        </Link>
-        <Link href="/admin/listings" className="shrink-0 rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
-          {t("listings")}
-        </Link>
-        <Link href="/admin/payouts" className="shrink-0 rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
-          {t("payouts")}
-        </Link>
-        <Link href="/admin/claims" className="shrink-0 rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50">
-          {t("claims")}
-        </Link>
+        {SECTIONS.map((section) => (
+          <Link
+            key={section}
+            href={`/admin/${section}`}
+            className="shrink-0 rounded-full bg-canvas px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50"
+          >
+            {t(section)}
+          </Link>
+        ))}
       </nav>
       {children}
     </div>

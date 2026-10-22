@@ -11,7 +11,7 @@ from typing import Any
 from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.accounts.models import OwnerProfile, VerificationStatus
+from app.accounts.models import OwnerProfile, User, UserStatus, VerificationStatus
 from app.availability import service as availability
 from app.availability.periods import Period, PeriodParams, check_duration, normalize
 from app.availability.schemas import Availability
@@ -50,10 +50,12 @@ def public_listings() -> Select[Listing, Category]:
         select(Listing, Category)
         .join(Category, Category.id == Listing.category_id)
         .join(OwnerProfile, OwnerProfile.id == Listing.owner_profile_id)
+        .join(User, User.id == OwnerProfile.user_id)
         .where(
             Listing.status == ListingStatus.ACTIVE,
             Category.is_active.is_(True),
             OwnerProfile.verification_status == VerificationStatus.VERIFIED,
+            User.status == UserStatus.ACTIVE,
         )
     )
 

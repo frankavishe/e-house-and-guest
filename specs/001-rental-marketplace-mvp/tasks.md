@@ -313,18 +313,18 @@ on its own.
 
 ### Tests for User Story 7 ⚠️ (write first, must fail)
 
-- [ ] T132 [P] [US7] Category admin tests in `backend/tests/integration/test_admin_categories.py` covering US7 acceptance scenario 1: create leaf with schema → listable and filterable at once; schema edits bump `schema_version` and invalidate the cache; type change or option removal in use → 409; commission/fee changes apply to new bookings only
-- [ ] T133 [P] [US7] Admin operations tests in `backend/tests/integration/test_admin_ops.py`: suspend/unsuspend users and listings (future bookings flagged, not cancelled), abuse report actioning, stats totals by month/category/region match the ledger, CSV export, every mutation writes `admin_audit_log`
-- [ ] T134 [P] [US7] Contract tests for `/admin/categories*`, `/admin/users*`, `/admin/reports-abuse*`, `/admin/stats` in `backend/tests/contract/test_admin_contract.py`
+- [x] T132 [P] [US7] Category admin tests in `backend/tests/integration/test_admin_categories.py` covering US7 acceptance scenario 1: create leaf with schema → listable and filterable at once; schema edits bump `schema_version` and invalidate the cache; type change or option removal in use → 409; commission/fee changes apply to new bookings only
+- [x] T133 [P] [US7] Admin operations tests in `backend/tests/integration/test_admin_ops.py`: suspend/unsuspend users and listings (future bookings flagged, not cancelled), abuse report actioning, stats totals by month/category/region match the ledger, CSV export, every mutation writes `admin_audit_log`
+- [x] T134 [P] [US7] Contract tests for `/admin/categories*`, `/admin/users*`, `/admin/reports-abuse*`, `/admin/stats` in `backend/tests/contract/test_admin_contract.py`
 
 ### Implementation for User Story 7
 
-- [ ] T135 [US7] Implement admin category management (create/edit with schema meta-validation, in-use checks, cache invalidation) in `backend/app/admin/categories.py`
-- [ ] T136 [US7] Implement admin user/listing suspension, abuse report handling and booking admin actions in `backend/app/admin/moderation.py`
-- [ ] T137 [US7] Implement stats/reports (bookings, GBV, commission, refunds, payouts grouped by month/category/region; CSV) in `backend/app/admin/stats.py` and endpoints in `backend/app/admin/router.py`
-- [ ] T138 [US7] Build the admin category & field editor (sw/en labels, field types, options, filter type, preview of the owner form and filters) in `frontend/src/app/[locale]/admin/categories/page.tsx`
-- [ ] T139 [US7] Build admin users/abuse/bookings screens and the stats dashboard with CSV download in `frontend/src/app/[locale]/admin/{users,reports,bookings,stats}/page.tsx`, with sw/en strings
-- [ ] T140 [US7] Playwright smoke test: admin adds "Generators", owner lists one, renter filters by kVA in `frontend/tests/e2e/admin-category.spec.ts`
+- [x] T135 [US7] Implement admin category management (create/edit with schema meta-validation, in-use checks, cache invalidation) in `backend/app/admin/categories.py`
+- [x] T136 [US7] Implement admin user/listing suspension, abuse report handling and booking admin actions in `backend/app/admin/moderation.py`
+- [x] T137 [US7] Implement stats/reports (bookings, GBV, commission, refunds, payouts grouped by month/category/region; CSV) in `backend/app/admin/stats.py` and endpoints in `backend/app/admin/router.py`
+- [x] T138 [US7] Build the admin category & field editor (sw/en labels, field types, options, filter type, preview of the owner form and filters) in `frontend/src/app/[locale]/admin/categories/page.tsx`
+- [x] T139 [US7] Build admin users/abuse/bookings screens and the stats dashboard with CSV download in `frontend/src/app/[locale]/admin/{users,reports,bookings,stats}/page.tsx`, with sw/en strings
+- [x] T140 [US7] Playwright smoke test: admin adds "Generators", owner lists one, renter filters by kVA in `frontend/tests/e2e/admin-category.spec.ts`
 
 **Checkpoint**: Quickstart V16 passes. All user stories are functional.
 

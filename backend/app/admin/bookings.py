@@ -1,15 +1,16 @@
 """Admin booking search (US5, FR-031): find a booking to cancel, refund or follow up."""
 
-from sqlalchemy import exists, func, or_, select
+from sqlalchemy import ColumnElement, and_, exists, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
-from app.accounts.models import OwnerProfile, User
+from app.accounts.models import OwnerProfile, User, UserStatus
 from app.admin.schemas import AdminBookingSummary, AdminParty
 from app.bookings.models import Booking, BookingStatus, Claim, ClaimStatus
 from app.bookings.schemas import PeriodOut
+from app.core import clock
 from app.core.i18n import Locale
-from app.listings.models import Listing
+from app.listings.models import Listing, ListingStatus
 from app.listings.schemas import Page
 from app.listings.service import localized
 
@@ -21,11 +22,22 @@ async def admin_bookings(
     page: int,
     page_size: int,
     locale: Locale,
+    attention_only: bool = False,
 ) -> Page[AdminBookingSummary]:
-    """Newest first. `q` matches the booking code or either party's phone."""
+    """Newest first. `q` matches the booking code or either party's phone; `attention_only`
+    keeps future bookings whose listing or a party is suspended."""
     renter = aliased(User)
     owner_user = aliased(User)
     open_claim = exists().where(Claim.booking_id == Booking.id, Claim.status == ClaimStatus.OPEN)
+    attention: ColumnElement[bool] = and_(
+        Booking.status.in_([BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS]),
+        func.upper(Booking.period) > clock.now(),
+        or_(
+            Listing.status == ListingStatus.SUSPENDED,
+            renter.status == UserStatus.SUSPENDED,
+            owner_user.status == UserStatus.SUSPENDED,
+        ),
+    )
     query = (
         select(
             Booking,
@@ -35,6 +47,7 @@ async def admin_bookings(
             OwnerProfile.display_name,
             owner_user.phone,
             open_claim,
+            attention,
         )
         .join(Listing, Listing.id == Booking.listing_id)
         .join(renter, renter.id == Booking.renter_id)
@@ -43,6 +56,8 @@ async def admin_bookings(
     )
     if status is not None:
         query = query.where(Booking.status == status)
+    if attention_only:
+        query = query.where(attention)
     if q:
         term = q.strip()
         query = query.where(
@@ -59,7 +74,7 @@ async def admin_bookings(
         .limit(page_size)
     )
     items = []
-    for booking, title_sw, title_en, r, owner_name, owner_phone, claimed in rows.all():
+    for booking, title_sw, title_en, r, owner_name, owner_phone, claimed, flagged in rows.all():
         assert booking.period.lower is not None and booking.period.upper is not None
         items.append(
             AdminBookingSummary(
@@ -73,6 +88,7 @@ async def admin_bookings(
                 renter=AdminParty(id=r.id, name=r.name or "", phone=r.phone),
                 owner=AdminParty(id=booking.owner_profile_id, name=owner_name, phone=owner_phone),
                 open_claim=bool(claimed),
+                attention=bool(flagged),
                 created_at=booking.created_at,
             )
         )
