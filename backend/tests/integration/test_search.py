@@ -249,6 +249,14 @@ async def test_stock_availability(
     assert ids(body) == {str(tents.id)} and body["items"][0]["total_tzs"] == 15_000
     assert ids(await search(client, world, category=tents_cat.slug, quantity=4, **period)) == set()
 
+    # Another listing's stock bookings do not count against this one.
+    chairs = await _listing(db, world, tents_cat, stock=10, price=1_000)
+    await make_block(db, chairs, *day_range(D, D + timedelta(days=1)), kind="stock", quantity=5)
+    body = await search(client, world, category=tents_cat.slug, quantity=3, **period)
+    assert ids(body) == {str(tents.id), str(chairs.id)}
+    body = await search(client, world, category=tents_cat.slug, quantity=5, **period)
+    assert ids(body) == {str(chairs.id)}
+
 
 async def test_past_period_is_rejected(client: httpx.AsyncClient, world: World) -> None:
     res = await client.get(

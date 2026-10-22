@@ -108,7 +108,7 @@ def _owner_blocks(listing_ids: Select[uuid.UUID]) -> Select[AvailabilityBlock]:
     return select(AvailabilityBlock).where(
         AvailabilityBlock.listing_id.in_(listing_ids),
         AvailabilityBlock.source == BlockSource.OWNER_BLOCK,
-        AvailabilityBlock.active.is_(True),
+        AvailabilityBlock.active,
     )
 
 

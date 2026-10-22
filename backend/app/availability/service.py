@@ -46,7 +46,7 @@ def exclusive_conflict(listing_id: Any, start: datetime, end: datetime) -> Exist
     b = aliased(AvailabilityBlock)
     return exists().where(
         b.listing_id == listing_id,
-        b.active.is_(True),
+        b.active,  # bare column: matches the partial index predicate `WHERE active`
         b.kind == BlockKind.EXCLUSIVE,
         b.period.op("&&")(_range(literal(start, TZ), literal(end, TZ))),
     )
@@ -64,10 +64,13 @@ def stock_shortfall(
         select(func.coalesce(func.sum(b.quantity), 0))
         .where(
             b.listing_id == listing_id,
-            b.active.is_(True),
+            b.active,
             b.kind == BlockKind.STOCK,
             b.period.op("&&")(_range(day, day + literal(ONE_DAY, Interval()))),
         )
+        # In search `listing_id` is the outer query's `listings.id`, two levels up; without
+        # explicit correlation `listings` lands in this FROM and every listing's blocks count.
+        .correlate_except(b)
         .scalar_subquery()
     )
     return exists(select(day).where(used + quantity > stock))
@@ -93,7 +96,7 @@ async def _blocks(
         select(AvailabilityBlock)
         .where(
             AvailabilityBlock.listing_id == listing_id,
-            AvailabilityBlock.active.is_(True),
+            AvailabilityBlock.active,
             AvailabilityBlock.kind == kind,
             AvailabilityBlock.period.op("&&")(_range(literal(start, TZ), literal(end, TZ))),
         )
@@ -290,7 +293,7 @@ async def release(session: AsyncSession, booking_id: uuid.UUID) -> None:
     """Free a booking's hold (cancelled, declined or expired)."""
     await session.execute(
         update(AvailabilityBlock)
-        .where(AvailabilityBlock.booking_id == booking_id, AvailabilityBlock.active.is_(True))
+        .where(AvailabilityBlock.booking_id == booking_id, AvailabilityBlock.active)
         .values(active=False, updated_at=clock.now())
         .execution_options(synchronize_session="fetch")
     )
