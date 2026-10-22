@@ -337,7 +337,7 @@ on its own.
 - [x] T143 [P] Delivery-area validation in quotes and bookings (`OUTSIDE_DELIVERY_AREA`) in `backend/app/pricing/service.py` with tests added to `backend/tests/unit/test_pricing.py`
 - [x] T144 [P] Add rate limiting for OTP, booking creation and messaging in `backend/app/core/ratelimit.py` (Postgres-backed counters)
 - [x] T145 [P] Search performance: k6 script `perf/search.js`, 20k-listing generator `backend/app/seed_perf.py`, check query plans and indexes until p95 < 500 ms (SC-002)
-- [ ] T146 [P] Frontend performance pass: bundle budget ≤ 300 KB gz per route, image `sizes`, Lighthouse mobile slow-3G on home/search/listing (LCP < 2 s), recorded in `frontend/perf-report.md`
+- [x] T146 [P] Frontend performance pass: bundle budget ≤ 300 KB gz per route, image `sizes`, Lighthouse mobile slow-3G on home/search/listing (LCP < 2 s), recorded in `frontend/perf-report.md`
 - [ ] T147 [P] Security review: cookie flags, CSRF posture for SameSite=Lax + JSON-only mutations, presigned URL TTLs, PII log masking check, secrets only from env, documented in `docs/security.md`
 - [ ] T148 [P] Write operations docs (env vars, provider switch, AzamPay/Beem go-live checklist from research.md "Verify" items, backups) in `docs/operations.md`
 - [ ] T149 Run the full quickstart.md validation (V1–V18) on a fresh `docker compose up` and record results in `specs/001-rental-marketplace-mvp/checklists/validation.md`

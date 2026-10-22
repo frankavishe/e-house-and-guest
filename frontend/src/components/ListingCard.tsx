@@ -24,7 +24,7 @@ export async function ListingCard({
         <ImageWithFallback
           src={photo?.url_320}
           srcSet={photo ? `${photo.url_320} 320w, ${photo.url_640} 640w` : undefined}
-          sizes="(min-width: 640px) 320px, 100vw"
+          sizes="(min-width: 1024px) 320px, (min-width: 640px) calc(50vw - 24px), calc(100vw - 32px)"
           alt={photo?.alt ?? listing.title}
           fallbackLabel={t("common.imageUnavailable")}
           priority={priority}

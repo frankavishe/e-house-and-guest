@@ -15,6 +15,11 @@ const publicMedia = new URL(process.env.S3_PUBLIC_BASE_URL ?? "http://localhost:
 const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
+  experimental: {
+    // The whole stylesheet is ~6 KB gz. Inlining it saves the render-blocking CSS request,
+    // one full round trip before first paint on slow 3G (Principle VI, frontend/perf-report.md).
+    inlineCss: true,
+  },
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${apiTarget}/api/:path*` }];
   },

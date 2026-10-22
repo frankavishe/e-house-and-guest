@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ClientMessages } from "@/i18n/ClientMessages";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -38,7 +39,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={locale}>
       <body className="min-h-dvh antialiased">
-        <NextIntlClientProvider>
+        <ClientMessages>
           <a
             href="#main"
             className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2"
@@ -49,7 +50,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <main id="main" className="mx-auto w-full max-w-5xl px-4 py-6">
             {children}
           </main>
-        </NextIntlClientProvider>
+        </ClientMessages>
       </body>
     </html>
   );
