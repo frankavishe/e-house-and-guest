@@ -37,7 +37,10 @@
     "CLAIM_OPEN": "Uhifadhi huu tayari una dai lililo wazi.",
     "CLAIM_WINDOW_CLOSED": "Dai linaweza kufunguliwa wakati wa ukodishaji au hadi saa 48 baada ya kumalizika.",
     "INVALID_AWARD": "Kiasi kilichotolewa hakilingani na uamuzi au amana iliyoshikiliwa.",
-    "REFUND_EXCEEDS_BALANCE": "Marejesho ni makubwa kuliko kilichobaki kurejeshwa kwa uhifadhi huu."
+    "REFUND_EXCEEDS_BALANCE": "Marejesho ni makubwa kuliko kilichobaki kurejeshwa kwa uhifadhi huu.",
+    "REVIEW_NOT_ALLOWED": "Unaweza kutoa tathmini baada ya uhifadhi kukamilika tu.",
+    "ALREADY_REVIEWED": "Tayari umetoa tathmini kwa uhifadhi huu.",
+    "ALREADY_REPORTED": "Tayari umeripoti hili. Timu yetu inalipitia."
   },
   "sms": {
     "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."
@@ -157,6 +160,16 @@
       },
       "resolved": {
         "sms": "Dai la uhifadhi {code} limeamuliwa. Amana aliyopewa mmiliki: {award}."
+      }
+    },
+    "message": {
+      "received": {
+        "in_app": "Ujumbe mpya kutoka kwa {name} kuhusu \"{title}\"."
+      }
+    },
+    "review": {
+      "received": {
+        "sms": "Umepokea tathmini ya nyota {rating} kwa uhifadhi {code} (\"{title}\")."
       }
     }
   }

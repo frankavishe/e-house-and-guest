@@ -338,6 +338,8 @@ async def _counterpart(session: AsyncSession, booking: Booking, role: RoleT) -> 
 async def booking_out(
     session: AsyncSession, booking: Booking, role: RoleT, locale: Locale
 ) -> BookingOut:
+    from app.reviews import service as reviews
+
     installments = await installments_of(session, booking.id)
     payments = await payments_of(session, booking.id)
     pending = any(p.status == PaymentStatus.PENDING for p in payments)
@@ -380,8 +382,7 @@ async def booking_out(
             cancel=booking.status in CANCELLABLE[canceller(role)],
             accept=is_owner and booking.status == BookingStatus.REQUESTED,
             decline=is_owner and booking.status == BookingStatus.REQUESTED,
-            # Reviews arrive with US6.
-            review=False,
+            review=await reviews.can_review(session, booking, role),
             claim=bool(claim_kinds),
         ),
         counterpart=await _counterpart(session, booking, role),

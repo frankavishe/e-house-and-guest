@@ -22,10 +22,12 @@ from app.core.errors import install_error_handlers, install_error_openapi
 from app.core.logging import configure_logging
 from app.listings.owner_router import router as owner_listings_router
 from app.listings.router import router as listings_router
+from app.messaging.router import router as messaging_router
 from app.notifications.router import router as notifications_router
 from app.payments.router import router as payments_router
 from app.payments.router import webhook_router
 from app.payouts.router import router as payouts_router
+from app.reviews.router import router as reviews_router
 from app.search.router import router as search_router
 
 API_PREFIX = "/api/v1"
@@ -61,6 +63,8 @@ def api_router() -> APIRouter:
     router.include_router(bookings_router)
     router.include_router(payments_router)
     router.include_router(payouts_router)
+    router.include_router(messaging_router)
+    router.include_router(reviews_router)
     router.include_router(notifications_router)
     router.include_router(webhook_router)
     if get_settings().is_dev_like:

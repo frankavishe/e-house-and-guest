@@ -9,6 +9,8 @@ from app.core import idempotency  # noqa: F401
 from app.jobs import models as jobs  # noqa: F401
 from app.ledger import models as ledger  # noqa: F401
 from app.listings import models as listings  # noqa: F401
+from app.messaging import models as messaging  # noqa: F401
 from app.notifications import models as notifications  # noqa: F401
 from app.payments import models as payments  # noqa: F401
 from app.payouts import models as payouts  # noqa: F401
+from app.reviews import models as reviews  # noqa: F401

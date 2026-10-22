@@ -163,6 +163,7 @@ async def test_listing_detail_shape(client: httpx.AsyncClient, db: AsyncSession)
         assert key in body, key
     assert body["title"] == "Listing" and body["description"] == "Listing description"
     assert body["owner"] == {
+        "user_id": body["owner"]["user_id"],
         "display_name": "Mama Owner",
         "rating_avg": None,
         "rating_count": 0,

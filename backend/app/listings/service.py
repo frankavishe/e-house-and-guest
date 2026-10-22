@@ -129,6 +129,10 @@ def _url(key: str) -> str:
     return get_storage().public_url(key=key)
 
 
+def thumbnail_url(photo: ListingPhoto) -> str:
+    return _url((photo.variants or {}).get("320") or photo.storage_key)
+
+
 def _photo(photo: ListingPhoto, locale: Locale, title: str) -> DetailPhoto:
     variants = photo.variants or {}
 
@@ -274,6 +278,8 @@ async def cards(
 
 
 async def detail(session: AsyncSession, listing_id: uuid.UUID, locale: Locale) -> ListingDetail:
+    from app.reviews.service import recent_reviews
+
     listing, category = await get_public_listing(session, listing_id)
     owner = await session.get(OwnerProfile, listing.owner_profile_id)
     assert owner is not None and category.default_unit is not None
@@ -307,12 +313,13 @@ async def detail(session: AsyncSession, listing_id: uuid.UUID, locale: Locale) -
         stock=listing.stock,
         cancellation_policy=listing.cancellation_policy.value,
         owner=OwnerOut(
+            user_id=owner.user_id,
             display_name=owner.display_name,
             rating_avg=float(owner.rating_avg) if owner.rating_avg is not None else None,
             rating_count=owner.rating_count,
             verified=owner.verification_status == VerificationStatus.VERIFIED,
         ),
-        reviews=[],  # reviews arrive with US6
+        reviews=await recent_reviews(session, listing.id),
     )
 
 

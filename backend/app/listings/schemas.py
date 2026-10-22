@@ -94,11 +94,17 @@ class PriceOut(BaseModel):
     season_end: date | None
 
 
-class OwnerOut(BaseModel):
+class OwnerRating(BaseModel):
     display_name: str
     rating_avg: float | None
     rating_count: int
     verified: bool
+
+
+class OwnerOut(OwnerRating):
+    """`user_id` links to the owner's public profile (`GET /users/{id}/reviews`)."""
+
+    user_id: uuid.UUID
 
 
 class ReviewOut(BaseModel):
