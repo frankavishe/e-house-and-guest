@@ -33,6 +33,9 @@ class LocalStorage:
     async def put(self, key: str, data: bytes, content_type: str, private: bool) -> None:
         self.objects[(private, key)] = (data, content_type)
 
+    async def delete(self, key: str, *, private: bool = False) -> None:
+        self.objects.pop((private, key), None)
+
     async def size(self, key: str, *, private: bool = False) -> int | None:
         obj = self.objects.get((private, key))
         return len(obj[0]) if obj else None

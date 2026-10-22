@@ -26,6 +26,7 @@ const FIELDS = [
 ];
 const MONTHS = [1, 2, 3, 6, 9, 12, 18, 24];
 const QUOTE_DEBOUNCE_MS = 400;
+const NO_AREA: number[] = [];
 
 /** The API period for the mode, or null while it is incomplete. */
 function toPeriod(mode: Listing["booking_mode"], f: Fields): Schemas["PeriodParams"] | null {
@@ -70,6 +71,9 @@ export function BookingWidget({
   const deliveryRequired = listing.delivery === "required";
   const [delivery, setDelivery] = useState(deliveryRequired);
   const [address, setAddress] = useState("");
+  const area = listing.delivery_area ?? NO_AREA;
+  const [district, setDistrict] = useState(area.length === 1 ? String(area[0]) : "");
+  const [districts, setDistricts] = useState<{ value: string; label: string }[]>([]);
   const [message, setMessage] = useState("");
   const [quote, setQuote] = useState<Quote | null>(null);
   const [quoteError, setQuoteError] = useState<string | null>(null);
@@ -81,6 +85,7 @@ export function BookingWidget({
   const mode = listing.booking_mode;
   const period = useMemo(() => toPeriod(mode, fields), [mode, fields]);
   const wantsDelivery = deliveryRequired || (listing.delivery === "optional" && delivery);
+  const needsDistrict = wantsDelivery && signedIn && area.length > 0;
   const slotMinutes = Number(listing.slot_config?.slot_minutes ?? 60) || 60;
 
   useEffect(() => {
@@ -109,6 +114,27 @@ export function BookingWidget({
       clearTimeout(timer);
     };
   }, [listing.id, period, wantsDelivery, t]);
+
+  // The renter picks a district inside the listing's delivery area (OUTSIDE_DELIVERY_AREA).
+  useEffect(() => {
+    if (!needsDistrict || districts.length) return;
+    let cancelled = false;
+    api
+      .GET("/api/v1/locations", { params: { query: { level: "district" } } })
+      .then(({ data }) => {
+        if (!cancelled && data) {
+          setDistricts(
+            data
+              .filter((d) => area.includes(d.id))
+              .map((d) => ({ value: String(d.id), label: d.name })),
+          );
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [needsDistrict, districts.length, area]);
 
   const set = (key: string) => (e: { target: { value: string } }) =>
     setFields((prev) => ({ ...prev, [key]: e.target.value }));
@@ -146,6 +172,7 @@ export function BookingWidget({
           listing_id: listing.id,
           period,
           delivery: wantsDelivery,
+          delivery_district_id: needsDistrict && district ? Number(district) : null,
           delivery_address: wantsDelivery ? address.trim() || null : null,
           message: message.trim() || null,
         },
@@ -253,6 +280,17 @@ export function BookingWidget({
           />
           {t("booking.wantDelivery")}
         </label>
+      )}
+      {needsDistrict && (
+        <Select
+          label={t("booking.deliveryDistrict")}
+          name="delivery_district_id"
+          placeholder=""
+          value={district}
+          onChange={(e) => setDistrict(e.target.value)}
+          required
+          options={districts}
+        />
       )}
       {wantsDelivery && signedIn && (
         <Input

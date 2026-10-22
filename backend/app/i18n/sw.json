@@ -1,5 +1,7 @@
 {
   "errors": {
+    "ACTIVE_BOOKINGS": "Maliza au ghairi nafasi zako zinazoendelea kabla ya kufuta akaunti yako.",
+    "PAYOUT_IN_PROGRESS": "Malipo kwako bado yanaendelea. Jaribu tena yakishalipwa.",
     "VALIDATION_ERROR": "Taarifa ulizoweka si sahihi.",
     "UNAUTHENTICATED": "Tafadhali ingia kwanza.",
     "FORBIDDEN": "Huna ruhusa ya kufanya hivi.",

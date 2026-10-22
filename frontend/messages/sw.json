@@ -172,6 +172,7 @@
     "total": "Jumla",
     "wantDelivery": "Niletewe",
     "deliveryAddress": "Anwani ya kuletewa",
+    "deliveryDistrict": "Wilaya ya kuletewa",
     "message": "Ujumbe kwa mmiliki (si lazima)",
     "instantNote": "Lipa sasa kwa pesa ya simu; uhifadhi unathibitishwa papo hapo.",
     "requestNote": "Mmiliki ana saa 24 kukubali. Utalipa baada ya kukubali tu.",
@@ -281,7 +282,14 @@
     "admin": "Usimamizi",
     "adminHint": "Thibitisha wamiliki na kagua matangazo.",
     "messages": "Ujumbe",
-    "messagesHint": "Mazungumzo yako na wamiliki na wapangaji"
+    "messagesHint": "Mazungumzo yako na wamiliki na wapangaji",
+    "delete": {
+      "title": "Futa akaunti yangu",
+      "explain": "Jina lako, namba ya simu, barua pepe, nyaraka za utambulisho, taarifa za malipo na ujumbe wako vitafutwa, na matangazo yako yataondolewa. Hatua hii haiwezi kurudishwa.",
+      "kept": "Kumbukumbu za nafasi na malipo ya zamani zinahifadhiwa bila jina lako, kama sheria inavyotaka.",
+      "confirm": "Naelewa kwamba hatua hii haiwezi kurudishwa",
+      "button": "Futa akaunti"
+    }
   },
   "owner": {
     "title": "Akaunti ya mmiliki",

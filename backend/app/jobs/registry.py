@@ -33,6 +33,8 @@ HANDLER_MODULES: list[str] = [
     "app.payments.refunds",
     "app.listings.jobs",
     "app.payouts.jobs",
+    "app.core.jobs",
+    "app.accounts.deletion",
 ]
 
 

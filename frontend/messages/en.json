@@ -172,6 +172,7 @@
     "total": "Total",
     "wantDelivery": "Deliver to me",
     "deliveryAddress": "Delivery address",
+    "deliveryDistrict": "Delivery district",
     "message": "Message to the owner (optional)",
     "instantNote": "Pay now with mobile money; the booking is confirmed straight away.",
     "requestNote": "The owner has 24 hours to accept. You pay only after they accept.",
@@ -281,7 +282,14 @@
     "admin": "Admin",
     "adminHint": "Verify owners and review listings.",
     "messages": "Messages",
-    "messagesHint": "Your conversations with owners and renters"
+    "messagesHint": "Your conversations with owners and renters",
+    "delete": {
+      "title": "Delete my account",
+      "explain": "Your name, phone number, email, ID documents, payout details and messages will be removed, and your listings taken down. This cannot be undone.",
+      "kept": "Records of past bookings and payments are kept, without your name, as the law requires.",
+      "confirm": "I understand that this cannot be undone",
+      "button": "Delete account"
+    }
   },
   "owner": {
     "title": "Owner account",

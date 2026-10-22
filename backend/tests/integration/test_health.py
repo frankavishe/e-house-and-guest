@@ -21,7 +21,7 @@ async def test_error_message_defaults_to_swahili(client: httpx.AsyncClient) -> N
 
 
 async def test_method_not_allowed_lists_every_method(client: httpx.AsyncClient) -> None:
-    res = await client.delete("/api/v1/me")
+    res = await client.put("/api/v1/me")
     assert res.status_code == 405
     assert res.json()["error"]["code"] == "METHOD_NOT_ALLOWED"
-    assert set(res.headers["allow"].split(", ")) == {"GET", "PATCH"}
+    assert set(res.headers["allow"].split(", ")) == {"GET", "PATCH", "DELETE"}

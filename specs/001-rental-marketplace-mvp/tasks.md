@@ -332,10 +332,10 @@ on its own.
 
 ## Phase 10: Polish & Cross-Cutting Concerns
 
-- [ ] T141 Implement account deletion (FR-033): `DELETE /me` schedules anonymisation job (name/phone/email tombstoned, documents and messages deleted, bookings/ledger kept) in `backend/app/accounts/deletion.py` with tests in `backend/tests/integration/test_account_deletion.py`
-- [ ] T142 [P] Implement `BeemSmsProvider` in `backend/app/integrations/sms/beem.py` with tests against a stubbed HTTP server in `backend/tests/integration/test_beem.py`
-- [ ] T143 [P] Delivery-area validation in quotes and bookings (`OUTSIDE_DELIVERY_AREA`) in `backend/app/pricing/service.py` with tests added to `backend/tests/unit/test_pricing.py`
-- [ ] T144 [P] Add rate limiting for OTP, booking creation and messaging in `backend/app/core/ratelimit.py` (Postgres-backed counters)
+- [x] T141 Implement account deletion (FR-033): `DELETE /me` schedules anonymisation job (name/phone/email tombstoned, documents and messages deleted, bookings/ledger kept) in `backend/app/accounts/deletion.py` with tests in `backend/tests/integration/test_account_deletion.py`
+- [x] T142 [P] Implement `BeemSmsProvider` in `backend/app/integrations/sms/beem.py` with tests against a stubbed HTTP server in `backend/tests/integration/test_beem.py`
+- [x] T143 [P] Delivery-area validation in quotes and bookings (`OUTSIDE_DELIVERY_AREA`) in `backend/app/pricing/service.py` with tests added to `backend/tests/unit/test_pricing.py`
+- [x] T144 [P] Add rate limiting for OTP, booking creation and messaging in `backend/app/core/ratelimit.py` (Postgres-backed counters)
 - [ ] T145 [P] Search performance: k6 script `perf/search.js`, 20k-listing generator `backend/app/seed_perf.py`, check query plans and indexes until p95 < 500 ms (SC-002)
 - [ ] T146 [P] Frontend performance pass: bundle budget ≤ 300 KB gz per route, image `sizes`, Lighthouse mobile slow-3G on home/search/listing (LCP < 2 s), recorded in `frontend/perf-report.md`
 - [ ] T147 [P] Security review: cookie flags, CSRF posture for SameSite=Lax + JSON-only mutations, presigned URL TTLs, PII log masking check, secrets only from env, documented in `docs/security.md`

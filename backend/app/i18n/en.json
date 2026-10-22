@@ -1,5 +1,7 @@
 {
   "errors": {
+    "ACTIVE_BOOKINGS": "Finish or cancel your current bookings before deleting your account.",
+    "PAYOUT_IN_PROGRESS": "A payout to you is still in progress. Try again once it is paid.",
     "VALIDATION_ERROR": "Some of the details you entered are not valid.",
     "UNAUTHENTICATED": "Please sign in first.",
     "FORBIDDEN": "You are not allowed to do this.",

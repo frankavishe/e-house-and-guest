@@ -59,6 +59,7 @@ def priced(
     lst: Listing | None = None,
     delivery: bool = False,
     delivery_district_id: int | None = None,
+    require_district: bool = False,
     **period: Any,
 ) -> Quote:
     assert cat.booking_mode is not None and cat.default_unit is not None
@@ -70,6 +71,7 @@ def priced(
         p,
         delivery=delivery,
         delivery_district_id=delivery_district_id,
+        require_district=require_district,
     )
 
 
@@ -258,6 +260,15 @@ def test_delivery_fee() -> None:
     with pytest.raises(AppError) as err:
         priced(cat, rates, optional, delivery=True, delivery_district_id=8, **period)
     assert err.value.code == "OUTSIDE_DELIVERY_AREA"
+    # A quote may preview the fee without a district; a booking must name one in the area.
+    assert priced(cat, rates, optional, delivery=True, **period).delivery_fee_tzs == 20_000
+    with pytest.raises(AppError) as err:
+        priced(cat, rates, optional, delivery=True, require_district=True, **period)
+    assert err.value.code == "OUTSIDE_DELIVERY_AREA"
+    assert err.value.details == {"reason": "district_required"}
+    anywhere = listing(delivery=DeliveryOption.OPTIONAL, delivery_fee_tzs=20_000)
+    q = priced(cat, rates, anywhere, delivery=True, require_district=True, **period)
+    assert q.delivery_fee_tzs == 20_000
 
     required = listing(delivery=DeliveryOption.REQUIRED, delivery_fee_tzs=5_000)
     assert priced(cat, rates, required, **period).delivery_fee_tzs == 5_000

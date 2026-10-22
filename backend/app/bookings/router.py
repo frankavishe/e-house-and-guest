@@ -20,7 +20,7 @@ from app.bookings.schemas import (
     DeclineBody,
     Receipt,
 )
-from app.core import idempotency
+from app.core import idempotency, ratelimit
 from app.core.deps import CurrentUser, Owner, Session
 from app.core.i18n import Locale, get_locale
 from app.listings.schemas import Page
@@ -61,6 +61,7 @@ async def create_booking(
 ) -> Any:
     """Instant-book listings start in `awaiting_payment` (pay within 15 min); others in
     `requested` until the owner accepts (24 h). The dates are held either way."""
+    await ratelimit.hit_user(session, ratelimit.BOOKINGS_PER_USER, user.id)
 
     async def action() -> BookingOut:
         booking = await service.create_booking(session, user, body)

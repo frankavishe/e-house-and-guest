@@ -21,7 +21,9 @@ def get_sms_provider() -> SmsProvider:
 
             _sms = ConsoleSmsProvider(echo=settings.env != "test")
         else:
-            raise NotImplementedError("BeemSmsProvider arrives in T142")
+            from app.integrations.sms.beem import BeemSmsProvider
+
+            _sms = BeemSmsProvider(settings)
     return _sms
 
 

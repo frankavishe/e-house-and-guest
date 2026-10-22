@@ -107,17 +107,20 @@ def _time_slot(period: Period, rates: _Rates, lines: _Lines) -> None:
         lines.add("base", unit, unit_price, count)
 
 
-def _delivery_fee(listing: Listing, requested: bool, district_id: int | None) -> int:
+def _delivery_fee(
+    listing: Listing, requested: bool, district_id: int | None, require_district: bool
+) -> int:
+    """A quote may omit the district (fee preview); a booking must name one inside the area."""
     if not requested and listing.delivery != DeliveryOption.REQUIRED:
         return 0
     if listing.delivery == DeliveryOption.NONE:
         raise AppError("DELIVERY_NOT_OFFERED", 422)
-    if (
-        district_id is not None
-        and listing.delivery_area
-        and district_id not in listing.delivery_area
-    ):
-        raise AppError("OUTSIDE_DELIVERY_AREA", 422)
+    if listing.delivery_area:
+        if district_id is None:
+            if require_district:
+                raise AppError("OUTSIDE_DELIVERY_AREA", 422, {"reason": "district_required"})
+        elif district_id not in listing.delivery_area:
+            raise AppError("OUTSIDE_DELIVERY_AREA", 422)
     return listing.delivery_fee_tzs or 0
 
 
@@ -129,6 +132,7 @@ def quote(
     *,
     delivery: bool = False,
     delivery_district_id: int | None = None,
+    require_district: bool = False,
 ) -> Quote:
     rates = _Rates(prices)
     lines = _Lines()
@@ -143,7 +147,7 @@ def quote(
             _per_day(period, rates, lines)
     built = lines.build()
     rental = sum(line.amount_tzs for line in built)
-    delivery_fee = _delivery_fee(listing, delivery, delivery_district_id)
+    delivery_fee = _delivery_fee(listing, delivery, delivery_district_id, require_district)
     service_fee = round_half_up(rental * category.renter_fee_bps, BPS)
     deposit = listing.deposit_tzs or 0
     return Quote(

@@ -57,6 +57,7 @@ class Settings(BaseSettings):
     beem_api_key: str = ""
     beem_secret_key: str = ""
     beem_sender_id: str = ""
+    beem_base_url: str = "https://apisms.beem.africa"
 
     # Object storage (R12)
     storage_provider: Literal["s3", "local"] = "s3"

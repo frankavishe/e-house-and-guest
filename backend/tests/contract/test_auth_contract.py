@@ -22,12 +22,15 @@ def test_auth_paths_are_documented() -> None:
         ("/api/v1/auth/logout", "post"),
         ("/api/v1/me", "get"),
         ("/api/v1/me", "patch"),
+        ("/api/v1/me", "delete"),
         ("/api/v1/health", "get"),
     ]:
         assert method in paths.get(path, {}), f"{method.upper()} {path} missing"
     assert "202" in operation("/api/v1/auth/otp/request", "post")["responses"]
     assert "204" in operation("/api/v1/auth/refresh", "post")["responses"]
     assert "204" in operation("/api/v1/auth/logout", "post")["responses"]
+    deleted = operation("/api/v1/me", "delete")["responses"]
+    assert "202" in deleted and "409" in deleted
 
 
 async def test_me_response_shape(client: httpx.AsyncClient, db: AsyncSession) -> None:

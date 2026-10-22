@@ -78,6 +78,10 @@ class S3Storage:
             ContentType=content_type,
         )
 
+    async def delete(self, key: str, *, private: bool = False) -> None:
+        # S3 DeleteObject succeeds for a missing key.
+        await asyncio.to_thread(self._client.delete_object, Bucket=self._bucket(private), Key=key)
+
     async def size(self, key: str, *, private: bool = False) -> int | None:
         def _head() -> int | None:
             try:

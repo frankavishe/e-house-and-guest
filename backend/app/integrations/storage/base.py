@@ -27,6 +27,10 @@ class StorageProvider(Protocol):
 
     async def put(self, key: str, data: bytes, content_type: str, private: bool) -> None: ...
 
+    async def delete(self, key: str, *, private: bool = False) -> None:
+        """Remove an object; a missing one is not an error (deletion jobs re-run)."""
+        ...
+
     async def size(self, key: str, *, private: bool = False) -> int | None:
         """Object size in bytes, or None if it does not exist (upload confirmation)."""
         ...

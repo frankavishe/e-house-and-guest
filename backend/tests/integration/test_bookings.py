@@ -214,3 +214,24 @@ async def test_each_mode_can_be_booked(
         assert body["amount_due_tzs"] == 50_000  # first month, no deposit
     else:
         assert body["installments"] is None
+
+
+async def test_delivery_must_be_inside_the_area(
+    client: httpx.AsyncClient, db: AsyncSession
+) -> None:
+    b = await make_bookable(db, delivery="optional", delivery_fee_tzs=10_000)
+    b.listing.delivery_area = [b.listing.district_id]
+    await db.flush()
+
+    r = await book(client, b, D, delivery=True)
+    assert r.status_code == 422
+    error = r.json()["error"]
+    assert error["code"] == "OUTSIDE_DELIVERY_AREA"
+    assert error["details"] == {"reason": "district_required"}
+
+    r = await book(client, b, D, delivery=True, delivery_district_id=b.listing.district_id + 1)
+    assert r.status_code == 422 and r.json()["error"]["code"] == "OUTSIDE_DELIVERY_AREA"
+
+    r = await book(client, b, D, delivery=True, delivery_district_id=b.listing.district_id)
+    assert r.status_code == 201, r.text
+    assert r.json()["quote"]["delivery_fee_tzs"] == 10_000

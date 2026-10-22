@@ -5,6 +5,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query, Response, status
 
+from app.core import ratelimit
 from app.core.deps import CurrentUser, Session
 from app.core.i18n import Locale, get_locale
 from app.messaging import service
@@ -43,6 +44,7 @@ async def start_conversation(
 ) -> ConversationOut:
     """Message a listing's owner. A renter has one conversation per listing; starting again
     adds the message to it (`200`)."""
+    await ratelimit.hit_user(session, ratelimit.MESSAGES_PER_USER, user.id)
     conv, created = await service.start(session, user, body.listing_id, body.body)
     out = await service.conversation_out(session, user, conv, locale)
     await session.commit()
@@ -97,6 +99,7 @@ async def send_message(
     conversation_id: uuid.UUID, body: MessageIn, user: CurrentUser, session: Session
 ) -> MessageOut:
     """Phone numbers are masked until the renter has a confirmed booking of the listing."""
+    await ratelimit.hit_user(session, ratelimit.MESSAGES_PER_USER, user.id)
     message = await service.send(session, user, conversation_id, body.body)
     out = service.message_out(message, user)
     await session.commit()

@@ -100,7 +100,11 @@ export interface paths {
         get: operations["get_me_api_v1_me_get"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Delete Me
+         * @description Delete the account (FR-033). Bookings and payment records are kept, anonymised.
+         */
+        delete: operations["delete_me_api_v1_me_delete"];
         options?: never;
         head?: never;
         /** Patch Me */
@@ -4324,6 +4328,42 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserOut"];
+                };
+            };
+            /** @description Error */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_me_api_v1_me_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Account deleted; personal data anonymisation scheduled */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description `ACTIVE_BOOKINGS` or `PAYOUT_IN_PROGRESS` */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
             /** @description Error */
