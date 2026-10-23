@@ -172,8 +172,7 @@ async def create_booking(session: AsyncSession, renter: User, body: BookingCreat
         delivery_district_id=body.delivery_district_id,
         require_district=True,
     )
-    if mode == BookingMode.QUANTITY:
-        await availability.lock_listing(session, listing.id)
+    await availability.lock_listing(session, listing.id)
     now = clock.now()
     instant = listing.instant_book
     booking = Booking(

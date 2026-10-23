@@ -239,7 +239,7 @@ async def unavailable_error(
 
 
 async def lock_listing(session: AsyncSession, listing_id: uuid.UUID) -> None:
-    """Serialise stock bookings of one listing. Take it before inserting the booking: the
+    """Serialise reservations of one listing. Take it before inserting the booking: the
     booking's foreign key share-locks the listing row, and upgrading that lock later lets
     two racing bookings deadlock."""
     await session.execute(select(Listing.id).where(Listing.id == listing_id).with_for_update())
@@ -257,9 +257,11 @@ async def reserve(
     """Hold `period` for a booking (or, without `booking_id`, as an owner block), or raise
     SLOT_TAKEN / INSUFFICIENT_STOCK (409).
 
-    Exclusive modes insert under the exclusion constraint, so of two racing inserts the
-    second fails in the database. Stock locks the listing row first (`FOR UPDATE`), which
-    serialises bookings of one item, then checks every day before inserting.
+    Every mode locks the listing row first (`FOR UPDATE`), which serialises reservations of
+    one item. Stock then checks every day before inserting. Exclusive modes insert under the
+    exclusion constraint, which rejects an overlap with a committed block; without the lock,
+    two uncommitted overlapping inserts wait on each other and Postgres aborts one with a
+    deadlock instead of a constraint violation.
     """
     block = AvailabilityBlock(
         listing_id=listing.id,
@@ -271,8 +273,8 @@ async def reserve(
         active=True,
         note=note,
     )
+    await lock_listing(session, listing.id)
     if mode == BookingMode.QUANTITY:
-        await lock_listing(session, listing.id)
         if not await is_available(session, listing, mode, period):
             raise await unavailable_error(session, listing, mode, period)
         session.add(block)
