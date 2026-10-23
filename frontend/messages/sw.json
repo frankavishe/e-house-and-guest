@@ -44,6 +44,11 @@
     "save": "Hifadhi",
     "signedIn": "Umeingia."
   },
+  "notFound": {
+    "title": "Ukurasa haupatikani",
+    "body": "Ukurasa unaoutafuta haupo au umeondolewa.",
+    "home": "Nenda ukurasa wa mwanzo"
+  },
   "errors": {
     "generic": "Hitilafu imetokea. Jaribu tena.",
     "network": "Hakuna mtandao. Angalia muunganisho wako na ujaribu tena."
@@ -250,7 +255,7 @@
     "payments": "Malipo",
     "reference": "Kumb. {ref}",
     "paid": "Imelipwa",
-    "total": "Jumla",
+    "balance": "Salio la kulipa",
     "issued": "Imetolewa {date}",
     "print": "Chapisha",
     "booking": "Rudi kwenye uhifadhi"
@@ -283,6 +288,7 @@
     "adminHint": "Thibitisha wamiliki na kagua matangazo.",
     "messages": "Ujumbe",
     "messagesHint": "Mazungumzo yako na wamiliki na wapangaji",
+    "signOut": "Toka",
     "delete": {
       "title": "Futa akaunti yangu",
       "explain": "Jina lako, namba ya simu, barua pepe, nyaraka za utambulisho, taarifa za malipo na ujumbe wako vitafutwa, na matangazo yako yataondolewa. Hatua hii haiwezi kurudishwa.",
@@ -478,7 +484,11 @@
     "accept": "Kubali",
     "decline": "Kataa",
     "reason": "Sababu (si lazima, mkodishaji ataiona)",
-    "confirmDecline": "Kataa ombi"
+    "confirmDecline": "Kataa ombi",
+    "from": "Kutoka kwa {name}",
+    "renterMessage": "Ujumbe kutoka kwa mkodishaji",
+    "yourMessage": "Ujumbe wako kwa mmiliki",
+    "ownerPrompt": "Kubali au kataa kabla ya {time}. Mkodishaji analipa baada ya wewe kukubali tu."
   },
   "admin": {
     "title": "Usimamizi",
@@ -531,9 +541,9 @@
     "net": "Mapato yako",
     "paidOut": "Yaliyolipwa",
     "pending": "Yanayosubiri kulipwa",
-    "bookings": "Booking",
-    "empty": "Bado hakuna booking zilizolipiwa katika kipindi hiki.",
-    "schedule": "Mapato yanaweza kulipwa saa 24 baada ya booking kuisha, na hutumwa katika malipo ya kila siku yanayofuata.",
+    "bookings": "Uhifadhi",
+    "empty": "Bado hakuna uhifadhi uliolipiwa katika kipindi hiki.",
+    "schedule": "Mapato yanaweza kulipwa saa 24 baada ya uhifadhi kuisha, na hutumwa katika malipo ya kila siku yanayofuata.",
     "payouts": "Malipo",
     "noPayouts": "Bado hakuna malipo.",
     "reference": "Kumbukumbu: {ref}",
@@ -565,7 +575,7 @@
     "reference": "Kumbukumbu ya uhamisho",
     "referenceHint": "Kumbukumbu ya M-Pesa au benki ya uhamisho uliofanya.",
     "failure": "Sababu ya kushindikana",
-    "bookings": "Booking",
+    "bookings": "Uhifadhi",
     "markPaid": "Weka kuwa yamelipwa",
     "confirmPaid": "Thibitisha yamelipwa",
     "retry": "Jaribu tena"
@@ -583,6 +593,7 @@
     "reason": "Sababu (si lazima)",
     "confirm": "Ndiyo, ghairi",
     "keep": "Endelea na uhifadhi",
+    "by_you": "Umeghairi uhifadhi huu.",
     "by_renter": "Mkodishaji ameghairi uhifadhi huu.",
     "by_owner": "Mmiliki ameghairi uhifadhi huu.",
     "by_admin": "Timu yetu ya msaada imeghairi uhifadhi huu.",

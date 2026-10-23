@@ -69,6 +69,25 @@ async def test_request_listing_waits_for_owner(
     assert r.json()["error"]["code"] == "INVALID_TRANSITION"
 
 
+async def test_owner_sees_request_message_and_renter(
+    client: httpx.AsyncClient, db: AsyncSession
+) -> None:
+    b = await make_bookable(db, instant_book=False)
+    r = await book(client, b, D, message="We are a team of 8.")
+    assert r.status_code == 201
+    booking_id = r.json()["id"]
+
+    sign_in(client, b.owner_user)
+    detail = (await client.get(f"/api/v1/bookings/{booking_id}")).json()
+    assert detail["request_message"] == "We are a team of 8."
+    page = (
+        await client.get("/api/v1/bookings", params={"role": "owner", "status": "requested"})
+    ).json()
+    (item,) = [i for i in page["items"] if i["id"] == booking_id]
+    assert item["request_message"] == "We are a team of 8."
+    assert item["counterpart_name"] == (b.renter.name or "")
+
+
 async def test_stock_refusal_reports_available(client: httpx.AsyncClient, db: AsyncSession) -> None:
     b = await make_bookable(db, "QUANTITY", stock=10)
     assert (await book(client, b, D, days=1, quantity=7)).status_code == 201

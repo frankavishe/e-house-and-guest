@@ -8,6 +8,7 @@ import { CancelBooking } from "@/components/CancelBooking";
 import { Checkout } from "@/components/Checkout";
 import { ClaimForm } from "@/components/ClaimForm";
 import { RefundActions } from "@/components/RefundActions";
+import { RequestActions } from "@/components/RequestActions";
 import { ReviewForm } from "@/components/ReviewForm";
 import { buttonClasses } from "@/components/ui/Button";
 import { Link, redirect } from "@/i18n/navigation";
@@ -20,9 +21,13 @@ type Props = { params: Promise<{ locale: string; bookingId: string }> };
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "myBookings" });
-  return { title: t("title"), robots: { index: false } };
+  const { locale, bookingId } = await params;
+  const t = await getTranslations({ locale });
+  const booking = UUID.test(bookingId) ? await getBooking(bookingId) : null;
+  return {
+    title: booking ? t("checkout.title", { code: booking.code }) : t("myBookings.title"),
+    robots: { index: false },
+  };
 }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -56,6 +61,9 @@ export default async function BookingPage({ params }: Props) {
       ? null
       : (booking.installments?.find((i) => i.payable) ?? null);
   const amountNow = installment?.amount_tzs ?? booking.amount_due_tzs;
+  const requestDeadline = booking.request_expires_at
+    ? formatDateTime(booking.request_expires_at, locale)
+    : "";
   const payable =
     booking.role === "renter" &&
     (booking.can.pay || pending != null) &&
@@ -97,22 +105,39 @@ export default async function BookingPage({ params }: Props) {
       </header>
 
       {booking.status === "requested" && (
-        <div className="rounded-xl bg-brand-50 p-4 text-sm text-brand-800">
-          <p className="font-medium">
-            {t("checkout.awaitingOwner", {
-              time: booking.request_expires_at
-                ? formatDateTime(booking.request_expires_at, locale)
-                : "",
-            })}
-          </p>
-          <p>{t("checkout.awaitingOwnerHint")}</p>
+        <div className="flex flex-col gap-3 rounded-xl bg-brand-50 p-4 text-sm text-brand-800">
+          {booking.can.accept ? (
+            <p className="font-medium">{t("requests.ownerPrompt", { time: requestDeadline })}</p>
+          ) : (
+            <div>
+              <p className="font-medium">
+                {t("checkout.awaitingOwner", { time: requestDeadline })}
+              </p>
+              <p>{t("checkout.awaitingOwnerHint")}</p>
+            </div>
+          )}
+          {booking.request_message && (
+            <div className="flex flex-col gap-1">
+              <p className="text-xs text-muted">
+                {t(booking.role === "renter" ? "requests.yourMessage" : "requests.renterMessage")}
+              </p>
+              <blockquote className="whitespace-pre-line rounded-lg bg-surface p-3 text-ink">
+                {booking.request_message}
+              </blockquote>
+            </div>
+          )}
+          {booking.can.accept && <RequestActions bookingId={booking.id} />}
         </div>
       )}
       {booking.status === "cancelled" && (
         <div className="flex flex-col gap-2 rounded-xl border border-line p-4 text-sm">
           <p className="text-danger">
             {booking.cancelled_by
-              ? t(`cancel.by_${booking.cancelled_by}`)
+              ? t(
+                  booking.cancelled_by === booking.role
+                    ? "cancel.by_you"
+                    : `cancel.by_${booking.cancelled_by}`,
+                )
               : t("checkout.cancelled")}
           </p>
           {booking.cancel_reason && (
@@ -249,7 +274,7 @@ export default async function BookingPage({ params }: Props) {
             <a href={`tel:${booking.counterpart.phone}`} className="text-brand-700 hover:underline">
               {formatPhone(booking.counterpart.phone)}
             </a>
-          ) : (
+          ) : booking.status === "cancelled" ? null : (
             t("checkout.phoneAfterConfirm")
           )}
         </p>

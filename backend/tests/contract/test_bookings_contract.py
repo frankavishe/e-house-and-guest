@@ -38,6 +38,7 @@ BOOKING_KEYS = {
     "claims",
     "cancelled_by",
     "cancel_reason",
+    "request_message",
     "created_at",
 }
 SUMMARY_KEYS = {
@@ -51,6 +52,8 @@ SUMMARY_KEYS = {
     "total_tzs",
     "payment_due_at",
     "request_expires_at",
+    "counterpart_name",
+    "request_message",
     "created_at",
 }
 PAYMENT_KEYS = {

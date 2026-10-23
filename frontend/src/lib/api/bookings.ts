@@ -1,5 +1,6 @@
 // Server-side reads for the signed-in booking pages (US2). Each returns null when the
 // booking is unknown or not the viewer's (the API answers 404 for both).
+import { cache } from "react";
 import type { Schemas } from "./client";
 import { serverApi } from "./server";
 
@@ -9,13 +10,14 @@ export type BookingStatus = Booking["status"];
 export type Receipt = Schemas["Receipt"];
 export type BookingPage = Schemas["Page_BookingSummary_"];
 
-export async function getBooking(id: string): Promise<Booking | null> {
+// Cached per request: the page and its metadata both read it.
+export const getBooking = cache(async (id: string): Promise<Booking | null> => {
   const api = await serverApi();
   const { data } = await api.GET("/api/v1/bookings/{booking_id}", {
     params: { path: { booking_id: id } },
   });
   return data ?? null;
-}
+});
 
 /** The receipt, or `notPaid` when the booking has no successful payment yet. */
 export async function getReceipt(

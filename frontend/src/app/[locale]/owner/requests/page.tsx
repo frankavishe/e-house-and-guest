@@ -60,6 +60,16 @@ export default async function OwnerRequestsPage({ params }: Props) {
                   <span className="text-muted">{b.code}</span>
                   <Money amount={b.total_tzs} className="font-medium text-ink" />
                 </p>
+                {b.counterpart_name && (
+                  <p className="text-sm text-ink">
+                    {t("requests.from", { name: b.counterpart_name })}
+                  </p>
+                )}
+                {b.request_message && (
+                  <blockquote className="whitespace-pre-line rounded-lg bg-canvas p-3 text-sm text-ink">
+                    {b.request_message}
+                  </blockquote>
+                )}
                 {b.request_expires_at && (
                   <p className="text-xs text-muted">
                     {t("requests.answerBy", {

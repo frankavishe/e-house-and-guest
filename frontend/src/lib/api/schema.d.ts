@@ -2061,6 +2061,8 @@ export interface components {
             cancelled_by: ("renter" | "owner" | "admin" | "system") | null;
             /** Cancel Reason */
             cancel_reason: string | null;
+            /** Request Message */
+            request_message: string | null;
             /**
              * Created At
              * Format: date-time
@@ -2096,6 +2098,10 @@ export interface components {
             payment_due_at: string | null;
             /** Request Expires At */
             request_expires_at: string | null;
+            /** Counterpart Name */
+            counterpart_name: string;
+            /** Request Message */
+            request_message: string | null;
             /**
              * Created At
              * Format: date-time

@@ -344,12 +344,16 @@ async def booking_out(
     payments = await payments_of(session, booking.id)
     pending = any(p.status == PaymentStatus.PENDING for p in payments)
     events = (
-        await session.execute(
-            select(BookingEvent)
-            .where(BookingEvent.booking_id == booking.id)
-            .order_by(BookingEvent.created_at, BookingEvent.id)
+        (
+            await session.execute(
+                select(BookingEvent)
+                .where(BookingEvent.booking_id == booking.id)
+                .order_by(BookingEvent.created_at, BookingEvent.id)
+            )
         )
-    ).scalars()
+        .scalars()
+        .all()
+    )
     card = (await _cards(session, [booking.listing_id], locale))[booking.listing_id]
     now = clock.now()
     awaiting = booking.status == BookingStatus.AWAITING_PAYMENT and (
@@ -414,6 +418,7 @@ async def booking_out(
         claims=[await claim_service.claim_out(session, booking, c) for c in claims],
         cancelled_by=booking.cancelled_by.value if booking.cancelled_by else None,
         cancel_reason=booking.cancel_reason,
+        request_message=next((e.note for e in events if e.from_status is None), None),
         created_at=booking.created_at,
     )
 
@@ -461,6 +466,23 @@ async def list_bookings(
         .all()
     )
     cards = await _cards(session, [b.listing_id for b in rows], locale)
+    ids = [b.id for b in rows]
+    events = await session.execute(
+        select(BookingEvent.booking_id, BookingEvent.note).where(
+            BookingEvent.booking_id.in_(ids), BookingEvent.from_status.is_(None)
+        )
+    )
+    messages = {booking_id: note for booking_id, note in events.all()}
+    if role == "owner":
+        names_query = select(Booking.id, User.name).join(User, User.id == Booking.renter_id)
+    else:
+        names_query = select(Booking.id, OwnerProfile.display_name).join(
+            OwnerProfile, OwnerProfile.id == Booking.owner_profile_id
+        )
+    names = {
+        booking_id: name
+        for booking_id, name in (await session.execute(names_query.where(Booking.id.in_(ids))))
+    }
     return Page[BookingSummary](
         items=[
             BookingSummary(
@@ -474,6 +496,8 @@ async def list_bookings(
                 total_tzs=b.total_tzs,
                 payment_due_at=b.payment_due_at,
                 request_expires_at=b.request_expires_at,
+                counterpart_name=names.get(b.id) or "",
+                request_message=messages.get(b.id),
                 created_at=b.created_at,
             )
             for b in rows

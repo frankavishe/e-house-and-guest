@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { DeleteAccount } from "@/components/DeleteAccount";
+import { SignOut } from "@/components/SignOut";
 import { Link, redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/api/server";
 import { formatPhone } from "@/lib/format";
@@ -53,6 +54,7 @@ export default async function AccountPage({ params }: Props) {
           </li>
         ))}
       </ul>
+      <SignOut />
       <DeleteAccount />
     </div>
   );

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { addDays } from "@/components/ListingAvailability";
+import { addDays, weekdayLabels } from "@/components/ListingAvailability";
 import { BlockForm, RemoveBlockButton } from "@/components/OwnerCalendarActions";
 import { OwnerNav } from "@/components/OwnerNav";
 import { Link, redirect } from "@/i18n/navigation";
@@ -114,6 +114,11 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
               >
                 →
               </Link>
+            </div>
+            <div aria-hidden className="grid grid-cols-7 gap-1 text-center text-xs text-muted">
+              {weekdayLabels(locale).map((w, i) => (
+                <span key={i}>{w}</span>
+              ))}
             </div>
             <ol className="grid grid-cols-7 gap-1 text-center text-sm">
               {Array.from({ length: lead }, (_, i) => (

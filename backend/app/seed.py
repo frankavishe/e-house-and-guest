@@ -9,12 +9,14 @@ Every step upserts, so re-running updates rows instead of duplicating them.
 import argparse
 import asyncio
 import csv
+import io
 import uuid
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
 import yaml
+from PIL import Image, ImageDraw, ImageFont
 from sqlalchemy import delete, func, select, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,6 +35,8 @@ from app.catalog.attributes import parse_schema, validate_values
 from app.catalog.models import BookingMode, Category, Location, LocationLevel, PriceUnit
 from app.core import clock, security
 from app.core.db import dispose_engine, get_sessionmaker
+from app.integrations import get_storage
+from app.listings.jobs import WIDTHS
 from app.listings.models import (
     CancellationPolicy,
     DeliveryOption,
@@ -226,6 +230,46 @@ async def _city_locations(
     return out
 
 
+# Demo photos: a generated placeholder per listing, tinted by category group, so the demo
+# never shows broken images. Uploaded once; re-runs skip keys already in storage.
+GROUP_COLORS = {
+    "accommodation": ((15, 118, 110), (94, 234, 212)),
+    "workspace": ((30, 64, 175), (147, 197, 253)),
+    "venues": ((157, 23, 77), (249, 168, 212)),
+    "storage-property": ((120, 53, 15), (253, 186, 116)),
+    "vehicles": ((55, 65, 81), (209, 213, 219)),
+    "equipment": ((101, 46, 147), (216, 180, 254)),
+}
+
+
+def _placeholder_photo(group: str, title: str, subtitle: str) -> bytes:
+    width, height = 1200, 800
+    top, bottom = GROUP_COLORS.get(group, ((51, 65, 85), (203, 213, 225)))
+    img = Image.new("RGB", (width, height))
+    draw = ImageDraw.Draw(img)
+    for y in range(height):
+        t = y / (height - 1)
+        draw.line(
+            [(0, y), (width, y)],
+            fill=tuple(round(a + (b - a) * t) for a, b in zip(top, bottom, strict=True)),
+        )
+    big, small = ImageFont.load_default(size=72), ImageFont.load_default(size=40)
+    draw.text((width / 2, height / 2 - 30), title, font=big, fill="white", anchor="mm")
+    draw.text((width / 2, height / 2 + 50), subtitle, font=small, fill="white", anchor="mm")
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=80, optimize=True)
+    return buf.getvalue()
+
+
+async def _ensure_demo_photo(key: str, category: Category) -> None:
+    storage = get_storage()
+    if await storage.size(key) is not None:
+        return
+    sw, en = category.name.get("sw") or category.slug, category.name.get("en") or category.slug
+    data = _placeholder_photo(category.path.split(".")[0], sw, en if en != sw else "")
+    await storage.put(key, data, "image/jpeg", private=False)
+
+
 async def seed_demo(session: AsyncSession, path: Path = SEED_DIR / "demo.yaml") -> int:
     data = _load_yaml(path)
     for spec in data["users"]:
@@ -322,14 +366,18 @@ async def _upsert_listing(
         )
 
     await session.execute(delete(ListingPhoto).where(ListingPhoto.listing_id == listing.id))
+    photo_key = f"demo/{leaf_slug}-{index}.jpg"
+    await _ensure_demo_photo(photo_key, category)
     session.add(
         ListingPhoto(
             listing_id=listing.id,
-            storage_key=f"demo/{leaf_slug}-{index}.jpg",
+            storage_key=photo_key,
             position=0,
             alt_sw=item["title_sw"],
             alt_en=item["title_en"],
             confirmed_at=clock.now(),
+            # Already public and web-sized, so every variant is the placeholder itself.
+            variants={str(width): photo_key for width in WIDTHS},
         )
     )
     await session.flush()

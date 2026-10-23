@@ -47,6 +47,8 @@ export function BlockForm({
       setStart("");
       setEnd("");
       setNote("");
+      // Show the month the block starts in, so the struck-through days are visible.
+      router.replace(`/owner/calendar?listing=${listingId}&month=${start.slice(0, 7)}`);
       router.refresh();
     } catch {
       setError(t("errors.network"));

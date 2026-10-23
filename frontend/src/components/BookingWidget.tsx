@@ -65,9 +65,19 @@ export function BookingWidget({
   const t = useTranslations();
   const router = useRouter();
   const today = eatDateString(new Date());
-  const [fields, setFields] = useState<Fields>(() =>
-    Object.fromEntries(FIELDS.filter((k) => initial[k]).map((k) => [k, initial[k]])),
+  const leaseMonths = MONTHS.filter(
+    (n) =>
+      (listing.min_duration == null || n >= listing.min_duration) &&
+      (listing.max_duration == null || n <= listing.max_duration),
   );
+  const [fields, setFields] = useState<Fields>(() => {
+    const picked = Object.fromEntries(FIELDS.filter((k) => initial[k]).map((k) => [k, initial[k]]));
+    // Leases start on the shortest allowed term, so the form is complete once a date is set.
+    if (listing.booking_mode === "LEASE" && !picked.months && leaseMonths.length) {
+      picked.months = String(leaseMonths[0]);
+    }
+    return picked;
+  });
   const deliveryRequired = listing.delivery === "required";
   const [delivery, setDelivery] = useState(deliveryRequired);
   const [address, setAddress] = useState("");
@@ -231,15 +241,13 @@ export function BookingWidget({
           <Select
             label={t("period.months")}
             name="months"
-            placeholder=""
             value={fields.months ?? ""}
             onChange={set("months")}
             required
-            options={MONTHS.filter(
-              (n) =>
-                (listing.min_duration == null || n >= listing.min_duration) &&
-                (listing.max_duration == null || n <= listing.max_duration),
-            ).map((n) => ({ value: String(n), label: t("period.monthCount", { count: n }) }))}
+            options={leaseMonths.map((n) => ({
+              value: String(n),
+              label: t("period.monthCount", { count: n }),
+            }))}
           />
         </div>
       ) : (

@@ -21,6 +21,7 @@ export const SECTION_NAMESPACES = {
     "networks",
     "paymentFailure",
     "refunds",
+    "requests",
     "reviews",
   ],
   account: ["account", "messages", "signIn"],

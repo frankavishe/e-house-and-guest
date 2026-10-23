@@ -109,10 +109,12 @@ export default async function ReceiptPage({ params }: Props) {
             <dt>{t("paid")}</dt>
             <dd className="tabular-nums">{formatTZS(receipt.paid_tzs)}</dd>
           </div>
-          <div className="flex justify-between text-muted">
-            <dt>{t("total")}</dt>
-            <dd className="tabular-nums">{formatTZS(receipt.total_tzs)}</dd>
-          </div>
+          {receipt.total_tzs > receipt.paid_tzs && (
+            <div className="flex justify-between text-muted">
+              <dt>{t("balance")}</dt>
+              <dd className="tabular-nums">{formatTZS(receipt.total_tzs - receipt.paid_tzs)}</dd>
+            </div>
+          )}
         </dl>
       </section>
 

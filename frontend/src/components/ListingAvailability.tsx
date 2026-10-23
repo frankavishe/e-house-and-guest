@@ -5,6 +5,7 @@ import { formatTime } from "@/lib/format";
 type Locale = "sw" | "en";
 
 const dateLocale: Record<Locale, string> = { sw: "sw-TZ", en: "en-GB" };
+const SW_WEEKDAYS = ["Jtt", "Jnn", "Jtn", "Alh", "Iju", "Jms", "Jpl"];
 
 export function addDays(iso: string, days: number): string {
   const [y, m, d] = iso.split("-").map(Number);
@@ -14,6 +15,15 @@ export function addDays(iso: string, days: number): string {
 function utc(iso: string): Date {
   const [y, m, d] = iso.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1, d));
+}
+
+/** Monday-first weekday headers (2024-01-01 was a Monday). CLDR's Swahili narrow names are the
+ * English letters (M T W …), so Swahili uses the common three-letter abbreviations. */
+export function weekdayLabels(locale: Locale): string[] {
+  if (locale === "sw") return SW_WEEKDAYS;
+  return Array.from({ length: 7 }, (_, i) =>
+    dayLabel(addDays("2024-01-01", i), locale, { weekday: "narrow" }),
+  );
 }
 
 function dayLabel(iso: string, locale: Locale, opts: Intl.DateTimeFormatOptions) {
@@ -39,10 +49,7 @@ function Calendar({
   for (let m = from.slice(0, 7); `${m}-01` <= last; m = addDays(`${m}-01`, 32).slice(0, 7)) {
     months.push(m);
   }
-  // Monday-first weekday names (2024-01-01 was a Monday).
-  const weekdays = Array.from({ length: 7 }, (_, i) =>
-    dayLabel(addDays("2024-01-01", i), locale, { weekday: "narrow" }),
-  );
+  const weekdays = weekdayLabels(locale);
   return (
     <div className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">

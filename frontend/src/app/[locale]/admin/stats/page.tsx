@@ -28,6 +28,13 @@ export default async function AdminStatsPage({ params, searchParams }: Props) {
   const from = getParam(pairs, "from");
   const to = getParam(pairs, "to");
   const groupBy = GROUPS.find((g) => g === getParam(pairs, "group_by")) ?? "month";
+  const monthFormat = new Intl.DateTimeFormat(raw === "en" ? "en-GB" : "sw-TZ", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+  const monthLabel = (label: string) =>
+    /^\d{4}-\d{2}$/.test(label) ? monthFormat.format(new Date(`${label}-01T12:00:00Z`)) : label;
   const [t, stats] = await Promise.all([
     getTranslations(),
     getStats(
@@ -92,7 +99,7 @@ export default async function AdminStatsPage({ params, searchParams }: Props) {
                 {stats.rows.map((row) => (
                   <tr key={row.key} className="border-b border-line">
                     <th scope="row" className="py-2 pr-3 text-left font-normal text-ink">
-                      {row.label}
+                      {groupBy === "month" ? monthLabel(row.label) : row.label}
                     </th>
                     <td className="py-2 pr-3 text-right tabular-nums">{row.bookings}</td>
                     {MONEY.map((m) => (

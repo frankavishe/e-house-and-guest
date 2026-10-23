@@ -102,6 +102,16 @@ async def seed_perf(session: AsyncSession, count: int, seed: int = 20_000) -> in
     owner = await _perf_owner(session)
     await session.execute(delete(Listing).where(Listing.owner_profile_id == owner.id))
     templates = await _templates(session)
+    # Clones reuse their template's demo photo, which exists in storage.
+    template_photos = {
+        listing_id: (key, variants)
+        for listing_id, key, variants in await session.execute(
+            select(ListingPhoto.listing_id, ListingPhoto.storage_key, ListingPhoto.variants).where(
+                ListingPhoto.listing_id.in_([t.id for t, _ in templates]),
+                ListingPhoto.position == 0,
+            )
+        )
+    }
     stock_categories = set(
         (
             await session.execute(
@@ -166,10 +176,12 @@ async def seed_perf(session: AsyncSession, count: int, seed: int = 20_000) -> in
                         "amount_tzs": max(500, int(p.amount_tzs * factor) // 500 * 500),
                     }
                 )
+            photo_key, photo_variants = template_photos.get(template.id, (f"perf/{i}.jpg", {}))
             photos.append(
                 {
                     "listing_id": listing_id,
-                    "storage_key": f"perf/{i}.jpg",
+                    "storage_key": photo_key,
+                    "variants": photo_variants,
                     "position": 0,
                     "confirmed_at": now,
                 }

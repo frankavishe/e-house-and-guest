@@ -44,6 +44,11 @@
     "save": "Save",
     "signedIn": "You are signed in."
   },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page you are looking for doesn't exist or has been removed.",
+    "home": "Go to the home page"
+  },
   "errors": {
     "generic": "Something went wrong. Please try again.",
     "network": "No connection. Check your network and try again."
@@ -250,7 +255,7 @@
     "payments": "Payments",
     "reference": "Ref. {ref}",
     "paid": "Paid",
-    "total": "Total",
+    "balance": "Balance due",
     "issued": "Issued {date}",
     "print": "Print",
     "booking": "Back to booking"
@@ -283,6 +288,7 @@
     "adminHint": "Verify owners and review listings.",
     "messages": "Messages",
     "messagesHint": "Your conversations with owners and renters",
+    "signOut": "Sign out",
     "delete": {
       "title": "Delete my account",
       "explain": "Your name, phone number, email, ID documents, payout details and messages will be removed, and your listings taken down. This cannot be undone.",
@@ -478,7 +484,11 @@
     "accept": "Accept",
     "decline": "Decline",
     "reason": "Reason (optional, shown to the renter)",
-    "confirmDecline": "Decline request"
+    "confirmDecline": "Decline request",
+    "from": "From {name}",
+    "renterMessage": "Message from the renter",
+    "yourMessage": "Your message to the owner",
+    "ownerPrompt": "Accept or decline by {time}. The renter pays only after you accept."
   },
   "admin": {
     "title": "Admin",
@@ -583,6 +593,7 @@
     "reason": "Reason (optional)",
     "confirm": "Yes, cancel",
     "keep": "Keep booking",
+    "by_you": "You cancelled this booking.",
     "by_renter": "The renter cancelled this booking.",
     "by_owner": "The owner cancelled this booking.",
     "by_admin": "Our support team cancelled this booking.",

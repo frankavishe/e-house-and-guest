@@ -97,6 +97,7 @@ test("admin adds Generators, an owner lists one, renters filter by kVA", async (
   // `next dev` compiles the editor route on first use; give that navigation longer.
   await expect(admin).toHaveURL(/\/en\/admin\/categories\/[0-9a-f-]{36}$/, { timeout: 120_000 });
   await expect(admin.getByText("schema version 1")).toBeVisible(NAV);
+  const editUrl = admin.url();
 
   // Owner: a generator listing through the wizard; the fields come from the new schema.
   await signIn(page, OWNER_PHONE);
@@ -161,5 +162,11 @@ test("admin adds Generators, an owner lists one, renters filter by kVA", async (
   await expect(visitor.getByText(title)).toHaveCount(0);
 
   await renter.close();
+
+  // Retire the throwaway type so repeated runs don't pile up categories in the dev DB.
+  await admin.goto(editUrl);
+  await admin.getByLabel("Active (visible to renters and owners)").uncheck();
+  await admin.getByRole("button", { name: "Save changes" }).click();
+  await expect(admin.getByText("Saved.", { exact: false })).toBeVisible(NAV);
   await adminContext.close();
 });

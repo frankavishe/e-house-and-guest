@@ -174,6 +174,7 @@ class BookingOut(BaseModel):
     claims: list[ClaimOut]
     cancelled_by: Literal["renter", "owner", "admin", "system"] | None
     cancel_reason: str | None
+    request_message: str | None  # the renter's note sent with the booking, for the owner
     created_at: datetime
 
 
@@ -188,6 +189,8 @@ class BookingSummary(BaseModel):
     total_tzs: int
     payment_due_at: datetime | None
     request_expires_at: datetime | None
+    counterpart_name: str  # the owner's display name for renters, the renter's name for owners
+    request_message: str | None
     created_at: datetime
 
 
