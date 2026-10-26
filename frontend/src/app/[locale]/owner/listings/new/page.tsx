@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { NewListingForm } from "@/components/NewListingForm";
-import { OwnerNav } from "@/components/OwnerNav";
 import { redirect } from "@/i18n/navigation";
 import { getCategories, type CategoryNode } from "@/lib/api/queries";
 import { getCurrentUser } from "@/lib/api/server";
@@ -41,7 +40,6 @@ export default async function NewListingPage({ params }: Props) {
   const [t, categories] = await Promise.all([getTranslations("ownerListings"), getCategories()]);
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
-      <OwnerNav current="listings" />
       <h1 className="text-xl font-bold text-ink">{t("new")}</h1>
       <p className="text-sm text-muted">{t("newHint")}</p>
       <NewListingForm categories={leaves(categories, locale === "en" ? "en" : "sw")} />

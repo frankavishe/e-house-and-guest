@@ -5,7 +5,7 @@ import { Badge } from "./ui/Badge";
 const TONES = {
   requested: "warning",
   awaiting_payment: "warning",
-  confirmed: "brand",
+  confirmed: "success",
   in_progress: "brand",
   completed: "neutral",
   cancelled: "danger",

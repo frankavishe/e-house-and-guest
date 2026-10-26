@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { api, type Schemas } from "@/lib/api/client";
 import { formatDateTime } from "@/lib/format";
+import { Icon } from "./icons";
 import { Sheet } from "./ui/Sheet";
 
 type Item = Schemas["NotificationOut"];
@@ -56,18 +57,11 @@ export function NotificationBell() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t("notifications.open", { count: unread })}
-        className="relative rounded-md p-2 text-ink hover:bg-canvas"
+        className="relative flex size-10 items-center justify-center rounded-full bg-card text-ink hover:bg-brand-50"
       >
-        <svg aria-hidden viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor">
-          <path
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"
-          />
-        </svg>
+        <Icon name="bell" />
         {unread > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold leading-4 text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex min-w-[18px] items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-bold leading-[18px] text-white ring-2 ring-surface">
             {unread > 9 ? "9+" : unread}
           </span>
         )}
@@ -88,12 +82,12 @@ export function NotificationBell() {
               <button
                 type="button"
                 onClick={markAllRead}
-                className="self-end text-sm text-brand-700 hover:underline"
+                className="self-end rounded-full px-3 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50"
               >
                 {t("notifications.markAllRead")}
               </button>
             )}
-            <ul className="flex flex-col divide-y divide-line">
+            <ul className="flex flex-col gap-1">
               {items.map((n) => {
                 const body = (
                   <>
@@ -110,7 +104,7 @@ export function NotificationBell() {
                       ? `/book/${n.booking_id}`
                       : null;
                 return (
-                  <li key={n.id} className="py-2">
+                  <li key={n.id} className={`rounded-2xl px-3 py-2.5 ${n.read_at ? "" : "bg-brand-50"}`}>
                     {href ? (
                       <Link
                         href={href}

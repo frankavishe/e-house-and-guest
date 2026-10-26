@@ -5,7 +5,7 @@ import { Badge } from "./ui/Badge";
 const TONES = {
   draft: "neutral",
   pending_review: "warning",
-  active: "brand",
+  active: "success",
   paused: "neutral",
   rejected: "danger",
   suspended: "danger",

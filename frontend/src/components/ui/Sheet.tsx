@@ -27,19 +27,19 @@ export function Sheet({ open, onClose, title, closeLabel, children }: Props) {
       onClose={onClose}
       onCancel={onClose}
       aria-label={title}
-      className="m-0 mt-auto max-h-[85vh] w-full max-w-none rounded-t-2xl bg-surface p-0 text-ink backdrop:bg-black/40 sm:m-auto sm:max-w-lg sm:rounded-2xl"
+      className="m-0 mt-auto max-h-[85vh] w-full max-w-none rounded-t-[var(--radius-shell)] bg-surface p-0 text-ink shadow-soft backdrop:bg-ink/40 backdrop:backdrop-blur-sm sm:m-auto sm:max-w-lg sm:rounded-[var(--radius-shell)]"
     >
-      <div className="flex items-center justify-between border-b border-line px-4 py-3">
-        <h2 className="text-base font-semibold">{title}</h2>
+      <div className="flex items-center justify-between px-5 pb-2 pt-5">
+        <h2 className="text-lg font-semibold">{title}</h2>
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md px-2 py-1 text-sm text-brand-700 hover:bg-brand-50"
+          className="rounded-full bg-card px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50"
         >
           {closeLabel}
         </button>
       </div>
-      <div className="overflow-y-auto p-4">{children}</div>
+      <div className="overflow-y-auto px-5 pb-5 pt-2">{children}</div>
     </dialog>
   );
 }

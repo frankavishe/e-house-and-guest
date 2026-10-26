@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Money } from "@/components/Money";
-import { OwnerNav } from "@/components/OwnerNav";
 import { PayoutMethods } from "@/components/PayoutMethods";
 import { PayoutStatusBadge } from "@/components/PayoutStatusBadge";
 import { buttonClasses } from "@/components/ui/Button";
@@ -60,7 +59,6 @@ export default async function OwnerEarningsPage({ params, searchParams }: Props)
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-5">
-      <OwnerNav current="earnings" />
       <h1 className="text-xl font-bold text-ink">{t("earnings.title")}</h1>
 
       <form className="flex flex-wrap items-end gap-2" role="search">

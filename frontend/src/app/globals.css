@@ -1,20 +1,63 @@
 @import "tailwindcss";
 
-/* Design tokens. System fonts only: no web-font download on slow 3G (Principle VI). */
+/* `dark:` follows the theme the user picked (data-theme on <html>), not only the OS. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Design tokens. System fonts only: no web-font download on slow 3G (Principle VI).
+ * Violet brand on a lilac canvas; soft grey `card` tiles inside a white `surface` shell. */
 @theme {
-  --color-brand-50: #ecfdf5;
-  --color-brand-100: #d1fae5;
-  --color-brand-600: #0f766e;
-  --color-brand-700: #115e59;
-  --color-brand-800: #134e4a;
+  --color-brand-50: #f4f2ff;
+  --color-brand-100: #e9e5ff;
+  --color-brand-200: #d4cdff;
+  --color-brand-300: #b3a8fb;
+  --color-brand-400: #9a8cf7;
+  --color-brand-500: #8574f2;
+  --color-brand-600: #6552e0;
+  --color-brand-700: #5341c4;
+  --color-brand-800: #3f3196;
   --color-accent-500: #f59e0b;
-  --color-ink: #1c1917;
-  --color-muted: #57534e;
-  --color-line: #e7e5e4;
+  --color-ink: #17161f;
+  --color-muted: #63627a;
+  --color-line: #e6e5ee;
   --color-surface: #ffffff;
-  --color-canvas: #fafaf9;
-  --color-danger: #b91c1c;
+  --color-card: #f4f4f8;
+  --color-canvas: #e9e7f5;
+  --color-danger: #c0262d;
+  --color-danger-soft: #fdeceb;
+  --color-warning: #95560b;
+  --color-warning-soft: #fdf3e1;
+  --color-success: #187a4c;
+  --color-success-soft: #e5f6ec;
+  --radius-card: 1.5rem;
+  --radius-shell: 2rem;
+  --shadow-soft: 0 1px 2px rgb(23 22 31 / 0.04), 0 8px 24px -12px rgb(60 48 140 / 0.18);
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-brand-50: #252041;
+  --color-brand-100: #2e2754;
+  --color-brand-200: #3d3470;
+  --color-brand-300: #6b5fd0;
+  --color-brand-400: #8b7ef0;
+  --color-brand-500: #9d91f5;
+  --color-brand-600: #6d5ae6;
+  --color-brand-700: #b3a9fa;
+  --color-brand-800: #cfc8ff;
+  --color-ink: #f1f0f8;
+  --color-muted: #a6a4ba;
+  --color-line: #2f2d3d;
+  --color-surface: #17161f;
+  --color-card: #211f2c;
+  --color-canvas: #0e0d15;
+  --color-danger: #f2777b;
+  --color-danger-soft: #3a1d22;
+  --color-warning: #f2b55c;
+  --color-warning-soft: #3a2c16;
+  --color-success: #5fd39a;
+  --color-success-soft: #173326;
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.6);
 }
 
 html {
@@ -28,6 +71,22 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-brand-600);
+  outline: 2px solid var(--color-brand-500);
   outline-offset: 2px;
+}
+
+/* Leaflet controls in the rounded map cards. */
+.leaflet-container {
+  font-family: var(--font-sans);
+}
+.leaflet-bar {
+  border: none !important;
+  box-shadow: var(--shadow-soft) !important;
+  border-radius: 9999px !important;
+  overflow: hidden;
+}
+.leaflet-bar a {
+  background: var(--color-surface) !important;
+  color: var(--color-ink) !important;
+  border-color: var(--color-line) !important;
 }

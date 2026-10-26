@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Money } from "@/components/Money";
-import { OwnerNav } from "@/components/OwnerNav";
 import { RequestActions } from "@/components/RequestActions";
 import { Link, redirect } from "@/i18n/navigation";
 import { listBookings } from "@/lib/api/bookings";
@@ -37,7 +36,6 @@ export default async function OwnerRequestsPage({ params }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      <OwnerNav current="requests" />
       <h1 className="text-xl font-bold text-ink">{t("requests.title")}</h1>
       {items.length === 0 ? (
         <p className="rounded-xl border border-line p-4 text-muted">{t("requests.empty")}</p>

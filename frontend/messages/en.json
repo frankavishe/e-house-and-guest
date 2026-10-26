@@ -832,5 +832,49 @@
     "total": "Total",
     "definitions": "Gross value is rentals, delivery and service fees paid (no deposits). Commission is platform revenue after refunds from it. Amounts count when the money moved.",
     "csv": "Download CSV"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "shell": {
+    "greeting": "Welcome back, {name}!",
+    "greetingAnon": "Welcome back!",
+    "subtitle_account": "Your bookings, payments and conversations in one place.",
+    "subtitle_owner": "Manage your listings, requests and earnings.",
+    "subtitle_admin": "Keep the marketplace safe and running.",
+    "overview": "Overview",
+    "browse": "Browse listings",
+    "more": "More",
+    "menu": "Menu",
+    "sections": "Areas",
+    "renter": "Renting",
+    "ownerArea": "Owner area",
+    "adminArea": "Admin",
+    "becomeOwner": "Become an owner",
+    "search": "Search"
+  },
+  "footer": {
+    "about": "Rooms, cars, halls and equipment from verified owners across Tanzania.",
+    "pay": "Pay with mobile money",
+    "explore": "Explore",
+    "forOwners": "For owners",
+    "listYours": "List your property",
+    "ownerHome": "Owner area",
+    "rights": "© {year} E-House & Guest"
+  },
+  "homeExtra": {
+    "badge": "Verified owners · Mobile money",
+    "how": "How it works",
+    "step1": "Search",
+    "step1Hint": "Filter by category, region and dates.",
+    "step2": "Book and pay",
+    "step2Hint": "Pay safely with M-Pesa, Mixx, Airtel Money or HaloPesa.",
+    "step3": "Enjoy",
+    "step3Hint": "Get a receipt and message the owner any time.",
+    "ownerCta": "Have something to rent out?",
+    "ownerCtaHint": "List it for free and get paid to your mobile wallet.",
+    "ownerCtaButton": "Start listing"
   }
 }

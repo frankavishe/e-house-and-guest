@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { addDays, weekdayLabels } from "@/components/ListingAvailability";
 import { BlockForm, RemoveBlockButton } from "@/components/OwnerCalendarActions";
-import { OwnerNav } from "@/components/OwnerNav";
 import { Link, redirect } from "@/i18n/navigation";
 import { getOwnerCalendar, getOwnerListing } from "@/lib/api/owner";
 import { getCurrentUser } from "@/lib/api/server";
@@ -71,7 +70,6 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      <OwnerNav current="calendar" />
       <h1 className="text-xl font-bold text-ink">{t("calendar.title")}</h1>
       {listings.length === 0 ? (
         <p className="rounded-xl border border-line p-4 text-muted">{t("calendar.noListings")}</p>

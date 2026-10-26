@@ -832,5 +832,49 @@
     "total": "Jumla",
     "definitions": "Thamani ghafi ni kodi, usafirishaji na ada za huduma zilizolipwa (bila amana). Kamisheni ni mapato ya jukwaa baada ya marejesho kutoka kwake. Kiasi huhesabiwa pesa zilipohamishwa.",
     "csv": "Pakua CSV"
+  },
+  "theme": {
+    "label": "Mandhari",
+    "light": "Mwanga",
+    "dark": "Giza"
+  },
+  "shell": {
+    "greeting": "Karibu tena, {name}!",
+    "greetingAnon": "Karibu tena!",
+    "subtitle_account": "Nafasi zako, malipo na mazungumzo mahali pamoja.",
+    "subtitle_owner": "Simamia matangazo, maombi na mapato yako.",
+    "subtitle_admin": "Weka soko salama na likiendelea.",
+    "overview": "Muhtasari",
+    "browse": "Tazama matangazo",
+    "more": "Zaidi",
+    "menu": "Menyu",
+    "sections": "Maeneo",
+    "renter": "Kukodi",
+    "ownerArea": "Eneo la mmiliki",
+    "adminArea": "Utawala",
+    "becomeOwner": "Kuwa mmiliki",
+    "search": "Tafuta"
+  },
+  "footer": {
+    "about": "Vyumba, magari, kumbi na vifaa kutoka kwa wamiliki waliothibitishwa kote Tanzania.",
+    "pay": "Lipa kwa pesa za simu",
+    "explore": "Gundua",
+    "forOwners": "Kwa wamiliki",
+    "listYours": "Tangaza mali yako",
+    "ownerHome": "Eneo la mmiliki",
+    "rights": "© {year} E-House & Guest"
+  },
+  "homeExtra": {
+    "badge": "Wamiliki waliothibitishwa · Pesa za simu",
+    "how": "Jinsi inavyofanya kazi",
+    "step1": "Tafuta",
+    "step1Hint": "Chuja kwa aina, mkoa na tarehe.",
+    "step2": "Weka nafasi na ulipe",
+    "step2Hint": "Lipa kwa usalama kwa M-Pesa, Mixx, Airtel Money au HaloPesa.",
+    "step3": "Furahia",
+    "step3Hint": "Pata risiti na mwandikie mmiliki wakati wowote.",
+    "ownerCta": "Una kitu cha kukodisha?",
+    "ownerCtaHint": "Tangaza bure na ulipwe kwenye pochi yako ya simu.",
+    "ownerCtaButton": "Anza kutangaza"
   }
 }

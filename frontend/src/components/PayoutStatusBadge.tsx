@@ -9,7 +9,7 @@ const TONES = {
   available: "brand",
   pending: "warning",
   processing: "warning",
-  paid: "brand",
+  paid: "success",
   failed: "danger",
 } as const;
 

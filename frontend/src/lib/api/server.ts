@@ -1,6 +1,7 @@
 // Server-side API client for server components and route handlers. Calls FastAPI directly
 // (API_INTERNAL_URL) and forwards the visitor's cookies and language.
 import { cookies } from "next/headers";
+import { cache } from "react";
 import { getLocale } from "next-intl/server";
 import createClient from "openapi-fetch";
 import type { paths } from "./schema";
@@ -24,8 +25,9 @@ export async function serverApi() {
   });
 }
 
-/** The signed-in user, or null (expired access token counts as signed out here). */
-export async function getCurrentUser() {
+/** The signed-in user, or null (expired access token counts as signed out here). Cached per
+ * request: the header, the dashboard shell and the page all ask. */
+export const getCurrentUser = cache(async function getCurrentUser() {
   const api = await serverApi();
   try {
     const { data } = await api.GET("/api/v1/me");
@@ -33,4 +35,4 @@ export async function getCurrentUser() {
   } catch {
     return null; // API unreachable: render the page signed out rather than failing
   }
-}
+});

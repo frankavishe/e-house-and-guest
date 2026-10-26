@@ -3,7 +3,10 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFrame } from "@/components/shell/SiteFrame";
+import { THEME_SCRIPT } from "@/components/ThemeToggle";
 import { ClientMessages } from "@/i18n/ClientMessages";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
@@ -27,7 +30,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0f766e",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#e9e7f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e0d15" },
+  ],
 };
 
 export default async function LocaleLayout({ children, params }: Props) {
@@ -37,19 +43,22 @@ export default async function LocaleLayout({ children, params }: Props) {
   const t = await getTranslations({ locale, namespace: "common" });
 
   return (
-    <html lang={locale}>
+    // data-theme is set before paint by THEME_SCRIPT, so the server markup differs on purpose.
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-dvh antialiased">
         <ClientMessages>
           <a
             href="#main"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-full focus:bg-surface focus:px-4 focus:py-2 focus:shadow-soft"
           >
             {t("skipToContent")}
           </a>
-          <SiteHeader />
-          <main id="main" className="mx-auto w-full max-w-5xl px-4 py-6">
+          <SiteFrame header={<SiteHeader />} footer={<SiteFooter />}>
             {children}
-          </main>
+          </SiteFrame>
         </ClientMessages>
       </body>
     </html>

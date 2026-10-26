@@ -1,23 +1,26 @@
 import type { ButtonHTMLAttributes } from "react";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
-type Size = "md" | "lg";
+type Size = "sm" | "md" | "lg" | "icon";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-brand-600 text-white hover:bg-brand-700 disabled:bg-brand-600/50",
-  secondary: "border border-line bg-surface text-ink hover:bg-canvas disabled:text-muted",
+  primary:
+    "bg-brand-600 text-white shadow-soft hover:bg-brand-500 disabled:bg-brand-600/50 disabled:shadow-none",
+  secondary: "bg-card text-ink hover:bg-brand-50 disabled:text-muted",
   ghost: "text-brand-700 hover:bg-brand-50 disabled:text-muted",
-  danger: "bg-danger text-white hover:bg-danger/90 disabled:bg-danger/50",
+  danger: "bg-danger text-white hover:bg-danger/90 disabled:bg-danger/50 dark:text-surface",
 };
 
 const sizes: Record<Size, string> = {
-  md: "h-10 px-4 text-sm",
-  lg: "h-12 px-5 text-base",
+  sm: "h-8 px-3 text-sm",
+  md: "h-10 px-5 text-sm",
+  lg: "h-12 px-6 text-base",
+  icon: "size-10 shrink-0",
 };
 
 export function buttonClasses(variant: Variant = "primary", size: Size = "md", full = false) {
   return [
-    "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors",
+    "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors",
     "disabled:cursor-not-allowed",
     variants[variant],
     sizes[size],

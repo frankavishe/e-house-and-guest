@@ -1,7 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
-import { AdminNav } from "@/components/AdminNav";
+import { DashboardShell } from "@/components/shell/DashboardShell";
 import { ClientMessages } from "@/i18n/ClientMessages";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/api/server";
@@ -22,10 +22,7 @@ export default async function AdminLayout({ children, params }: Props) {
 
   return (
     <ClientMessages section="admin">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
-        <AdminNav />
-        {children}
-      </div>
+      <DashboardShell section="admin">{children}</DashboardShell>
     </ClientMessages>
   );
 }

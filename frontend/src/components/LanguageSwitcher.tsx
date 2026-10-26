@@ -18,7 +18,7 @@ export function LanguageSwitcher() {
       locale={other}
       hrefLang={other}
       aria-label={t("switchToLabel")}
-      className="rounded-md px-2 py-1 text-sm font-medium text-brand-700 hover:bg-brand-50"
+      className="flex h-10 items-center rounded-full bg-card px-3.5 text-sm font-medium text-ink hover:bg-brand-50"
     >
       {t("switchTo")}
     </Link>

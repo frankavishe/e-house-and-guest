@@ -2,58 +2,57 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/api/server";
+import { Icon } from "./icons";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { NotificationBell } from "./NotificationBell";
+import { Logo } from "./shell/Logo";
+import { Avatar } from "./ui/Avatar";
+import { buttonClasses } from "./ui/Button";
 
 export async function SiteHeader() {
   const [t, user] = await Promise.all([getTranslations(), getCurrentUser()]);
+  const iconButton =
+    "flex size-10 items-center justify-center rounded-full bg-card text-ink hover:bg-brand-50";
   return (
-    <header className="sticky top-0 z-10 border-b border-line bg-surface/95 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-2 px-4">
-        <Link href="/" className="text-base font-bold text-brand-800">
-          {t("common.appName")}
-        </Link>
-        <nav className="flex items-center gap-1">
+    <header className="sticky top-0 z-10 bg-surface/90 backdrop-blur sm:rounded-t-[var(--radius-shell)]">
+      <div className="flex h-16 items-center justify-between gap-2 px-4 sm:h-20 sm:px-6 lg:px-8">
+        <Logo name={t("common.appName")} className="min-w-0" />
+        <nav className="flex items-center gap-2">
           <Suspense fallback={null}>
             <LanguageSwitcher />
           </Suspense>
+          <Link
+            href="/search"
+            aria-label={t("shell.search")}
+            title={t("shell.search")}
+            className={`${iconButton} max-sm:hidden`}
+          >
+            <Icon name="search" />
+          </Link>
           {user ? (
             <>
               <Link
                 href="/account/messages"
                 title={t("nav.messages")}
                 aria-label={t("nav.messages")}
-                className="rounded-md p-2 text-ink hover:bg-canvas"
+                className={`${iconButton} max-sm:hidden`}
               >
-                <svg
-                  aria-hidden
-                  viewBox="0 0 24 24"
-                  className="size-5"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                  />
-                </svg>
+                <Icon name="message" />
               </Link>
               <NotificationBell />
               <Link
                 href="/account"
                 title={t("nav.account")}
-                className="max-w-32 truncate rounded-md px-2 py-1 text-sm text-ink hover:bg-canvas"
+                className="flex items-center gap-2 rounded-full bg-card py-1 pl-1 pr-1 text-sm font-medium text-ink hover:bg-brand-50 sm:pr-3"
               >
-                {user.name ?? t("nav.account")}
+                <Avatar name={user.name} size="sm" />
+                <span className="max-w-28 truncate max-sm:sr-only">
+                  {user.name ?? t("nav.account")}
+                </span>
               </Link>
             </>
           ) : (
-            <Link
-              href="/account/sign-in"
-              className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700"
-            >
+            <Link href="/account/sign-in" className={buttonClasses("primary", "md")}>
               {t("nav.signIn")}
             </Link>
           )}

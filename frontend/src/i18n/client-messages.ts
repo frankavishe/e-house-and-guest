@@ -4,8 +4,8 @@
 // frontend/perf-report.md). tests/unit/client-messages.test.ts checks that every client
 // component's namespaces are covered here.
 
-/** Header widgets and shared error messages, on every page. */
-export const BASE_NAMESPACES = ["common", "nav", "notifications", "errors"] as const;
+/** Header widgets, the theme switch and shared error messages, on every page. */
+export const BASE_NAMESPACES = ["common", "nav", "notifications", "errors", "theme"] as const;
 
 /** Extra namespaces per top-level route segment (`/[locale]/<section>/…`). */
 export const SECTION_NAMESPACES = {
