@@ -27,7 +27,7 @@ export default async function OwnerOnboardingPage({ params }: Props) {
   ]);
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
+    <div className="flex w-full max-w-3xl flex-col gap-5">
       <header className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("title")}</h1>
         <p className="text-sm text-muted">{t("intro")}</p>

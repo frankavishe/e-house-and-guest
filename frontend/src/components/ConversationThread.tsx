@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { api, apiError, type Schemas } from "@/lib/api/client";
 import { formatDateTime } from "@/lib/format";
+import { Icon } from "./icons";
 import { Button } from "./ui/Button";
 
 type Message = Schemas["MessageOut"];
@@ -82,17 +83,22 @@ export function ConversationThread({
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      {!revealed && <p className="rounded-2xl bg-surface p-3 text-xs text-muted">{t("maskNote")}</p>}
-      <ol className="flex flex-col gap-2" aria-live="polite">
-        {messages.length === 0 && <li className="text-sm text-muted">{t("noMessages")}</li>}
+    <div className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-3 sm:p-4">
+      {!revealed && (
+        <p className="flex items-center gap-2 rounded-2xl bg-surface p-3 text-xs text-muted">
+          <Icon name="shield" className="size-4 shrink-0 text-brand-600" />
+          {t("maskNote")}
+        </p>
+      )}
+      <ol className="flex min-h-48 flex-col gap-2 p-1" aria-live="polite">
+        {messages.length === 0 && <li className="m-auto text-sm text-muted">{t("noMessages")}</li>}
         {messages.map((m) => (
           <li
             key={m.seq}
-            className={`flex max-w-[85%] flex-col gap-0.5 rounded-2xl px-3 py-2 text-sm ${
+            className={`flex max-w-[85%] flex-col gap-0.5 rounded-3xl px-4 py-2.5 text-sm ${
               m.mine
-                ? "self-end bg-brand-600 text-white"
-                : "self-start border border-line bg-surface text-ink"
+                ? "self-end rounded-br-md bg-brand-600 text-white"
+                : "self-start rounded-bl-md bg-surface text-ink"
             }`}
           >
             <p className="whitespace-pre-line break-words">{m.body}</p>
@@ -105,7 +111,7 @@ export function ConversationThread({
         ))}
       </ol>
       <div ref={endRef} />
-      <form onSubmit={send} className="flex flex-col gap-2">
+      <form onSubmit={send} className="flex flex-col gap-2 rounded-3xl bg-surface p-2">
         <label className="sr-only" htmlFor="reply">
           {t("reply")}
         </label>
@@ -116,11 +122,12 @@ export function ConversationThread({
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder={t("placeholder")}
-          className="rounded-2xl border border-line bg-surface p-3 text-sm text-ink"
+          className="resize-none rounded-2xl bg-transparent p-3 text-sm text-ink focus:outline-none"
         />
-        {error && <p className="text-sm text-danger">{error}</p>}
+        {error && <p className="px-3 text-sm text-danger">{error}</p>}
         <div className="flex justify-end">
           <Button type="submit" loading={busy} disabled={!body.trim()}>
+            <Icon name="arrowRight" className="size-4" />
             {t("send")}
           </Button>
         </div>

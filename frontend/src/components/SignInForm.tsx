@@ -79,7 +79,7 @@ export function SignInForm({ returnTo }: { returnTo: string }) {
 
   return (
     <div className="mx-auto my-4 flex w-full max-w-md flex-col gap-5 rounded-[var(--radius-card)] bg-card p-6 sm:my-10 sm:p-8">
-      <span className="flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-700 text-white">
+      <span className="flex size-12 items-center justify-center rounded-full bg-hero text-white">
         <Icon name={step === "name" ? "user" : "smartphone"} />
       </span>
       <h1 className="text-2xl font-semibold tracking-tight">{step === "name" ? t("signIn.nameTitle") : t("signIn.title")}</h1>

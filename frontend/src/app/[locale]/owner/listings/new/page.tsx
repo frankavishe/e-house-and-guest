@@ -39,7 +39,7 @@ export default async function NewListingPage({ params }: Props) {
   }
   const [t, categories] = await Promise.all([getTranslations("ownerListings"), getCategories()]);
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
+    <div className="flex w-full max-w-3xl flex-col gap-5">
       <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("new")}</h1>
       <p className="text-sm text-muted">{t("newHint")}</p>
       <NewListingForm categories={leaves(categories, locale === "en" ? "en" : "sw")} />

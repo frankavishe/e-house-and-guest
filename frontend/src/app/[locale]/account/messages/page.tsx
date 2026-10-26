@@ -35,7 +35,7 @@ export default async function InboxPage({ params, searchParams }: Props) {
   const items = inbox?.items ?? [];
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+    <div className="flex w-full flex-col gap-5">
       <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("messages.title")}</h1>
       {items.length === 0 ? (
         <p className="text-sm text-muted">{t("messages.empty")}</p>

@@ -7,7 +7,7 @@ export default async function NotFound() {
   const t = await getTranslations("notFound");
   return (
     <div className="mx-auto my-6 flex max-w-md flex-col items-center gap-3 rounded-[var(--radius-card)] bg-card px-6 py-12 text-center sm:my-12">
-      <p className="bg-gradient-to-br from-brand-400 to-brand-700 bg-clip-text text-7xl font-semibold tracking-tight text-transparent">
+      <p className="bg-hero bg-clip-text text-7xl font-semibold tracking-tight text-transparent">
         404
       </p>
       <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("title")}</h1>

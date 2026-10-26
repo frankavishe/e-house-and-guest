@@ -11,7 +11,7 @@ export function Avatar({ name, size = "md" }: { name?: string | null; size?: "sm
   return (
     <span
       aria-hidden
-      className={`inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-300 to-brand-600 font-semibold text-white ${sizes[size]}`}
+      className={`inline-flex shrink-0 items-center justify-center rounded-full bg-hero font-semibold text-white ${sizes[size]}`}
     >
       {initials}
     </span>

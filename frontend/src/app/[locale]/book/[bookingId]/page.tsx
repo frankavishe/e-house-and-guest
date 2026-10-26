@@ -76,7 +76,7 @@ export default async function BookingPage({ params }: Props) {
 
   return (
     <article className="mx-auto flex w-full max-w-2xl flex-col gap-5">
-      <header className="relative flex flex-col gap-4 overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-brand-400 to-brand-700 p-5 text-white sm:p-6">
+      <header className="relative flex flex-col gap-4 overflow-hidden rounded-[var(--radius-card)] bg-hero p-5 text-white sm:p-6">
         <span
           aria-hidden
           className="pointer-events-none absolute -right-12 -top-12 size-44 rounded-full border-[22px] border-white/10"

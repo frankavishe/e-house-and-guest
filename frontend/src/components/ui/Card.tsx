@@ -15,7 +15,7 @@ type Props = {
 const tones = {
   soft: "bg-card",
   surface: "bg-surface shadow-soft",
-  brand: "bg-gradient-to-br from-brand-400 to-brand-700 text-white",
+  brand: "bg-hero text-white",
 };
 
 /** Rounded bento tile with an optional title row. */

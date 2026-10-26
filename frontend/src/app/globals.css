@@ -64,6 +64,11 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Violet hero gradient; the same in both themes so white text on it always reads. */
+@utility bg-hero {
+  background-image: linear-gradient(135deg, #9b8df8 0%, #6a57e3 55%, #4b3bbd 100%);
+}
+
 body {
   background: var(--color-canvas);
   color: var(--color-ink);

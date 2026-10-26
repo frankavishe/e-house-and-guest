@@ -43,7 +43,7 @@ export function NavLink({ item, current, onClick }: { item: NavItem; current: bo
       onClick={onClick}
       aria-current={current ? "page" : undefined}
       className={`group flex items-center gap-3 rounded-full px-3 py-2.5 text-sm font-medium transition-colors ${
-        current ? "bg-brand-500 text-white shadow-soft" : "text-ink hover:bg-card"
+        current ? "bg-brand-600 text-white shadow-soft" : "text-ink hover:bg-card"
       }`}
     >
       <Icon name={item.icon} className="size-[18px] shrink-0" />
@@ -51,7 +51,7 @@ export function NavLink({ item, current, onClick }: { item: NavItem; current: bo
       {item.badge ? (
         <span
           className={`ml-auto flex min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold leading-5 ${
-            current ? "bg-white text-brand-700" : "bg-brand-500 text-white"
+            current ? "bg-white text-brand-600" : "bg-brand-600 text-white"
           }`}
         >
           {item.badge}

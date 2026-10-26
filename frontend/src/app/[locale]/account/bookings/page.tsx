@@ -53,7 +53,7 @@ export default async function MyBookingsPage({ params, searchParams }: Props) {
   );
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+    <div className="flex w-full flex-col gap-5">
       <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("myBookings.title")}</h1>
       {(isOwner || role === "owner") && (
         <nav className="flex gap-2">
@@ -74,7 +74,7 @@ export default async function MyBookingsPage({ params, searchParams }: Props) {
           )}
         </div>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid gap-3 xl:grid-cols-2">
           {items.map((b) => (
             <li key={b.id}>
               <Link

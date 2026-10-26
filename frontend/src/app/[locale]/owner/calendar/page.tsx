@@ -69,7 +69,7 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
   const lastDay = (end: string) => new Date(new Date(end).getTime() - 1);
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+    <div className="flex w-full flex-col gap-5">
       <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("calendar.title")}</h1>
       {listings.length === 0 ? (
         <p className="rounded-3xl bg-card p-4 text-muted">{t("calendar.noListings")}</p>

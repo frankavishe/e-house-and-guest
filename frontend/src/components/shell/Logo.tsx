@@ -6,7 +6,7 @@ export function Logo({ name, className = "" }: { name: string; className?: strin
     <Link href="/" className={`flex items-center gap-2.5 font-semibold text-ink ${className}`}>
       <span
         aria-hidden
-        className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-700"
+        className="flex size-8 shrink-0 items-center justify-center rounded-full bg-hero"
       >
         <span className="size-3.5 rounded-full border-[3px] border-white" />
       </span>

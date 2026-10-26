@@ -46,7 +46,7 @@ export default async function ProfilePage({ params, searchParams }: Props) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-5">
       <header className="overflow-hidden rounded-[var(--radius-card)] bg-card">
-        <div aria-hidden className="h-24 bg-gradient-to-br from-brand-300 via-brand-500 to-brand-700" />
+        <div aria-hidden className="h-24 bg-hero" />
         <div className="-mt-8 flex flex-col gap-3 px-5 pb-5 sm:flex-row sm:items-end">
           <span className="rounded-full ring-4 ring-card">
             <Avatar name={name} size="lg" />

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ConversationThread } from "@/components/ConversationThread";
+import { Icon } from "@/components/icons";
+import { Avatar } from "@/components/ui/Avatar";
 import { Link, redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/api/server";
 import { getThread } from "@/lib/api/social";
@@ -30,28 +32,36 @@ export default async function ConversationPage({ params }: Props) {
   const t = await getTranslations("messages");
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      <nav className="text-sm">
-        <Link href="/account/messages" className="text-brand-700 hover:underline">
-          ← {t("title")}
+    <div className="flex w-full max-w-3xl flex-col gap-4">
+      <header className="flex items-center gap-3">
+        <Link
+          href="/account/messages"
+          aria-label={t("title")}
+          title={t("title")}
+          className="flex size-10 shrink-0 items-center justify-center rounded-full bg-card hover:bg-brand-50"
+        >
+          <Icon name="chevronLeft" />
         </Link>
-      </nav>
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">{c.counterpart.name}</h1>
-        <p className="text-sm text-muted">
-          {t(c.role === "owner" ? "yourListingLabel" : "aboutLabel")}{" "}
-          <Link href={`/l/${c.listing.id}`} className="text-brand-700 hover:underline">
-            {c.listing.title}
-          </Link>
-          {c.booking_id && (
-            <>
-              {" · "}
-              <Link href={`/book/${c.booking_id}`} className="text-brand-700 hover:underline">
-                {t("viewBooking")}
-              </Link>
-            </>
-          )}
-        </p>
+        <Avatar name={c.counterpart.name} />
+        <div className="min-w-0">
+          <h1 className="truncate text-xl font-semibold tracking-tight text-ink">
+            {c.counterpart.name}
+          </h1>
+          <p className="truncate text-sm text-muted">
+            {t(c.role === "owner" ? "yourListingLabel" : "aboutLabel")}{" "}
+            <Link href={`/l/${c.listing.id}`} className="text-brand-700 hover:underline">
+              {c.listing.title}
+            </Link>
+            {c.booking_id && (
+              <>
+                {" · "}
+                <Link href={`/book/${c.booking_id}`} className="text-brand-700 hover:underline">
+                  {t("viewBooking")}
+                </Link>
+              </>
+            )}
+          </p>
+        </div>
       </header>
       <ConversationThread
         conversationId={c.id}

@@ -101,7 +101,7 @@ export default async function ListingPage({ params, searchParams }: Props) {
   );
 
   const priceCard = listing.base_price && (
-    <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-brand-400 to-brand-700 p-5 text-white">
+    <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-hero p-5 text-white">
       <span
         aria-hidden
         className="pointer-events-none absolute -right-10 -top-10 size-36 rounded-full border-[18px] border-white/10"
@@ -145,7 +145,7 @@ export default async function ListingPage({ params, searchParams }: Props) {
           )}
         </div>
         {listing.owner.verified && (
-          <span className="ml-auto flex size-10 items-center justify-center rounded-full bg-brand-500 text-white">
+          <span className="ml-auto flex size-10 items-center justify-center rounded-full bg-brand-600 text-white">
             <Icon name="shield" />
           </span>
         )}

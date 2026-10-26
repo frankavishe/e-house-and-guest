@@ -58,7 +58,7 @@ export default async function OwnerEarningsPage({ params, searchParams }: Props)
     : [];
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-5">
+    <div className="flex w-full flex-col gap-5">
       <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("earnings.title")}</h1>
 
       <form className="flex flex-wrap items-end gap-2" role="search">

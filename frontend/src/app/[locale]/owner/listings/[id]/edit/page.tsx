@@ -48,7 +48,7 @@ export default async function EditListingPage({ params, searchParams }: Props) {
   const option = (l: { id: number; name: string }) => ({ value: String(l.id), label: l.name });
 
   return (
-    <div className="mx-auto w-full max-w-xl">
+    <div className="w-full max-w-3xl">
       <ListingWizard
         initial={listing}
         schema={(category?.attribute_schema ?? []) as Record<string, unknown>[]}

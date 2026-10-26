@@ -42,7 +42,7 @@ export default async function HomePage({ params }: Props) {
   return (
     <div className="flex flex-col gap-10">
       <div className="grid gap-4 lg:grid-cols-[1.05fr_1fr]">
-        <section className="relative flex flex-col justify-between gap-8 overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-brand-400 via-brand-500 to-brand-700 p-6 text-white sm:p-8">
+        <section className="relative flex flex-col justify-between gap-8 overflow-hidden rounded-[var(--radius-card)] bg-hero p-6 text-white sm:p-8">
           <span
             aria-hidden
             className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full border-[28px] border-white/10"
@@ -172,7 +172,7 @@ export default async function HomePage({ params }: Props) {
         </div>
         <div className="flex flex-col justify-between gap-6 rounded-[var(--radius-card)] bg-ink p-6 text-surface">
           <div className="flex flex-col gap-2">
-            <span className="flex size-11 items-center justify-center rounded-full bg-brand-500 text-white">
+            <span className="flex size-11 items-center justify-center rounded-full bg-brand-600 text-white">
               <Icon name="building" />
             </span>
             <h2 className="mt-2 text-xl font-semibold tracking-tight">{t("homeExtra.ownerCta")}</h2>
