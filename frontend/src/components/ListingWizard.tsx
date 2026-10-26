@@ -20,7 +20,7 @@ type Patch = Schemas["ListingPatch"];
 
 const LocationPinMap = dynamic(() => import("./LocationPinMap"), {
   ssr: false,
-  loading: () => <Skeleton className="h-64 w-full rounded-xl" />,
+  loading: () => <Skeleton className="h-64 w-full rounded-2xl" />,
 });
 
 
@@ -142,19 +142,19 @@ export function ListingWizard({ initial, schema, regions, districts: initialDist
         <Link href="/owner/listings" className="text-sm text-brand-700 hover:underline">
           ← {t("ownerListings.title")}
         </Link>
-        <h1 className="text-xl font-bold text-ink">{title}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">{title}</h1>
         <p className="text-sm text-muted">{listing.category.name}</p>
         <ListingStatusBadge listing={listing} />
         {live && listing.review_state === "pending" && (
-          <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">{t("wizard.liveReviewNote")}</p>
+          <p className="rounded-2xl bg-warning-soft p-3 text-sm text-warning">{t("wizard.liveReviewNote")}</p>
         )}
         {listing.rejection_reason && listing.status !== "active" && listing.status !== "paused" && (
-          <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-danger">
+          <p role="alert" className="rounded-2xl bg-danger-soft p-3 text-sm text-danger">
             {t("wizard.rejectedBecause", { reason: listing.rejection_reason })}
           </p>
         )}
         {live && listing.review_state === "rejected" && listing.rejection_reason && (
-          <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-danger">
+          <p role="alert" className="rounded-2xl bg-danger-soft p-3 text-sm text-danger">
             {t("wizard.changesRejected", { reason: listing.rejection_reason })}
           </p>
         )}
@@ -168,7 +168,7 @@ export function ListingWizard({ initial, schema, regions, districts: initialDist
             onClick={() => go(s)}
             aria-current={step === s ? "step" : undefined}
             className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium ${
-              step === s ? "bg-brand-600 text-white" : "bg-canvas text-ink hover:bg-brand-50"
+              step === s ? "bg-brand-600 text-white" : "bg-card text-ink hover:bg-brand-50"
             }`}
           >
             {i + 1}. {t(`wizard.step.${s}`)}
@@ -323,7 +323,7 @@ function TextArea({ label, value, onChange }: { label: string; value: string; on
         maxLength={5000}
         value={value}
         onChange={onChange}
-        className="rounded-lg border border-line bg-surface p-3 text-base text-ink"
+        className="rounded-2xl border border-line bg-surface p-4 text-base text-ink focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100"
       />
     </label>
   );
@@ -546,7 +546,7 @@ function ReviewStep({
   return (
     <div className="flex flex-col gap-4">
       {listing.missing.length > 0 ? (
-        <div className="flex flex-col gap-2 rounded-xl border border-line p-4">
+        <div className="flex flex-col gap-2 rounded-3xl bg-card p-4">
           <p className="text-sm font-medium text-ink">{t("missingTitle")}</p>
           <ul className="flex flex-col gap-1">
             {listing.missing.map((m) => (
@@ -559,7 +559,7 @@ function ReviewStep({
           </ul>
         </div>
       ) : (
-        canSubmit && <p className="rounded-xl bg-brand-50 p-4 text-sm text-brand-800">{t("ready")}</p>
+        canSubmit && <p className="rounded-2xl bg-brand-50 p-4 text-sm text-brand-700">{t("ready")}</p>
       )}
       {note[listing.status] && <p className="text-sm text-muted">{note[listing.status]}</p>}
       {canSubmit && (
@@ -578,7 +578,7 @@ function ReviewStep({
         </Button>
       )}
       {confirmDelete ? (
-        <div className="flex flex-col gap-2 rounded-xl border border-red-200 p-4">
+        <div className="flex flex-col gap-2 rounded-2xl border border-red-200 p-4">
           <p className="text-sm text-ink">{t("deleteConfirm")}</p>
           <div className="flex gap-2">
             <Button variant="danger" loading={busy} onClick={onDelete}>

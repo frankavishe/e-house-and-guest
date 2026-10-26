@@ -71,7 +71,7 @@ export function MessageOwnerButton({
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder={t("askPlaceholder")}
-          className="rounded-lg border border-line bg-surface p-3 text-sm text-ink"
+          className="rounded-2xl border border-line bg-surface p-3 text-sm text-ink"
         />
       </label>
       <p className="text-xs text-muted">{t("maskNote")}</p>

@@ -33,7 +33,7 @@ export default async function AdminClaimsPage({ params, searchParams }: Props) {
 
   return (
     <>
-      <h1 className="text-xl font-bold text-ink">{t("admin.claims")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("admin.claims")}</h1>
       <nav
         aria-label={t("adminClaims.filter")}
         className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
@@ -44,7 +44,7 @@ export default async function AdminClaimsPage({ params, searchParams }: Props) {
             href={`/admin/claims?status=${s}`}
             aria-current={s === status ? "page" : undefined}
             className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium ${
-              s === status ? "bg-brand-600 text-white" : "bg-canvas text-ink hover:bg-brand-50"
+              s === status ? "bg-brand-600 text-white" : "bg-card text-ink hover:bg-brand-50"
             }`}
           >
             {t(`claim.status_${s}`)}
@@ -52,13 +52,13 @@ export default async function AdminClaimsPage({ params, searchParams }: Props) {
         ))}
       </nav>
       {items.length === 0 ? (
-        <p className="rounded-xl border border-line p-4 text-muted">{t("adminClaims.empty")}</p>
+        <p className="rounded-3xl bg-card p-4 text-muted">{t("adminClaims.empty")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {items.map((c) => (
             <li
               key={c.id}
-              className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4"
+              className="flex flex-col gap-3 rounded-3xl bg-card p-4"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <Link

@@ -23,7 +23,7 @@ export default async function NewCategoryPage({ params }: Props) {
       <Link href="/admin/categories" className="text-sm text-brand-700 hover:underline">
         ← {t("admin.categories")}
       </Link>
-      <h1 className="text-xl font-bold text-ink">{t("adminCategories.new")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("adminCategories.new")}</h1>
       <CategoryEditor locale={locale} groups={(categories ?? []).filter((c) => !c.is_leaf)} />
     </>
   );

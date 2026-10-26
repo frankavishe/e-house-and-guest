@@ -119,7 +119,7 @@ export function ClaimForm({
           maxLength={2000}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="rounded-lg border border-line bg-surface p-3 text-base text-ink"
+          className="rounded-2xl border border-line bg-surface p-4 text-base text-ink focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100"
         />
       </label>
       {kind === "damage" && (

@@ -83,7 +83,7 @@ export function PayoutMethods({ methods }: { methods: PayoutMethod[] }) {
         {t("earnings.methods")}
       </h2>
       {methods.length === 0 && (
-        <p className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+        <p className="rounded-2xl bg-warning-soft p-3 text-sm text-warning">
           {t("earnings.noMethod")}
         </p>
       )}
@@ -91,7 +91,7 @@ export function PayoutMethods({ methods }: { methods: PayoutMethod[] }) {
         {methods.map((m) => (
           <li
             key={m.id}
-            className="flex items-center justify-between gap-3 rounded-xl border border-line bg-surface p-3"
+            className="flex items-center justify-between gap-3 rounded-3xl bg-card p-3"
           >
             <div className="flex min-w-0 flex-col">
               <span className="flex items-center gap-2 font-medium text-ink">
@@ -114,7 +114,7 @@ export function PayoutMethods({ methods }: { methods: PayoutMethod[] }) {
         ))}
       </ul>
       {adding ? (
-        <form onSubmit={add} className="flex flex-col gap-3 rounded-xl border border-line p-4">
+        <form onSubmit={add} className="flex flex-col gap-3 rounded-3xl bg-card p-4">
           <Select
             label={t("earnings.kind")}
             value={kind}

@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { Pagination } from "@/components/Pagination";
 import { ReportButton } from "@/components/ReportButton";
 import { ReviewList } from "@/components/ReviewList";
+import { Icon } from "@/components/icons";
+import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { getCurrentUser } from "@/lib/api/server";
 import { getUserReviews } from "@/lib/api/social";
@@ -43,22 +45,30 @@ export default async function ProfilePage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-5">
-      <header className="flex items-center gap-3">
-        <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-brand-50 text-xl font-semibold text-brand-800">
-          {name.slice(0, 1).toUpperCase()}
-        </div>
-        <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="truncate text-xl font-bold text-ink">{name}</h1>
-          <div className="flex flex-wrap gap-2 text-sm text-muted">
-            {profile.owner?.verified && <Badge tone="brand">{t("listing.verifiedOwner")}</Badge>}
-            {ownerStars && <span>{t("reviews.asOwner", { stars: ownerStars })}</span>}
-            {renterStars && <span>{t("reviews.asRenter", { stars: renterStars })}</span>}
+      <header className="overflow-hidden rounded-[var(--radius-card)] bg-card">
+        <div aria-hidden className="h-24 bg-gradient-to-br from-brand-300 via-brand-500 to-brand-700" />
+        <div className="-mt-8 flex flex-col gap-3 px-5 pb-5 sm:flex-row sm:items-end">
+          <span className="rounded-full ring-4 ring-card">
+            <Avatar name={name} size="lg" />
+          </span>
+          <div className="flex min-w-0 flex-col gap-1">
+            <h1 className="truncate text-2xl font-semibold tracking-tight text-ink">{name}</h1>
+            <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
+              {profile.owner?.verified && (
+                <Badge tone="brand">
+                  <Icon name="shield" className="size-3.5" />
+                  {t("listing.verifiedOwner")}
+                </Badge>
+              )}
+              {ownerStars && <span>{t("reviews.asOwner", { stars: ownerStars })}</span>}
+              {renterStars && <span>{t("reviews.asRenter", { stars: renterStars })}</span>}
+            </div>
           </div>
         </div>
       </header>
 
-      <section className="flex flex-col gap-3 border-t border-line pt-4">
-        <h2 className="text-base font-semibold text-ink">{t("listing.reviews")}</h2>
+      <section className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5">
+        <h2 className="text-xl font-semibold tracking-tight text-ink">{t("listing.reviews")}</h2>
         {data.items.length === 0 ? (
           <p className="text-sm text-muted">{t("listing.noReviews")}</p>
         ) : (

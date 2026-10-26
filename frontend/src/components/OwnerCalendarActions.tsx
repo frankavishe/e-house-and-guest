@@ -58,7 +58,7 @@ export function BlockForm({
   }
 
   return (
-    <form onSubmit={add} className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4">
+    <form onSubmit={add} className="flex flex-col gap-3 rounded-3xl bg-card p-4">
       <h2 className="text-base font-semibold text-ink">{t("calendar.blockTitle")}</h2>
       <div className="grid grid-cols-2 gap-2">
         <Input label={t("calendar.from")} type="date" min={minDate} required value={start} onChange={(e) => setStart(e.target.value)} />

@@ -74,7 +74,7 @@ export function ReviewForm({
           maxLength={1000}
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          className="rounded-lg border border-line bg-surface p-3 text-sm text-ink"
+          className="rounded-2xl border border-line bg-surface p-3 text-sm text-ink"
         />
       </label>
       {error && <p className="text-sm text-danger">{error}</p>}

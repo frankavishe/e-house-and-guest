@@ -29,19 +29,19 @@ export default async function AdminListingsPage({ params }: Props) {
 
   return (
     <>
-      <h1 className="text-xl font-bold text-ink">{t("admin.listings")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("admin.listings")}</h1>
       {items.length === 0 ? (
-        <p className="rounded-xl border border-line p-4 text-muted">{t("admin.noListings")}</p>
+        <p className="rounded-3xl bg-card p-4 text-muted">{t("admin.noListings")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {items.map(({ listing, owner, diff }) => (
-            <li key={listing.id} className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4">
+            <li key={listing.id} className="flex flex-col gap-3 rounded-3xl bg-card p-4">
               <div className="flex gap-3">
                 <ImageWithFallback
                   src={listing.photos[0]?.url_320}
                   alt=""
                   fallbackLabel={t("common.imageUnavailable")}
-                  className="size-20 shrink-0 rounded-lg"
+                  className="size-20 shrink-0 rounded-2xl"
                 />
                 <div className="flex min-w-0 flex-col gap-1">
                   <p className="font-medium text-ink">{listing.title_sw || listing.title_en}</p>

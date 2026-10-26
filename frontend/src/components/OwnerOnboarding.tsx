@@ -109,7 +109,7 @@ export function OwnerOnboarding({ profile }: { profile: Profile | null }) {
   return (
     <div className="flex flex-col gap-5">
       {profile && (
-        <section className="flex flex-col gap-2 rounded-xl border border-line bg-surface p-4">
+        <section className="flex flex-col gap-2 rounded-3xl bg-card p-4">
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-base font-semibold text-ink">{profile.display_name}</h2>
             <Badge tone={STATUS_TONE[profile.verification_status]}>
@@ -139,7 +139,7 @@ export function OwnerOnboarding({ profile }: { profile: Profile | null }) {
                 {(["individual", "business"] as const).map((k) => (
                   <label
                     key={k}
-                    className={`flex h-12 cursor-pointer items-center gap-2 rounded-lg border px-3 text-sm ${
+                    className={`flex h-12 cursor-pointer items-center gap-2 rounded-2xl border px-3 text-sm ${
                       kind === k ? "border-brand-600 bg-brand-50 font-medium" : "border-line"
                     }`}
                   >

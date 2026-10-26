@@ -57,7 +57,7 @@ export function MobileTabBar({
                 </span>
                 <span className="max-w-full truncate">{item.label}</span>
                 {item.badge ? (
-                  <span className="absolute right-[calc(50%-1.25rem)] top-0.5 min-w-4 rounded-full bg-brand-600 px-1 text-[10px] font-bold leading-4 text-white">
+                  <span className="absolute right-[calc(50%-1.25rem)] top-0.5 min-w-4 rounded-full bg-brand-600 px-1 text-[10px] font-semibold leading-4 text-white">
                     {item.badge}
                   </span>
                 ) : null}

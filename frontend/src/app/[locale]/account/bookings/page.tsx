@@ -45,7 +45,7 @@ export default async function MyBookingsPage({ params, searchParams }: Props) {
       href={value === "owner" ? "/account/bookings?role=owner" : "/account/bookings"}
       aria-current={role === value ? "page" : undefined}
       className={`rounded-full px-3 py-1.5 text-sm font-medium ${
-        role === value ? "bg-brand-600 text-white" : "bg-canvas text-ink hover:bg-brand-50"
+        role === value ? "bg-brand-600 text-white" : "bg-card text-ink hover:bg-brand-50"
       }`}
     >
       {label}
@@ -54,7 +54,7 @@ export default async function MyBookingsPage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      <h1 className="text-xl font-bold text-ink">{t("myBookings.title")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("myBookings.title")}</h1>
       {(isOwner || role === "owner") && (
         <nav className="flex gap-2">
           {tab("renter", t("myBookings.asRenter"))}
@@ -63,7 +63,7 @@ export default async function MyBookingsPage({ params, searchParams }: Props) {
       )}
 
       {items.length === 0 ? (
-        <div className="flex flex-col items-start gap-3 rounded-xl border border-line p-4">
+        <div className="flex flex-col items-start gap-3 rounded-3xl bg-card p-4">
           <p className="text-muted">
             {role === "owner" ? t("myBookings.emptyOwner") : t("myBookings.empty")}
           </p>
@@ -79,13 +79,13 @@ export default async function MyBookingsPage({ params, searchParams }: Props) {
             <li key={b.id}>
               <Link
                 href={`/book/${b.id}`}
-                className="flex gap-3 rounded-xl border border-line bg-surface p-3 hover:border-brand-600"
+                className="flex gap-3 rounded-3xl bg-card p-3 transition-colors hover:bg-brand-50"
               >
                 <ImageWithFallback
                   src={b.listing.cover_photo?.url_320}
                   alt={b.listing.cover_photo?.alt ?? b.listing.title}
                   fallbackLabel={t("common.imageUnavailable")}
-                  className="size-20 shrink-0 rounded-lg"
+                  className="size-20 shrink-0 rounded-2xl"
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <div className="flex items-start justify-between gap-2">

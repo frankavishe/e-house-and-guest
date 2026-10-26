@@ -83,7 +83,7 @@ export function ConversationThread({
 
   return (
     <div className="flex flex-col gap-3">
-      {!revealed && <p className="rounded-lg bg-canvas p-3 text-xs text-muted">{t("maskNote")}</p>}
+      {!revealed && <p className="rounded-2xl bg-surface p-3 text-xs text-muted">{t("maskNote")}</p>}
       <ol className="flex flex-col gap-2" aria-live="polite">
         {messages.length === 0 && <li className="text-sm text-muted">{t("noMessages")}</li>}
         {messages.map((m) => (
@@ -116,7 +116,7 @@ export function ConversationThread({
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder={t("placeholder")}
-          className="rounded-lg border border-line bg-surface p-3 text-sm text-ink"
+          className="rounded-2xl border border-line bg-surface p-3 text-sm text-ink"
         />
         {error && <p className="text-sm text-danger">{error}</p>}
         <div className="flex justify-end">

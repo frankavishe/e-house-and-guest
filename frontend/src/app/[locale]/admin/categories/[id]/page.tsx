@@ -27,7 +27,7 @@ export default async function EditCategoryPage({ params }: Props) {
       <Link href="/admin/categories" className="text-sm text-brand-700 hover:underline">
         ← {t("admin.categories")}
       </Link>
-      <h1 className="text-xl font-bold text-ink">{localized(category.name, locale)}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{localized(category.name, locale)}</h1>
       <p className="text-sm text-muted">
         {category.path} · {t("adminCategories.version", { n: category.schema_version })}
       </p>

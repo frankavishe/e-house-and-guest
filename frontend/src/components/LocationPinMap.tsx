@@ -35,7 +35,7 @@ export default function LocationPinMap({ value, onChange, tileUrl, attribution }
       center={value ? [value.lat, value.lng] : undefined}
       zoom={value ? 14 : undefined}
       scrollWheelZoom={false}
-      className="h-64 w-full rounded-xl border border-line"
+      className="h-64 w-full rounded-3xl bg-card"
     >
       <TileLayer url={tileUrl} attribution={attribution} />
       <ClickToPlace onChange={onChange} />
@@ -43,7 +43,7 @@ export default function LocationPinMap({ value, onChange, tileUrl, attribution }
         <CircleMarker
           center={[value.lat, value.lng]}
           radius={10}
-          pathOptions={{ color: "#115e59", fillColor: "#0f766e", fillOpacity: 0.85, weight: 2 }}
+          pathOptions={{ color: "#ffffff", fillColor: "#6552e0", fillOpacity: 0.85, weight: 2 }}
         />
       )}
     </MapContainer>

@@ -70,9 +70,9 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      <h1 className="text-xl font-bold text-ink">{t("calendar.title")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("calendar.title")}</h1>
       {listings.length === 0 ? (
-        <p className="rounded-xl border border-line p-4 text-muted">{t("calendar.noListings")}</p>
+        <p className="rounded-3xl bg-card p-4 text-muted">{t("calendar.noListings")}</p>
       ) : (
         <>
           <nav
@@ -87,7 +87,7 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
                 className={`max-w-48 shrink-0 truncate rounded-full px-3 py-1.5 text-sm ${
                   l.id === selected?.id
                     ? "bg-ink text-white"
-                    : "bg-canvas text-ink hover:bg-brand-50"
+                    : "bg-card text-ink hover:bg-brand-50"
                 }`}
               >
                 {l.title || t("ownerListings.untitled")}
@@ -95,11 +95,11 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
             ))}
           </nav>
 
-          <section className="flex flex-col gap-2 rounded-xl border border-line bg-surface p-3">
+          <section className="flex flex-col gap-2 rounded-3xl bg-card p-3">
             <div className="flex items-center justify-between">
               <Link
                 href={href(shiftMonth(month, -1))}
-                className="rounded-md px-2 py-1 text-brand-700 hover:bg-brand-50"
+                className="rounded-full px-2 py-1 text-brand-700 hover:bg-brand-50"
                 aria-label={t("calendar.previous")}
               >
                 ←
@@ -107,7 +107,7 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
               <h2 className="text-base font-semibold capitalize text-ink">{monthLabel}</h2>
               <Link
                 href={href(shiftMonth(month, 1))}
-                className="rounded-md px-2 py-1 text-brand-700 hover:bg-brand-50"
+                className="rounded-full px-2 py-1 text-brand-700 hover:bg-brand-50"
                 aria-label={t("calendar.next")}
               >
                 →
@@ -130,12 +130,12 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
                   <li
                     key={day}
                     title={`${formatDate(`${day}T12:00:00+03:00`, locale)}: ${t(`calendar.${state}`)}`}
-                    className={`rounded-md py-2 ${
+                    className={`rounded-full py-2 ${
                       booked
                         ? "bg-brand-600 font-medium text-white"
                         : blocked
                           ? "bg-line text-muted line-through"
-                          : "bg-canvas text-ink"
+                          : "bg-surface text-ink"
                     } ${day === today ? "ring-2 ring-brand-700" : ""}`}
                   >
                     {Number(day.slice(8))}
@@ -163,7 +163,7 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
                   <li key={b.id}>
                     <Link
                       href={`/book/${b.id}`}
-                      className="flex justify-between gap-2 rounded-lg border border-line p-3 hover:border-brand-600"
+                      className="flex justify-between gap-2 rounded-2xl border border-line bg-surface p-3 transition-colors hover:bg-brand-50"
                     >
                       <span>
                         {b.code} · {b.renter_name}
@@ -191,7 +191,7 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
                 {blocks.map((b) => (
                   <li
                     key={b.id}
-                    className="flex items-center justify-between gap-2 rounded-lg border border-line p-3"
+                    className="flex items-center justify-between gap-2 rounded-2xl border border-line bg-surface p-3"
                   >
                     <span>
                       {formatDate(b.period.start, locale)} – {formatDate(lastDay(b.period.end), locale)}

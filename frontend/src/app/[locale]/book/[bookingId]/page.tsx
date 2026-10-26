@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { QuoteBreakdown } from "@/components/BookingWidget";
+import { BookingProgress } from "@/components/BookingProgress";
 import { BookingStatusBadge } from "@/components/BookingStatusBadge";
 import { CancelBooking } from "@/components/CancelBooking";
 import { Checkout } from "@/components/Checkout";
@@ -32,8 +33,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-2 border-t border-line pt-4">
-      <h2 className="text-base font-semibold text-ink">{title}</h2>
+    <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
+      <h2 className="text-lg font-semibold text-ink">{title}</h2>
       {children}
     </section>
   );
@@ -74,38 +75,60 @@ export default async function BookingPage({ params }: Props) {
   const openClaim = booking.claims.find((c) => c.status === "open") ?? null;
 
   return (
-    <article className="mx-auto flex w-full max-w-xl flex-col gap-5">
-      <header className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-xl font-bold text-ink">
+    <article className="mx-auto flex w-full max-w-2xl flex-col gap-5">
+      <header className="relative flex flex-col gap-4 overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-brand-400 to-brand-700 p-5 text-white sm:p-6">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -right-12 -top-12 size-44 rounded-full border-[22px] border-white/10"
+        />
+        <div className="relative flex flex-wrap items-center justify-between gap-2">
+          <h1 className="text-2xl font-semibold tracking-tight">
             {t("checkout.title", { code: booking.code })}
           </h1>
-          <BookingStatusBadge status={booking.status} />
+          <span className="rounded-full bg-white px-1 py-0.5">
+            <BookingStatusBadge status={booking.status} />
+          </span>
         </div>
-        <Link href={`/l/${listing.id}`} className="font-medium text-brand-700 hover:underline">
+        <Link
+          href={`/l/${listing.id}`}
+          className="relative w-fit text-lg font-medium text-white/95 underline-offset-4 hover:underline"
+        >
           {listing.title}
         </Link>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-          <dt className="text-muted">{t("checkout.period")}</dt>
-          <dd className="text-ink">
-            {formatPeriod(booking.period, listing.booking_mode, unit, locale)}
-          </dd>
+        <dl className="relative grid gap-2 sm:grid-cols-2">
+          <div className="rounded-2xl bg-white/15 p-3 backdrop-blur">
+            <dt className="text-xs text-white/75">{t("checkout.period")}</dt>
+            <dd className="mt-0.5 font-medium">
+              {formatPeriod(booking.period, listing.booking_mode, unit, locale)}
+            </dd>
+          </div>
           {booking.quantity > 1 && (
-            <>
-              <dt className="text-muted">{t("checkout.quantity")}</dt>
-              <dd className="text-ink">{booking.quantity}</dd>
-            </>
+            <div className="rounded-2xl bg-white/15 p-3 backdrop-blur">
+              <dt className="text-xs text-white/75">{t("checkout.quantity")}</dt>
+              <dd className="mt-0.5 font-medium">{booking.quantity}</dd>
+            </div>
+          )}
+          {booking.delivery_address && (
+            <div className="rounded-2xl bg-white/15 p-3 backdrop-blur sm:col-span-2">
+              <dd className="text-sm">
+                {t("checkout.deliveryTo", { address: booking.delivery_address })}
+              </dd>
+            </div>
           )}
         </dl>
-        {booking.delivery_address && (
-          <p className="text-sm text-muted">
-            {t("checkout.deliveryTo", { address: booking.delivery_address })}
-          </p>
-        )}
       </header>
 
+      {!["cancelled", "disputed"].includes(booking.status) && (
+        <div className="rounded-[var(--radius-card)] bg-card p-5">
+          <BookingProgress
+            status={booking.status}
+            wasRequested={booking.request_expires_at != null || booking.request_message != null}
+          />
+        </div>
+      )}
+
       {booking.status === "requested" && (
-        <div className="flex flex-col gap-3 rounded-xl bg-brand-50 p-4 text-sm text-brand-800">
+        <div className="flex flex-col gap-3 rounded-2xl bg-brand-50 p-4 text-sm text-brand-700">
           {booking.can.accept ? (
             <p className="font-medium">{t("requests.ownerPrompt", { time: requestDeadline })}</p>
           ) : (
@@ -121,7 +144,7 @@ export default async function BookingPage({ params }: Props) {
               <p className="text-xs text-muted">
                 {t(booking.role === "renter" ? "requests.yourMessage" : "requests.renterMessage")}
               </p>
-              <blockquote className="whitespace-pre-line rounded-lg bg-surface p-3 text-ink">
+              <blockquote className="whitespace-pre-line rounded-2xl bg-surface p-3 text-ink">
                 {booking.request_message}
               </blockquote>
             </div>
@@ -130,7 +153,7 @@ export default async function BookingPage({ params }: Props) {
         </div>
       )}
       {booking.status === "cancelled" && (
-        <div className="flex flex-col gap-2 rounded-xl border border-line p-4 text-sm">
+        <div className="flex flex-col gap-2 rounded-3xl bg-card p-4 text-sm">
           <p className="text-danger">
             {booking.cancelled_by
               ? t(
@@ -151,12 +174,12 @@ export default async function BookingPage({ params }: Props) {
         </div>
       )}
       {openClaim && (
-        <p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-800">
+        <p className="rounded-2xl bg-warning-soft p-4 text-sm text-warning">
           {t("claim.disputedBanner")}
         </p>
       )}
       {paidOnce && (
-        <div className="flex flex-col gap-3 rounded-xl bg-brand-50 p-4 text-sm text-brand-800">
+        <div className="flex flex-col gap-3 rounded-2xl bg-brand-50 p-4 text-sm text-brand-700">
           {booking.status !== "cancelled" && booking.status !== "disputed" && (
             <p className="font-medium">{t("checkout.confirmed")}</p>
           )}
@@ -167,10 +190,12 @@ export default async function BookingPage({ params }: Props) {
       )}
 
       {payable && (
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5">
           <div className="flex items-baseline justify-between gap-2">
-            <h2 className="text-base font-semibold text-ink">{t("checkout.amountDue")}</h2>
-            <span className="text-lg font-bold tabular-nums text-ink">{formatTZS(amountNow)}</span>
+            <h2 className="text-lg font-semibold text-ink">{t("checkout.amountDue")}</h2>
+            <span className="text-2xl font-semibold tabular-nums tracking-tight text-ink">
+              {formatTZS(amountNow)}
+            </span>
           </div>
           {isLease && booking.status === "awaiting_payment" && (
             <p className="text-sm text-muted">{t("checkout.leaseFirst")}</p>
@@ -237,7 +262,7 @@ export default async function BookingPage({ params }: Props) {
           {booking.claims.map((c) => (
             <div
               key={c.id}
-              className="flex flex-col gap-1 rounded-lg border border-line p-3 text-sm"
+              className="flex flex-col gap-1 rounded-2xl border border-line bg-surface p-3 text-sm"
             >
               <p className="font-medium text-ink">
                 {t(`claim.kind_${c.kind}`)} · {t(`claim.status_${c.status}`)}

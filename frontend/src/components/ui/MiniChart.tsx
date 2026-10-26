@@ -12,7 +12,7 @@ export function MiniBars({ data, className = "" }: { data: Point[]; className?: 
         <div key={d.label} className="flex flex-col items-center gap-1">
           <div className="flex h-12 w-4 items-end">
             <div
-              className={`w-full rounded-md ${i === data.length - 1 ? "bg-brand-500" : "bg-brand-200"}`}
+              className={`w-full rounded-full ${i === data.length - 1 ? "bg-brand-500" : "bg-brand-200"}`}
               style={{ height: `${Math.max(8, (d.value / max) * 100)}%` }}
             />
           </div>

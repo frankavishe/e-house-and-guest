@@ -23,8 +23,8 @@ export function Select({ label, options, placeholder, error, id, className = "",
       <select
         id={selectId}
         aria-invalid={error ? true : undefined}
-        className={`h-12 rounded-2xl border bg-card px-4 text-base text-ink focus:border-brand-400 focus:bg-surface focus:outline-none focus:ring-4 focus:ring-brand-100 ${
-          error ? "border-danger" : "border-transparent"
+        className={`h-12 rounded-2xl border bg-surface px-4 text-base text-ink focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100 ${
+          error ? "border-danger" : "border-line"
         } ${className}`}
         {...rest}
       >

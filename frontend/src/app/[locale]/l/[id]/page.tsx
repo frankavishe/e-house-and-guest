@@ -11,6 +11,8 @@ import { Money } from "@/components/Money";
 import { ReportButton } from "@/components/ReportButton";
 import { ReviewList } from "@/components/ReviewList";
 import { ShareLinks } from "@/components/ShareLinks";
+import { Icon } from "@/components/icons";
+import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Link } from "@/i18n/navigation";
 import { getAvailability, getListing, type ListingDetail } from "@/lib/api/queries";
@@ -55,8 +57,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-2 border-t border-line pt-4">
-      <h2 className="text-base font-semibold text-ink">{title}</h2>
+    <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
+      <h2 className="text-lg font-semibold text-ink">{title}</h2>
       {children}
     </section>
   );
@@ -94,19 +96,78 @@ export default async function ListingPage({ params, searchParams }: Props) {
   const seasonal = listing.prices.filter((p) => p.season_start);
   const unit = (u: string) => t(`units.${u}`);
 
+  const booking = (
+    <BookingWidget listing={listing} signedIn={Boolean(user)} initial={Object.fromEntries(pairs)} />
+  );
+
+  const priceCard = listing.base_price && (
+    <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-brand-400 to-brand-700 p-5 text-white">
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-10 -top-10 size-36 rounded-full border-[18px] border-white/10"
+      />
+      <p className="text-sm text-white/80">{t("listing.prices")}</p>
+      <p className="mt-1 text-3xl font-semibold tracking-tight">
+        <Money amount={listing.base_price.amount_tzs} />
+        <span className="ml-1 text-base font-normal text-white/80">
+          / {unit(listing.base_price.unit)}
+        </span>
+      </p>
+      <div className="mt-3 flex flex-wrap gap-2 text-xs">
+        {listing.instant_book && (
+          <span className="rounded-full bg-white/20 px-2.5 py-1 font-medium">
+            {t("search.instantBook")}
+          </span>
+        )}
+        <span className="rounded-full bg-white/20 px-2.5 py-1 font-medium">
+          {t(`policy.${listing.cancellation_policy}`)}
+        </span>
+      </div>
+    </div>
+  );
+
+  const ownerCard = (
+    <div className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
+      <p className="text-sm font-medium text-muted">
+        {listing.owner.verified ? t("listing.verifiedOwner") : t("listing.owner")}
+      </p>
+      <Link href={`/u/${listing.owner.user_id}`} className="group flex items-center gap-3">
+        <Avatar name={listing.owner.display_name} />
+        <div className="min-w-0">
+          <p className="truncate font-semibold text-ink group-hover:text-brand-700">
+            {listing.owner.display_name}
+          </p>
+          {listing.owner.rating_count > 0 && listing.owner.rating_avg != null && (
+            <p className="flex items-center gap-1 text-xs text-muted">
+              <Icon name="star" className="size-3.5 fill-accent-500 stroke-accent-500" />
+              {listing.owner.rating_avg.toFixed(1)} ({listing.owner.rating_count})
+            </p>
+          )}
+        </div>
+        {listing.owner.verified && (
+          <span className="ml-auto flex size-10 items-center justify-center rounded-full bg-brand-500 text-white">
+            <Icon name="shield" />
+          </span>
+        )}
+      </Link>
+      {!isOwner && <MessageOwnerButton listingId={listing.id} signedIn={Boolean(user)} />}
+    </div>
+  );
+
   return (
     <article className="flex flex-col gap-5">
       <nav className="text-sm">
         <Link
           href={`/search?category=${listing.category.slug}`}
-          className="text-brand-700 hover:underline"
+          className="inline-flex items-center gap-1 rounded-full bg-card px-3 py-1.5 font-medium text-ink hover:bg-brand-50 hover:text-brand-700"
         >
-          ← {listing.category.name}
+          <Icon name="chevronLeft" className="size-4" />
+          {listing.category.name}
         </Link>
       </nav>
 
       <div
-        className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0"
+        className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 [scrollbar-width:thin] sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0"
         aria-label={t("listing.photos")}
       >
         {(listing.photos.length ? listing.photos : [null]).map((photo, i) => (
@@ -122,190 +183,184 @@ export default async function ListingPage({ params, searchParams }: Props) {
             alt={photo?.alt ?? listing.title}
             fallbackLabel={t("common.imageUnavailable")}
             priority={i === 0}
-            className="w-[90%] shrink-0 snap-center rounded-xl sm:w-[600px]"
+            className="w-[90%] shrink-0 snap-center rounded-[var(--radius-card)] sm:w-[600px]"
           />
         ))}
       </div>
 
-      <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold leading-tight text-ink">{listing.title}</h1>
-        <p className="text-sm text-muted">
-          {listing.location.district}, {listing.location.region}
-        </p>
-        <div className="flex flex-wrap items-center gap-2">
-          {listing.instant_book && <Badge tone="brand">{t("search.instantBook")}</Badge>}
-          {listing.rating_count > 0 && listing.rating_avg != null && (
-            <span className="text-sm">
-              ★ {listing.rating_avg.toFixed(1)} ({listing.rating_count})
+      <div className="grid gap-5 lg:grid-cols-[1fr_380px] lg:grid-rows-[auto_1fr] lg:gap-x-6">
+        <header className="flex min-w-0 flex-col gap-2 lg:col-start-1 lg:row-start-1">
+          <h1 className="text-3xl font-semibold leading-tight tracking-tight text-ink">
+            {listing.title}
+          </h1>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
+            <span className="inline-flex items-center gap-1">
+              <Icon name="pin" className="size-4" />
+              {listing.location.district}, {listing.location.region}
             </span>
+            {listing.rating_count > 0 && listing.rating_avg != null && (
+              <span className="inline-flex items-center gap-1 text-ink">
+                <Icon name="star" className="size-4 fill-accent-500 stroke-accent-500" />
+                {listing.rating_avg.toFixed(1)}
+                <span className="text-muted">({listing.rating_count})</span>
+              </span>
+            )}
+            {listing.instant_book && <Badge tone="brand">{t("search.instantBook")}</Badge>}
+          </div>
+        </header>
+
+        <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
+          {priceCard}
+          {booking}
+          {ownerCard}
+        </aside>
+
+        <div className="flex min-w-0 flex-col gap-5 lg:col-start-1 lg:row-start-2">
+          <p className="whitespace-pre-line leading-relaxed text-ink">{listing.description}</p>
+
+          {listing.attributes.length > 0 && (
+            <Section title={t("listing.details")}>
+              {[...groups.entries()].map(([group, attrs]) => (
+                <div key={group || "_"} className="flex flex-col gap-1">
+                  {group && <h3 className="text-sm font-medium text-muted">{group}</h3>}
+                  <dl className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {attrs.map((a) => (
+                      <div
+                        key={a.key}
+                        className="flex flex-col-reverse gap-0.5 rounded-2xl bg-surface p-3"
+                      >
+                        <dt className="text-xs text-muted">{a.label}</dt>
+                        <dd className="font-semibold text-ink">
+                          {a.display}
+                          {a.unit ? ` ${a.unit}` : ""}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              ))}
+            </Section>
+          )}
+
+          <Section title={t("listing.prices")}>
+            <ul className="flex flex-col gap-1 text-sm">
+              {basePrices.map((p) => (
+                <li key={p.unit} className="flex justify-between">
+                  <span className="text-muted">{t("listing.perUnit", { unit: unit(p.unit) })}</span>
+                  <Money amount={p.amount_tzs} className="font-medium" />
+                </li>
+              ))}
+              {seasonal.map((p) => (
+                <li key={`${p.unit}-${p.season_start}`} className="flex justify-between">
+                  <span className="text-muted">
+                    {t("listing.season", {
+                      from: formatDate(`${p.season_start}T12:00:00+03:00`, locale),
+                      to: formatDate(`${p.season_end}T12:00:00+03:00`, locale),
+                      unit: unit(p.unit),
+                    })}
+                  </span>
+                  <Money amount={p.amount_tzs} className="font-medium" />
+                </li>
+              ))}
+            </ul>
+            <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+              <dt className="text-muted">{t("listing.deposit")}</dt>
+              <dd>
+                {listing.deposit_tzs ? (
+                  <Money amount={listing.deposit_tzs} />
+                ) : (
+                  t("listing.noDeposit")
+                )}
+              </dd>
+              <dt className="text-muted">{t("listing.delivery")}</dt>
+              <dd>
+                {listing.delivery === "none"
+                  ? t("listing.deliveryNone")
+                  : t(`listing.delivery_${listing.delivery}`, {
+                      fee: listing.delivery_fee_tzs
+                        ? formatTZS(listing.delivery_fee_tzs)
+                        : t("listing.deliveryFree"),
+                    })}
+              </dd>
+              {(listing.min_duration != null || listing.max_duration != null) && (
+                <>
+                  <dt className="text-muted">{t("listing.duration")}</dt>
+                  <dd>
+                    {[
+                      listing.min_duration != null &&
+                        t("listing.minDuration", {
+                          count: listing.min_duration,
+                          unit: unit(listing.default_unit),
+                        }),
+                      listing.max_duration != null &&
+                        t("listing.maxDuration", {
+                          count: listing.max_duration,
+                          unit: unit(listing.default_unit),
+                        }),
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </dd>
+                </>
+              )}
+              {listing.booking_mode === "QUANTITY" && (
+                <>
+                  <dt className="text-muted">{t("listing.stock")}</dt>
+                  <dd>{listing.stock}</dd>
+                </>
+              )}
+              <dt className="text-muted">{t("listing.cancellation")}</dt>
+              <dd>{t(`policy.${listing.cancellation_policy}`)}</dd>
+            </dl>
+          </Section>
+
+          <Section title={t("listing.availability")}>
+            <ListingAvailability
+              availability={availability}
+              from={from}
+              days={days}
+              locale={locale}
+            />
+          </Section>
+
+          <Section title={t("listing.reviews")}>
+            {listing.reviews.length === 0 ? (
+              <p className="text-sm text-muted">{t("listing.noReviews")}</p>
+            ) : (
+              <ReviewList reviews={listing.reviews} locale={locale} />
+            )}
+            {listing.rating_count > listing.reviews.length && (
+              <Link
+                href={`/u/${listing.owner.user_id}`}
+                className="text-sm text-brand-700 hover:underline"
+              >
+                {t("reviews.allOwnerReviews", { count: listing.owner.rating_count })}
+              </Link>
+            )}
+          </Section>
+
+          <Section title={t("listing.share")}>
+            <ShareLinks
+              url={shareUrl}
+              title={listing.title}
+              labels={{
+                whatsapp: t("listing.shareWhatsapp"),
+                share: t("listing.shareLink"),
+                copied: t("listing.copied"),
+              }}
+            />
+          </Section>
+
+          {!isOwner && (
+            <ReportButton
+              targetKind="listing"
+              targetId={listing.id}
+              signedIn={Boolean(user)}
+              returnTo={`/l/${listing.id}`}
+            />
           )}
         </div>
-        {listing.base_price && (
-          <p className="text-lg text-ink">
-            <Money amount={listing.base_price.amount_tzs} className="font-bold" />{" "}
-            <span className="text-sm text-muted">/ {unit(listing.base_price.unit)}</span>
-          </p>
-        )}
-      </header>
-
-      <BookingWidget
-        listing={listing}
-        signedIn={Boolean(user)}
-        initial={Object.fromEntries(pairs)}
-      />
-
-      <div className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-3">
-        <Link
-          href={`/u/${listing.owner.user_id}`}
-          className="flex items-center gap-3 hover:underline"
-        >
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 font-semibold text-brand-800">
-            {listing.owner.display_name.slice(0, 1).toUpperCase()}
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-ink">{listing.owner.display_name}</p>
-            <p className="text-xs text-muted">
-              {listing.owner.verified ? t("listing.verifiedOwner") : t("listing.owner")}
-              {listing.owner.rating_count > 0 && listing.owner.rating_avg != null
-                ? ` · ★ ${listing.owner.rating_avg.toFixed(1)}`
-                : ""}
-            </p>
-          </div>
-        </Link>
-        {!isOwner && <MessageOwnerButton listingId={listing.id} signedIn={Boolean(user)} />}
       </div>
-
-      <p className="whitespace-pre-line text-ink">{listing.description}</p>
-
-      {listing.attributes.length > 0 && (
-        <Section title={t("listing.details")}>
-          {[...groups.entries()].map(([group, attrs]) => (
-            <div key={group || "_"} className="flex flex-col gap-1">
-              {group && <h3 className="text-sm font-medium text-muted">{group}</h3>}
-              <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-                {attrs.map((a) => (
-                  <div key={a.key} className="contents">
-                    <dt className="text-muted">{a.label}</dt>
-                    <dd className="text-ink">
-                      {a.display}
-                      {a.unit ? ` ${a.unit}` : ""}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          ))}
-        </Section>
-      )}
-
-      <Section title={t("listing.prices")}>
-        <ul className="flex flex-col gap-1 text-sm">
-          {basePrices.map((p) => (
-            <li key={p.unit} className="flex justify-between">
-              <span className="text-muted">{t("listing.perUnit", { unit: unit(p.unit) })}</span>
-              <Money amount={p.amount_tzs} className="font-medium" />
-            </li>
-          ))}
-          {seasonal.map((p) => (
-            <li key={`${p.unit}-${p.season_start}`} className="flex justify-between">
-              <span className="text-muted">
-                {t("listing.season", {
-                  from: formatDate(`${p.season_start}T12:00:00+03:00`, locale),
-                  to: formatDate(`${p.season_end}T12:00:00+03:00`, locale),
-                  unit: unit(p.unit),
-                })}
-              </span>
-              <Money amount={p.amount_tzs} className="font-medium" />
-            </li>
-          ))}
-        </ul>
-        <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-          <dt className="text-muted">{t("listing.deposit")}</dt>
-          <dd>
-            {listing.deposit_tzs ? <Money amount={listing.deposit_tzs} /> : t("listing.noDeposit")}
-          </dd>
-          <dt className="text-muted">{t("listing.delivery")}</dt>
-          <dd>
-            {listing.delivery === "none"
-              ? t("listing.deliveryNone")
-              : t(`listing.delivery_${listing.delivery}`, {
-                  fee: listing.delivery_fee_tzs
-                    ? formatTZS(listing.delivery_fee_tzs)
-                    : t("listing.deliveryFree"),
-                })}
-          </dd>
-          {(listing.min_duration != null || listing.max_duration != null) && (
-            <>
-              <dt className="text-muted">{t("listing.duration")}</dt>
-              <dd>
-                {[
-                  listing.min_duration != null &&
-                    t("listing.minDuration", {
-                      count: listing.min_duration,
-                      unit: unit(listing.default_unit),
-                    }),
-                  listing.max_duration != null &&
-                    t("listing.maxDuration", {
-                      count: listing.max_duration,
-                      unit: unit(listing.default_unit),
-                    }),
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </dd>
-            </>
-          )}
-          {listing.booking_mode === "QUANTITY" && (
-            <>
-              <dt className="text-muted">{t("listing.stock")}</dt>
-              <dd>{listing.stock}</dd>
-            </>
-          )}
-          <dt className="text-muted">{t("listing.cancellation")}</dt>
-          <dd>{t(`policy.${listing.cancellation_policy}`)}</dd>
-        </dl>
-      </Section>
-
-      <Section title={t("listing.availability")}>
-        <ListingAvailability availability={availability} from={from} days={days} locale={locale} />
-      </Section>
-
-      <Section title={t("listing.reviews")}>
-        {listing.reviews.length === 0 ? (
-          <p className="text-sm text-muted">{t("listing.noReviews")}</p>
-        ) : (
-          <ReviewList reviews={listing.reviews} locale={locale} />
-        )}
-        {listing.rating_count > listing.reviews.length && (
-          <Link
-            href={`/u/${listing.owner.user_id}`}
-            className="text-sm text-brand-700 hover:underline"
-          >
-            {t("reviews.allOwnerReviews", { count: listing.owner.rating_count })}
-          </Link>
-        )}
-      </Section>
-
-      <Section title={t("listing.share")}>
-        <ShareLinks
-          url={shareUrl}
-          title={listing.title}
-          labels={{
-            whatsapp: t("listing.shareWhatsapp"),
-            share: t("listing.shareLink"),
-            copied: t("listing.copied"),
-          }}
-        />
-      </Section>
-
-      {!isOwner && (
-        <ReportButton
-          targetKind="listing"
-          targetId={listing.id}
-          signedIn={Boolean(user)}
-          returnTo={`/l/${listing.id}`}
-        />
-      )}
     </article>
   );
 }

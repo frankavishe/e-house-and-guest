@@ -13,7 +13,7 @@ export default function ErrorPage({ error, reset }: { error: Error; reset: () =>
   return (
     <div
       role="alert"
-      className="mx-auto flex max-w-md flex-col items-center gap-3 py-16 text-center"
+      className="mx-auto my-6 flex max-w-md flex-col items-center gap-4 rounded-[var(--radius-card)] bg-card px-6 py-12 text-center sm:my-12"
     >
       <p className="text-ink">{t("errors.generic")}</p>
       <Button onClick={reset}>{t("common.retry")}</Button>

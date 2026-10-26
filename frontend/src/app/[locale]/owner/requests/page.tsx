@@ -36,15 +36,15 @@ export default async function OwnerRequestsPage({ params }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      <h1 className="text-xl font-bold text-ink">{t("requests.title")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("requests.title")}</h1>
       {items.length === 0 ? (
-        <p className="rounded-xl border border-line p-4 text-muted">{t("requests.empty")}</p>
+        <p className="rounded-3xl bg-card p-4 text-muted">{t("requests.empty")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {items.map((b) => (
             <li
               key={b.id}
-              className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4"
+              className="flex flex-col gap-3 rounded-3xl bg-card p-4"
             >
               <div className="flex flex-col gap-1">
                 <Link href={`/book/${b.id}`} className="font-medium text-brand-700 hover:underline">
@@ -64,7 +64,7 @@ export default async function OwnerRequestsPage({ params }: Props) {
                   </p>
                 )}
                 {b.request_message && (
-                  <blockquote className="whitespace-pre-line rounded-lg bg-canvas p-3 text-sm text-ink">
+                  <blockquote className="whitespace-pre-line rounded-2xl bg-surface p-3 text-sm text-ink">
                     {b.request_message}
                   </blockquote>
                 )}

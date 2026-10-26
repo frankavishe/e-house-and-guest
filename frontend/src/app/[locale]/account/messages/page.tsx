@@ -36,28 +36,28 @@ export default async function InboxPage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-      <h1 className="text-xl font-bold text-ink">{t("messages.title")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("messages.title")}</h1>
       {items.length === 0 ? (
         <p className="text-sm text-muted">{t("messages.empty")}</p>
       ) : (
-        <ul className="flex flex-col divide-y divide-line rounded-xl border border-line bg-surface">
+        <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-3xl bg-card">
           {items.map((c) => (
             <li key={c.id}>
               <Link
                 href={`/account/messages/${c.id}`}
-                className="flex items-center gap-3 p-3 hover:bg-canvas"
+                className="flex items-center gap-3 p-3 hover:bg-brand-50"
               >
                 <ImageWithFallback
                   src={c.listing.photo_url}
                   alt={c.listing.title}
                   fallbackLabel={t("common.imageUnavailable")}
                   sizes="56px"
-                  className="size-14 shrink-0 rounded-lg"
+                  className="size-14 shrink-0 rounded-2xl"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-baseline justify-between gap-2">
                     <span
-                      className={`truncate text-sm ${c.unread_count ? "font-bold" : "font-medium"} text-ink`}
+                      className={`truncate text-sm ${c.unread_count ? "font-semibold" : "font-medium"} text-ink`}
                     >
                       {c.counterpart.name}
                     </span>
@@ -75,7 +75,7 @@ export default async function InboxPage({ params, searchParams }: Props) {
                   <p className="flex items-center justify-between gap-2">
                     <span className="truncate text-sm text-muted">{c.last_message}</span>
                     {c.unread_count > 0 && (
-                      <span className="shrink-0 rounded-full bg-brand-600 px-2 text-xs font-bold leading-5 text-white">
+                      <span className="shrink-0 rounded-full bg-brand-600 px-2 text-xs font-semibold leading-5 text-white">
                         {c.unread_count}
                       </span>
                     )}

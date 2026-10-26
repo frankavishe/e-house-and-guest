@@ -68,7 +68,7 @@ export function CancelBooking({ bookingId }: { bookingId: string }) {
       {preview ? (
         <>
           {preview.cancelled_by === "owner" && (
-            <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+            <p className="rounded-2xl bg-warning-soft p-3 text-sm text-warning">
               {t("cancel.ownerWarning")}
             </p>
           )}

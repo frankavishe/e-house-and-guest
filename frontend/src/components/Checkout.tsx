@@ -118,7 +118,7 @@ export function Checkout({
 
   if (expired) {
     return (
-      <div className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4">
+      <div className="flex flex-col gap-3 rounded-2xl bg-surface p-4">
         <p role="alert" className="text-danger">
           {t("checkout.expired")}
         </p>
@@ -132,7 +132,7 @@ export function Checkout({
   return (
     <form
       onSubmit={pay}
-      className="flex flex-col gap-4 rounded-xl border border-line bg-surface p-4"
+      className="flex flex-col gap-4"
     >
       <fieldset className="flex flex-col gap-2" disabled={waiting}>
         <legend className="mb-1 text-sm font-medium text-ink">{t("checkout.network")}</legend>
@@ -140,8 +140,8 @@ export function Checkout({
           {NETWORKS.map((n) => (
             <label
               key={n}
-              className={`flex h-12 cursor-pointer items-center gap-2 rounded-lg border px-3 text-sm ${
-                network === n ? "border-brand-600 bg-brand-50 font-medium" : "border-line"
+              className={`flex h-14 cursor-pointer items-center gap-2 rounded-2xl border-2 bg-surface px-4 text-sm transition-colors ${
+                network === n ? "border-brand-500 font-semibold text-brand-700" : "border-transparent hover:border-brand-200"
               }`}
             >
               <input
@@ -173,7 +173,7 @@ export function Checkout({
 
       <div aria-live="polite" className="flex flex-col gap-2 text-sm">
         {waiting && (
-          <p className="flex items-center gap-2 rounded-lg bg-brand-50 p-3 text-brand-800">
+          <p className="flex items-center gap-2 rounded-2xl bg-brand-50 p-3 text-brand-700">
             <span
               aria-hidden
               className="size-4 shrink-0 animate-spin rounded-full border-2 border-current border-r-transparent"

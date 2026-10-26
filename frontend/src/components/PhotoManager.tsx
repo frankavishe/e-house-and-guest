@@ -108,7 +108,7 @@ export function PhotoManager({
                 src={photo.url_320}
                 alt={photo.alt_sw ?? photo.alt_en ?? ""}
                 fallbackLabel={t("common.imageUnavailable")}
-                className="aspect-[4/3] w-full rounded-lg"
+                className="aspect-[4/3] w-full rounded-2xl"
               />
               <div className="flex flex-wrap items-center gap-1">
                 {i === 0 && <Badge tone="brand">{t("wizard.cover")}</Badge>}

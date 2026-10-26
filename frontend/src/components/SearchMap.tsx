@@ -89,7 +89,7 @@ export default function SearchMap({ items, bbox, tileUrl, attribution }: Props) 
     <MapContainer
       bounds={TANZANIA}
       scrollWheelZoom={false}
-      className="h-[60vh] w-full rounded-xl border border-line"
+      className="h-[60vh] w-full rounded-[var(--radius-card)] bg-card lg:h-[calc(100dvh-8rem)]"
     >
       <TileLayer url={tileUrl} attribution={attribution} />
       <Viewport items={items} bbox={bbox} />
@@ -98,7 +98,7 @@ export default function SearchMap({ items, bbox, tileUrl, attribution }: Props) 
           key={item.id}
           center={[item.lat, item.lng]}
           radius={9}
-          pathOptions={{ color: "#115e59", fillColor: "#0f766e", fillOpacity: 0.85, weight: 2 }}
+          pathOptions={{ color: "#ffffff", fillColor: "#6552e0", fillOpacity: 0.85, weight: 2 }}
         >
           <Popup>
             <Link href={item.href} className="font-semibold text-brand-700">

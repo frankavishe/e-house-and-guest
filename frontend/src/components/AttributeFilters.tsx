@@ -75,7 +75,7 @@ export async function AttributeFilters({ schema, pairs, locale }: Props) {
                 {options.map((o) => (
                   <label
                     key={o.value}
-                    className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-line px-3 text-sm has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50"
+                    className="inline-flex min-h-10 items-center gap-2 rounded-2xl border border-line bg-surface px-3 text-sm has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50"
                   >
                     <input
                       type="checkbox"

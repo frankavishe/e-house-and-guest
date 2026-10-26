@@ -86,7 +86,7 @@ function Calendar({
                           ? "text-line"
                           : taken
                             ? "bg-line text-muted line-through"
-                            : "bg-brand-50 text-brand-800"
+                            : "bg-brand-50 text-brand-700"
                       }`}
                     >
                       {Number(day.slice(8))}
@@ -141,7 +141,7 @@ export async function ListingAvailability({
               {day.slots.map((slot) => (
                 <li
                   key={slot.start}
-                  className="rounded-md bg-brand-50 px-2 py-1 text-xs tabular-nums text-brand-800"
+                  className="rounded-full bg-brand-50 px-2 py-1 text-xs tabular-nums text-brand-700"
                 >
                   {formatTime(slot.start, locale)}–{formatTime(slot.end, locale)}
                 </li>

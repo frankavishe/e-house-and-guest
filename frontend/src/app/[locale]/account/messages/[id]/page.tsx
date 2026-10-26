@@ -37,7 +37,7 @@ export default async function ConversationPage({ params }: Props) {
         </Link>
       </nav>
       <header className="flex flex-col gap-1">
-        <h1 className="text-xl font-bold text-ink">{c.counterpart.name}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">{c.counterpart.name}</h1>
         <p className="text-sm text-muted">
           {t(c.role === "owner" ? "yourListingLabel" : "aboutLabel")}{" "}
           <Link href={`/l/${c.listing.id}`} className="text-brand-700 hover:underline">

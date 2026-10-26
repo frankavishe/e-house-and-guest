@@ -59,7 +59,7 @@ export default async function OwnerEarningsPage({ params, searchParams }: Props)
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-5">
-      <h1 className="text-xl font-bold text-ink">{t("earnings.title")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("earnings.title")}</h1>
 
       <form className="flex flex-wrap items-end gap-2" role="search">
         <Input label={t("earnings.from")} type="date" name="from" defaultValue={from} />
@@ -79,7 +79,7 @@ export default async function OwnerEarningsPage({ params, searchParams }: Props)
           {tiles.map(([key, amount]) => (
             <div
               key={key}
-              className={`rounded-xl border border-line bg-surface p-3 ${key === "net" ? "col-span-2 sm:col-span-1" : ""}`}
+              className={`rounded-3xl bg-card p-3 ${key === "net" ? "col-span-2 sm:col-span-1" : ""}`}
             >
               <dt className="text-xs text-muted">{t(`earnings.${key}`)}</dt>
               <dd>
@@ -95,13 +95,13 @@ export default async function OwnerEarningsPage({ params, searchParams }: Props)
           {t("earnings.bookings")}
         </h2>
         {items.length === 0 ? (
-          <p className="rounded-xl border border-line p-4 text-muted">{t("earnings.empty")}</p>
+          <p className="rounded-3xl bg-card p-4 text-muted">{t("earnings.empty")}</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {items.map((item) => (
               <li
                 key={item.booking_id}
-                className="flex flex-col gap-1 rounded-xl border border-line bg-surface p-3"
+                className="flex flex-col gap-1 rounded-3xl bg-card p-3"
               >
                 <div className="flex items-start justify-between gap-2">
                   <Link
@@ -149,13 +149,13 @@ export default async function OwnerEarningsPage({ params, searchParams }: Props)
           {t("earnings.payouts")}
         </h2>
         {(payouts?.items.length ?? 0) === 0 ? (
-          <p className="rounded-xl border border-line p-4 text-muted">{t("earnings.noPayouts")}</p>
+          <p className="rounded-3xl bg-card p-4 text-muted">{t("earnings.noPayouts")}</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {payouts?.items.map((p) => (
               <li
                 key={p.id}
-                className="flex flex-col gap-1 rounded-xl border border-line bg-surface p-3"
+                className="flex flex-col gap-1 rounded-3xl bg-card p-3"
               >
                 <div className="flex items-center justify-between gap-2">
                   <Money amount={p.amount_tzs} className="font-semibold text-ink" />

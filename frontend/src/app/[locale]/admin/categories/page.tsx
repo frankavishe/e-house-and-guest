@@ -25,12 +25,12 @@ export default async function AdminCategoriesPage({ params }: Props) {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-xl font-bold text-ink">{t("admin.categories")}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("admin.categories")}</h1>
         <Link href="/admin/categories/new" className={buttonClasses()}>
           {t("adminCategories.new")}
         </Link>
       </div>
-      <ul className="flex flex-col divide-y divide-line rounded-xl border border-line bg-surface">
+      <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-3xl bg-card">
         {(categories ?? []).map((c) => {
           const depth = c.path.split(".").length - 1;
           return (

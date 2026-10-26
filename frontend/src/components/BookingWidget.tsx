@@ -203,10 +203,10 @@ export function BookingWidget({
   return (
     <form
       onSubmit={submit}
-      className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4"
+      className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5"
       aria-labelledby="booking-title"
     >
-      <h2 id="booking-title" className="text-base font-semibold text-ink">
+      <h2 id="booking-title" className="text-lg font-semibold text-ink">
         {t("booking.title")}
       </h2>
 

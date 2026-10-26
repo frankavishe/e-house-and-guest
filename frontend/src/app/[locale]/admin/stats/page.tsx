@@ -54,7 +54,7 @@ export default async function AdminStatsPage({ params, searchParams }: Props) {
 
   return (
     <>
-      <h1 className="text-xl font-bold text-ink">{t("admin.stats")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("admin.stats")}</h1>
       <form method="get" className="grid gap-3 sm:grid-cols-4 sm:items-end">
         <Input label={t("adminStats.from")} type="date" name="from" defaultValue={stats?.from} />
         <Input label={t("adminStats.to")} type="date" name="to" defaultValue={stats?.to} />
@@ -67,7 +67,7 @@ export default async function AdminStatsPage({ params, searchParams }: Props) {
         <Button type="submit">{t("adminStats.show")}</Button>
       </form>
       {!stats ? (
-        <p className="rounded-xl border border-line p-4 text-muted">{t("errors.generic")}</p>
+        <p className="rounded-3xl bg-card p-4 text-muted">{t("errors.generic")}</p>
       ) : (
         <>
           <div className="-mx-4 overflow-x-auto px-4">

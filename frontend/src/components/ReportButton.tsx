@@ -78,7 +78,7 @@ export function ReportButton({
           maxLength={1000}
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          className="rounded-lg border border-line bg-surface p-3 text-sm text-ink"
+          className="rounded-2xl border border-line bg-surface p-3 text-sm text-ink"
         />
       </label>
       {error && <p className="text-sm text-danger">{error}</p>}

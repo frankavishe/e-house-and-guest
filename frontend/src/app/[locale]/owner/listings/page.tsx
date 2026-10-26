@@ -39,32 +39,32 @@ export default async function OwnerListingsPage({ params, searchParams }: Props)
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="text-xl font-bold text-ink">{t("ownerListings.title")}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("ownerListings.title")}</h1>
         <Link href="/owner/listings/new" className={buttonClasses("primary")}>
           {t("ownerListings.new")}
         </Link>
       </header>
       {user.owner_profile.verification_status !== "verified" && (
-        <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
+        <p className="rounded-2xl bg-warning-soft p-3 text-sm text-warning">
           {t("ownerListings.notVerified")}
         </p>
       )}
 
       {items.length === 0 ? (
-        <p className="rounded-xl border border-line p-4 text-muted">{t("ownerListings.empty")}</p>
+        <p className="rounded-3xl bg-card p-4 text-muted">{t("ownerListings.empty")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {items.map((l) => (
             <li key={l.id}>
               <Link
                 href={`/owner/listings/${l.id}/edit`}
-                className="flex gap-3 rounded-xl border border-line bg-surface p-3 hover:border-brand-600"
+                className="flex gap-3 rounded-3xl bg-card p-3 transition-colors hover:bg-brand-50"
               >
                 <ImageWithFallback
                   src={l.photos[0]?.url_320}
                   alt={l.title_sw ?? l.title_en ?? ""}
                   fallbackLabel={t("common.imageUnavailable")}
-                  className="size-20 shrink-0 rounded-lg"
+                  className="size-20 shrink-0 rounded-2xl"
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                   <p className="truncate font-medium text-ink">

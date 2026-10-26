@@ -40,7 +40,7 @@ export function ImageWithFallback({
   }, [src]);
   return (
     <div
-      className={`relative overflow-hidden bg-line ${className}`}
+      className={`relative overflow-hidden bg-brand-50 ${className}`}
       style={{ aspectRatio: aspect }}
     >
       {showImage ? (

@@ -22,13 +22,13 @@ export default async function AdminVerificationsPage({ params }: Props) {
 
   return (
     <>
-      <h1 className="text-xl font-bold text-ink">{t("verifications")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("verifications")}</h1>
       {items.length === 0 ? (
-        <p className="rounded-xl border border-line p-4 text-muted">{t("noVerifications")}</p>
+        <p className="rounded-3xl bg-card p-4 text-muted">{t("noVerifications")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {items.map((v) => (
-            <li key={v.id} className="flex flex-col gap-3 rounded-xl border border-line bg-surface p-4">
+            <li key={v.id} className="flex flex-col gap-3 rounded-3xl bg-card p-4">
               <div className="flex flex-col gap-1">
                 <p className="font-medium text-ink">{v.display_name}</p>
                 <p className="text-sm text-muted">

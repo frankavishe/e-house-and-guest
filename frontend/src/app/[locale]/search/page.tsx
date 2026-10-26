@@ -6,6 +6,7 @@ import { Pagination } from "@/components/Pagination";
 import { PeriodFields } from "@/components/PeriodFields";
 import { CleanGetForm, FiltersSheet, SortSelect } from "@/components/SearchControls";
 import { SearchMapLoader } from "@/components/SearchMapLoader";
+import { Icon } from "@/components/icons";
 import { buttonClasses, Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -133,7 +134,7 @@ export default async function SearchPage({ params, searchParams }: Props) {
       ) : (
         <p className="text-sm text-muted">{t("filters.pickCategoryForMore")}</p>
       )}
-      <div className="sticky bottom-0 flex gap-2 bg-surface pt-2">
+      <div className="sticky bottom-0 flex gap-2 bg-surface pb-1 pt-3">
         <Link href="/search" className={buttonClasses("secondary")}>
           {t("filters.clear")}
         </Link>
@@ -144,10 +145,22 @@ export default async function SearchPage({ params, searchParams }: Props) {
     </CleanGetForm>
   );
 
+  const results = (
+    <ul
+      className={`grid gap-4 sm:grid-cols-2 ${view === "map" ? "xl:grid-cols-2" : "lg:grid-cols-3"}`}
+    >
+      {items.map((listing, index) => (
+        <li key={listing.id}>
+          <ListingCard listing={listing} periodQuery={carry} priority={index < 2} />
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-bold text-ink sm:text-2xl">{heading}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{heading}</h1>
         {page && (
           <p className="text-sm text-muted" aria-live="polite">
             {t("search.resultCount", { count: page.total })}
@@ -155,7 +168,7 @@ export default async function SearchPage({ params, searchParams }: Props) {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-[var(--radius-card)] bg-card p-2">
         <FiltersSheet
           label={t("filters.title")}
           title={t("filters.title")}
@@ -171,39 +184,19 @@ export default async function SearchPage({ params, searchParams }: Props) {
         />
         <Link
           href={`/search${withParams(pairs, { view: view === "map" ? null : "map" })}`}
-          className={`${buttonClasses("ghost")} ml-auto`}
+          className={`${view === "map" ? buttonClasses("primary") : `${buttonClasses("secondary")} bg-surface`} ml-auto`}
         >
+          <Icon name={view === "map" ? "list" : "pin"} className="size-4" />
           {view === "map" ? t("search.showList") : t("search.showMap")}
         </Link>
       </div>
 
       {error && (
-        <p
-          role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-danger"
-        >
+        <p role="alert" className="rounded-2xl bg-danger-soft p-3 text-sm text-danger">
           {error.status === 404
             ? t("search.unknownCategory")
             : error.message || t("errors.generic")}
         </p>
-      )}
-
-      {view === "map" && (
-        <SearchMapLoader
-          bbox={getParam(pairs, "bbox")}
-          tileUrl={TILE_URL}
-          attribution={t("map.attribution")}
-          items={items
-            .filter((i) => i.lat != null && i.lng != null)
-            .map((i) => ({
-              id: i.id,
-              title: i.title,
-              lat: i.lat as number,
-              lng: i.lng as number,
-              href: `/l/${i.id}${carry}`,
-              price: formatTZS(i.total_tzs ?? i.base_price?.amount_tzs ?? 0),
-            }))}
-        />
       )}
 
       {getParam(pairs, "bbox") && (
@@ -219,19 +212,36 @@ export default async function SearchPage({ params, searchParams }: Props) {
       )}
 
       {page && items.length === 0 && !error && (
-        <div className="rounded-xl border border-dashed border-line p-6 text-center">
+        <div className="rounded-3xl border-2 border-dashed border-line p-6 text-center">
           <p className="font-medium text-ink">{t("search.noResults")}</p>
           <p className="mt-1 text-sm text-muted">{t("search.noResultsHint")}</p>
         </div>
       )}
 
-      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((listing, index) => (
-          <li key={listing.id}>
-            <ListingCard listing={listing} periodQuery={carry} priority={index < 2} />
-          </li>
-        ))}
-      </ul>
+      {view === "map" ? (
+        <div className="grid gap-4 lg:grid-cols-[1fr_1.1fr]">
+          <div className="order-2 lg:order-1">{results}</div>
+          <div className="order-1 lg:sticky lg:top-24 lg:order-2 lg:self-start">
+            <SearchMapLoader
+              bbox={getParam(pairs, "bbox")}
+              tileUrl={TILE_URL}
+              attribution={t("map.attribution")}
+              items={items
+                .filter((i) => i.lat != null && i.lng != null)
+                .map((i) => ({
+                  id: i.id,
+                  title: i.title,
+                  lat: i.lat as number,
+                  lng: i.lng as number,
+                  href: `/l/${i.id}${carry}`,
+                  price: formatTZS(i.total_tzs ?? i.base_price?.amount_tzs ?? 0),
+                }))}
+            />
+          </div>
+        </div>
+      ) : (
+        results
+      )}
 
       {page && (
         <Pagination pairs={pairs} page={page.page} pageSize={page.page_size} total={page.total} />

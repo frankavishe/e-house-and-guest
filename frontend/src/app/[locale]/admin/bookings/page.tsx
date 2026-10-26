@@ -49,7 +49,7 @@ export default async function AdminBookingsPage({ params, searchParams }: Props)
 
   return (
     <>
-      <h1 className="text-xl font-bold text-ink">{t("admin.bookings")}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("admin.bookings")}</h1>
       <form method="get" className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
         <Input label={t("adminBookings.search")} name="q" defaultValue={q ?? ""} maxLength={50} />
         <Select
@@ -68,13 +68,13 @@ export default async function AdminBookingsPage({ params, searchParams }: Props)
         <Button type="submit">{t("adminBookings.find")}</Button>
       </form>
       {items.length === 0 ? (
-        <p className="rounded-xl border border-line p-4 text-muted">{t("adminBookings.empty")}</p>
+        <p className="rounded-3xl bg-card p-4 text-muted">{t("adminBookings.empty")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {items.map((b) => (
             <li
               key={b.id}
-              className="flex flex-col gap-2 rounded-xl border border-line bg-surface p-4"
+              className="flex flex-col gap-2 rounded-3xl bg-card p-4"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <Link href={`/book/${b.id}`} className="font-medium text-brand-700 hover:underline">

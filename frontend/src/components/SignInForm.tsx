@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
+import { Icon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { api, apiError } from "@/lib/api/client";
@@ -77,8 +78,11 @@ export function SignInForm({ returnTo }: { returnTo: string }) {
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-col gap-5 py-4">
-      <h1 className="text-2xl font-bold">{step === "name" ? t("signIn.nameTitle") : t("signIn.title")}</h1>
+    <div className="mx-auto my-4 flex w-full max-w-md flex-col gap-5 rounded-[var(--radius-card)] bg-card p-6 sm:my-10 sm:p-8">
+      <span className="flex size-12 items-center justify-center rounded-full bg-gradient-to-br from-brand-400 to-brand-700 text-white">
+        <Icon name={step === "name" ? "user" : "smartphone"} />
+      </span>
+      <h1 className="text-2xl font-semibold tracking-tight">{step === "name" ? t("signIn.nameTitle") : t("signIn.title")}</h1>
 
       {step === "phone" && (
         <form onSubmit={requestCode} className="flex flex-col gap-4" noValidate>

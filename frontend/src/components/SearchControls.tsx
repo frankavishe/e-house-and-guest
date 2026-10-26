@@ -4,6 +4,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { withParams, type Pair } from "@/lib/search";
+import { Icon } from "./icons";
 import { Button } from "./ui/Button";
 import { Sheet } from "./ui/Sheet";
 
@@ -54,7 +55,8 @@ export function FiltersSheet({
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Button variant="secondary" onClick={() => setOpen(true)} aria-haspopup="dialog">
+      <Button variant="secondary" onClick={() => setOpen(true)} aria-haspopup="dialog" className="bg-surface">
+        <Icon name="filter" className="size-4" />
         {label}
         {activeCount > 0 && (
           <span className="rounded-full bg-brand-600 px-1.5 text-xs text-white">{activeCount}</span>
@@ -81,7 +83,7 @@ export function SortSelect({
   const search = useSearchParams();
   return (
     <label className="flex items-center gap-2 text-sm text-ink">
-      <span className="sr-only sm:not-sr-only">{label}</span>
+      <span className="sr-only pl-2 sm:not-sr-only">{label}</span>
       <select
         aria-label={label}
         value={value}
@@ -89,7 +91,7 @@ export function SortSelect({
           const pairs = Array.from(search.entries()) as Pair[];
           router.push(`/search${withParams(pairs, { sort: e.target.value })}`);
         }}
-        className="h-10 rounded-lg border border-line bg-surface px-2 text-sm"
+        className="h-10 rounded-full border-0 bg-surface px-4 text-sm font-medium"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>

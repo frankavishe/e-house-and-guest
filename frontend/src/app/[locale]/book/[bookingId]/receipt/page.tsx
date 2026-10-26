@@ -47,7 +47,7 @@ export default async function ReceiptPage({ params }: Props) {
   const row = (label: string, value: string) => (
     <div className="contents">
       <dt className="text-muted">{label}</dt>
-      <dd className="text-ink">{value}</dd>
+      <dd className="font-medium text-ink">{value}</dd>
     </div>
   );
 
@@ -55,7 +55,7 @@ export default async function ReceiptPage({ params }: Props) {
     <article className="mx-auto flex w-full max-w-xl flex-col gap-5 print:max-w-none">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-bold text-ink">{t("title")}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("title")}</h1>
           <p className="text-sm text-muted">
             {t("issued", { date: formatDateTime(receipt.issued_at, locale) })}
           </p>
@@ -63,7 +63,7 @@ export default async function ReceiptPage({ params }: Props) {
         <BookingStatusBadge status={receipt.status} />
       </header>
 
-      <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 rounded-[var(--radius-card)] bg-card p-5 text-sm">
         {row(t("code"), receipt.code)}
         {row(t("listing"), receipt.listing_title)}
         {row(t("owner"), receipt.owner_name)}
@@ -80,12 +80,12 @@ export default async function ReceiptPage({ params }: Props) {
         {receipt.quantity > 1 && row(t("quantity"), String(receipt.quantity))}
       </dl>
 
-      <section className="flex flex-col gap-2 border-t border-line pt-4">
+      <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
         <QuoteBreakdown quote={receipt.quote} />
       </section>
 
-      <section className="flex flex-col gap-2 border-t border-line pt-4">
-        <h2 className="text-base font-semibold text-ink">{t("payments")}</h2>
+      <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
+        <h2 className="text-lg font-semibold text-ink">{t("payments")}</h2>
         <ul className="flex flex-col gap-2 text-sm">
           {receipt.payments.map((p) => (
             <li key={p.id} className="flex justify-between gap-2">

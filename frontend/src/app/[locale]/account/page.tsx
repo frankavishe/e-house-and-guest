@@ -38,7 +38,7 @@ export default async function AccountPage({ params }: Props) {
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-4">
       <header className="flex flex-col gap-1">
-        <h1 className="text-xl font-bold text-ink">{user.name ?? t("title")}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">{user.name ?? t("title")}</h1>
         <p className="text-sm text-muted">{formatPhone(user.phone)}</p>
       </header>
       <ul className="flex flex-col gap-2">
@@ -46,7 +46,7 @@ export default async function AccountPage({ params }: Props) {
           <li key={href}>
             <Link
               href={href}
-              className="flex flex-col rounded-xl border border-line bg-surface p-4 hover:border-brand-600"
+              className="flex flex-col rounded-3xl bg-card p-4 transition-colors hover:bg-brand-50"
             >
               <span className="font-medium text-ink">{label}</span>
               <span className="text-sm text-muted">{hint}</span>

@@ -6,9 +6,11 @@ import { Link } from "@/i18n/navigation";
 export default async function NotFound() {
   const t = await getTranslations("notFound");
   return (
-    <div className="mx-auto flex max-w-md flex-col items-center gap-3 py-16 text-center">
-      <p className="text-5xl font-bold text-brand-700">404</p>
-      <h1 className="text-xl font-bold text-ink">{t("title")}</h1>
+    <div className="mx-auto my-6 flex max-w-md flex-col items-center gap-3 rounded-[var(--radius-card)] bg-card px-6 py-12 text-center sm:my-12">
+      <p className="bg-gradient-to-br from-brand-400 to-brand-700 bg-clip-text text-7xl font-semibold tracking-tight text-transparent">
+        404
+      </p>
+      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("title")}</h1>
       <p className="text-muted">{t("body")}</p>
       <Link href="/" className={buttonClasses()}>
         {t("home")}
