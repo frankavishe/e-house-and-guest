@@ -23,7 +23,6 @@ const LocationPinMap = dynamic(() => import("./LocationPinMap"), {
   loading: () => <Skeleton className="h-64 w-full rounded-2xl" />,
 });
 
-
 type Props = {
   initial: Listing;
   schema: Record<string, unknown>[];
@@ -34,7 +33,14 @@ type Props = {
 };
 
 /** Step-by-step listing editor (T105). Each step saves to the API before moving on. */
-export function ListingWizard({ initial, schema, regions, districts: initialDistricts, step: firstStep, tileUrl }: Props) {
+export function ListingWizard({
+  initial,
+  schema,
+  regions,
+  districts: initialDistricts,
+  step: firstStep,
+  tileUrl,
+}: Props) {
   const t = useTranslations();
   const locale = useLocale() === "en" ? "en" : "sw";
   const router = useRouter();
@@ -134,19 +140,27 @@ export function ListingWizard({ initial, schema, regions, districts: initialDist
     }
   }
 
-  const title = (locale === "en" ? listing.title_en || listing.title_sw : listing.title_sw || listing.title_en) || t("ownerListings.untitled");
+  const title =
+    (locale === "en"
+      ? listing.title_en || listing.title_sw
+      : listing.title_sw || listing.title_en) || t("ownerListings.untitled");
 
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <Link href="/owner/listings" className="text-sm text-brand-700 hover:underline">
+        <Link
+          href="/owner/listings"
+          className="inline-flex w-fit items-center gap-1 rounded-full bg-card px-3 py-1.5 text-sm font-medium text-ink hover:bg-brand-50 hover:text-brand-700"
+        >
           ← {t("ownerListings.title")}
         </Link>
         <h1 className="text-2xl font-semibold tracking-tight text-ink">{title}</h1>
         <p className="text-sm text-muted">{listing.category.name}</p>
         <ListingStatusBadge listing={listing} />
         {live && listing.review_state === "pending" && (
-          <p className="rounded-2xl bg-warning-soft p-3 text-sm text-warning">{t("wizard.liveReviewNote")}</p>
+          <p className="rounded-2xl bg-warning-soft p-3 text-sm text-warning">
+            {t("wizard.liveReviewNote")}
+          </p>
         )}
         {listing.rejection_reason && listing.status !== "active" && listing.status !== "paused" && (
           <p role="alert" className="rounded-2xl bg-danger-soft p-3 text-sm text-danger">
@@ -167,17 +181,27 @@ export function ListingWizard({ initial, schema, regions, districts: initialDist
             type="button"
             onClick={() => go(s)}
             aria-current={step === s ? "step" : undefined}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium ${
+            className={`flex shrink-0 items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4 text-sm font-medium ${
               step === s ? "bg-brand-600 text-white" : "bg-card text-ink hover:bg-brand-50"
             }`}
           >
-            {i + 1}. {t(`wizard.step.${s}`)}
+            <span
+              className={`flex size-6 items-center justify-center rounded-full text-xs ${
+                step === s ? "bg-white text-brand-600" : "bg-surface text-muted"
+              }`}
+            >
+              {i + 1}
+            </span>
+            {t(`wizard.step.${s}`)}
           </button>
         ))}
       </nav>
 
-      <section aria-labelledby="step-title" className="flex flex-col gap-4">
-        <h2 id="step-title" className="text-base font-semibold text-ink">
+      <section
+        aria-labelledby="step-title"
+        className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5 sm:p-6"
+      >
+        <h2 id="step-title" className="text-lg font-semibold text-ink">
           {t(`wizard.step.${step}`)}
         </h2>
         {step === "details" && (
@@ -219,7 +243,9 @@ export function ListingWizard({ initial, schema, regions, districts: initialDist
             }}
           />
         )}
-        {step === "rules" && <RulesStep listing={listing} busy={busy} onSave={(body) => patch(body)} />}
+        {step === "rules" && (
+          <RulesStep listing={listing} busy={busy} onSave={(body) => patch(body)} />
+        )}
         {step === "review" && (
           <ReviewStep
             listing={listing}
@@ -279,7 +305,8 @@ function DetailsStep({
   const [attrs, setAttrs] = useState<AttrValues>(current("attributes") ?? {});
   const bind = (key: keyof typeof text) => ({
     value: text[key],
-    onChange: (e: { target: { value: string } }) => setText((v) => ({ ...v, [key]: e.target.value })),
+    onChange: (e: { target: { value: string } }) =>
+      setText((v) => ({ ...v, [key]: e.target.value })),
   });
 
   function save(e: FormEvent) {
@@ -303,8 +330,16 @@ function DetailsStep({
       <TextArea label={t("descriptionEn")} {...bind("description_en")} />
       {schema.length > 0 && (
         <>
-          <h3 className="pt-2 text-base font-semibold text-ink">{t("features", { category: listing.category.name })}</h3>
-          <AttributeForm schema={schema} values={attrs} onChange={setAttrs} errors={errors} locale={locale} />
+          <h3 className="pt-2 text-base font-semibold text-ink">
+            {t("features", { category: listing.category.name })}
+          </h3>
+          <AttributeForm
+            schema={schema}
+            values={attrs}
+            onChange={setAttrs}
+            errors={errors}
+            locale={locale}
+          />
         </>
       )}
       <Button type="submit" size="lg" full loading={busy}>
@@ -314,7 +349,15 @@ function DetailsStep({
   );
 }
 
-function TextArea({ label, value, onChange }: { label: string; value: string; onChange: (e: { target: { value: string } }) => void }) {
+function TextArea({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (e: { target: { value: string } }) => void;
+}) {
   return (
     <label className="flex flex-col gap-1">
       <span className="text-sm font-medium text-ink">{label}</span>
@@ -419,7 +462,12 @@ function LocationStep({
       <div className="flex flex-col gap-1">
         <span className="text-sm font-medium text-ink">{t("wizard.pin")}</span>
         <p className="text-sm text-muted">{t("wizard.pinHint")}</p>
-        <LocationPinMap value={pin} onChange={setPin} tileUrl={tileUrl} attribution={t("map.attribution")} />
+        <LocationPinMap
+          value={pin}
+          onChange={setPin}
+          tileUrl={tileUrl}
+          attribution={t("map.attribution")}
+        />
         {pin && (
           <Button variant="ghost" onClick={() => setPin(null)}>
             {t("wizard.clearPin")}
@@ -433,10 +481,22 @@ function LocationStep({
   );
 }
 
-function RulesStep({ listing, busy, onSave }: { listing: Listing; busy: boolean; onSave: (body: Patch) => void }) {
+function RulesStep({
+  listing,
+  busy,
+  onSave,
+}: {
+  listing: Listing;
+  busy: boolean;
+  onSave: (body: Patch) => void;
+}) {
   const t = useTranslations();
   const mode = listing.category.booking_mode;
-  const slot = (listing.slot_config ?? {}) as { open?: string; close?: string; slot_minutes?: number };
+  const slot = (listing.slot_config ?? {}) as {
+    open?: string;
+    close?: string;
+    slot_minutes?: number;
+  };
   const [policy, setPolicy] = useState(listing.cancellation_policy);
   const [instant, setInstant] = useState(listing.instant_book);
   const [minD, setMinD] = useState(String(listing.min_duration ?? ""));
@@ -457,7 +517,8 @@ function RulesStep({ listing, busy, onSave }: { listing: Listing; busy: boolean;
       max_duration: num(maxD),
     };
     if (mode === "QUANTITY") body.stock = Number(stock) || 1;
-    if (mode === "TIME_SLOT") body.slot_config = { ...slot, open, close, slot_minutes: Number(minutes) };
+    if (mode === "TIME_SLOT")
+      body.slot_config = { ...slot, open, close, slot_minutes: Number(minutes) };
     onSave(body);
   }
 
@@ -489,22 +550,58 @@ function RulesStep({ listing, busy, onSave }: { listing: Listing; busy: boolean;
         <p className="text-sm text-muted">{t("wizard.leaseApproval")}</p>
       )}
       <div className="grid grid-cols-2 gap-2">
-        <Input label={t("wizard.minDuration", { unit })} type="number" inputMode="numeric" min={1} value={minD} onChange={(e) => setMinD(e.target.value)} />
-        <Input label={t("wizard.maxDuration", { unit })} type="number" inputMode="numeric" min={1} value={maxD} onChange={(e) => setMaxD(e.target.value)} />
+        <Input
+          label={t("wizard.minDuration", { unit })}
+          type="number"
+          inputMode="numeric"
+          min={1}
+          value={minD}
+          onChange={(e) => setMinD(e.target.value)}
+        />
+        <Input
+          label={t("wizard.maxDuration", { unit })}
+          type="number"
+          inputMode="numeric"
+          min={1}
+          value={maxD}
+          onChange={(e) => setMaxD(e.target.value)}
+        />
       </div>
       {mode === "QUANTITY" && (
-        <Input label={t("wizard.stock")} hint={t("wizard.stockHint")} type="number" inputMode="numeric" min={1} required value={stock} onChange={(e) => setStock(e.target.value)} />
+        <Input
+          label={t("wizard.stock")}
+          hint={t("wizard.stockHint")}
+          type="number"
+          inputMode="numeric"
+          min={1}
+          required
+          value={stock}
+          onChange={(e) => setStock(e.target.value)}
+        />
       )}
       {mode === "TIME_SLOT" && (
         <div className="grid grid-cols-2 gap-2">
-          <Input label={t("wizard.opens")} type="time" value={open} onChange={(e) => setOpen(e.target.value)} />
-          <Input label={t("wizard.closes")} type="time" value={close} onChange={(e) => setClose(e.target.value)} />
+          <Input
+            label={t("wizard.opens")}
+            type="time"
+            value={open}
+            onChange={(e) => setOpen(e.target.value)}
+          />
+          <Input
+            label={t("wizard.closes")}
+            type="time"
+            value={close}
+            onChange={(e) => setClose(e.target.value)}
+          />
           <div className="col-span-2">
             <Select
               label={t("wizard.slotLength")}
               value={minutes}
               onChange={(e) => setMinutes(e.target.value)}
-              options={[30, 60, 120].map((m) => ({ value: String(m), label: t("wizard.minutes", { count: m }) }))}
+              options={[30, 60, 120].map((m) => ({
+                value: String(m),
+                label: t("wizard.minutes", { count: m }),
+              }))}
             />
           </div>
         </div>
@@ -546,12 +643,16 @@ function ReviewStep({
   return (
     <div className="flex flex-col gap-4">
       {listing.missing.length > 0 ? (
-        <div className="flex flex-col gap-2 rounded-3xl bg-card p-4">
-          <p className="text-sm font-medium text-ink">{t("missingTitle")}</p>
+        <div className="flex flex-col gap-2 rounded-2xl bg-warning-soft p-4">
+          <p className="text-sm font-medium text-warning">{t("missingTitle")}</p>
           <ul className="flex flex-col gap-1">
             {listing.missing.map((m) => (
               <li key={m}>
-                <button type="button" onClick={() => onFix(m)} className="text-sm text-brand-700 hover:underline">
+                <button
+                  type="button"
+                  onClick={() => onFix(m)}
+                  className="text-sm text-brand-700 hover:underline"
+                >
                   {t(`missing.${m}`)} →
                 </button>
               </li>
@@ -559,11 +660,19 @@ function ReviewStep({
           </ul>
         </div>
       ) : (
-        canSubmit && <p className="rounded-2xl bg-brand-50 p-4 text-sm text-brand-700">{t("ready")}</p>
+        canSubmit && (
+          <p className="rounded-2xl bg-brand-50 p-4 text-sm text-brand-700">{t("ready")}</p>
+        )
       )}
       {note[listing.status] && <p className="text-sm text-muted">{note[listing.status]}</p>}
       {canSubmit && (
-        <Button size="lg" full loading={busy} disabled={listing.missing.length > 0} onClick={onSubmit}>
+        <Button
+          size="lg"
+          full
+          loading={busy}
+          disabled={listing.missing.length > 0}
+          onClick={onSubmit}
+        >
           {t("submit")}
         </Button>
       )}
@@ -578,7 +687,7 @@ function ReviewStep({
         </Button>
       )}
       {confirmDelete ? (
-        <div className="flex flex-col gap-2 rounded-2xl border border-red-200 p-4">
+        <div className="flex flex-col gap-2 rounded-2xl bg-danger-soft p-4">
           <p className="text-sm text-ink">{t("deleteConfirm")}</p>
           <div className="flex gap-2">
             <Button variant="danger" loading={busy} onClick={onDelete}>

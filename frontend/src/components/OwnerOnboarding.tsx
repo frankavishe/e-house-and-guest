@@ -8,6 +8,7 @@ import { uploadFile } from "@/lib/upload";
 import { Badge } from "./ui/Badge";
 import { Button, buttonClasses } from "./ui/Button";
 import { Input } from "./ui/Input";
+import { ProgressRing } from "./ui/ProgressRing";
 
 type Profile = Schemas["OwnerProfileOut"];
 type Kind = Profile["kind"];
@@ -15,9 +16,12 @@ type Kind = Profile["kind"];
 const STATUS_TONE = {
   draft: "neutral",
   pending: "warning",
-  verified: "brand",
+  verified: "success",
   rejected: "danger",
 } as const;
+
+/** How far along verification is, for the ring on the status card. */
+const STATUS_PROGRESS = { draft: 25, rejected: 50, pending: 75, verified: 100 } as const;
 
 /** Become an owner: identity details, documents, submit for verification, status. */
 export function OwnerOnboarding({ profile }: { profile: Profile | null }) {
@@ -33,11 +37,15 @@ export function OwnerOnboarding({ profile }: { profile: Profile | null }) {
   });
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const editable = !profile || profile.verification_status === "draft" || profile.verification_status === "rejected";
+  const editable =
+    !profile ||
+    profile.verification_status === "draft" ||
+    profile.verification_status === "rejected";
 
   const field = (key: keyof typeof form) => ({
     value: form[key],
-    onChange: (e: { target: { value: string } }) => setForm((f) => ({ ...f, [key]: e.target.value })),
+    onChange: (e: { target: { value: string } }) =>
+      setForm((f) => ({ ...f, [key]: e.target.value })),
   });
 
   async function run(action: () => Promise<{ error?: unknown } | void>) {
@@ -109,20 +117,30 @@ export function OwnerOnboarding({ profile }: { profile: Profile | null }) {
   return (
     <div className="flex flex-col gap-5">
       {profile && (
-        <section className="flex flex-col gap-2 rounded-3xl bg-card p-4">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-base font-semibold text-ink">{profile.display_name}</h2>
-            <Badge tone={STATUS_TONE[profile.verification_status]}>
-              {t(`owner.status.${profile.verification_status}`)}
-            </Badge>
+        <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
+          <div className="flex items-center gap-4">
+            <ProgressRing
+              value={STATUS_PROGRESS[profile.verification_status]}
+              size={56}
+              label={`${STATUS_PROGRESS[profile.verification_status]}%`}
+            />
+            <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-2">
+              <h2 className="truncate text-lg font-semibold text-ink">{profile.display_name}</h2>
+              <Badge tone={STATUS_TONE[profile.verification_status]}>
+                {t(`owner.status.${profile.verification_status}`)}
+              </Badge>
+            </div>
           </div>
-          <p className="text-sm text-muted">{t(`owner.statusHint.${profile.verification_status}`)}</p>
+          <p className="text-sm text-muted">
+            {t(`owner.statusHint.${profile.verification_status}`)}
+          </p>
           {profile.verification_status === "rejected" && profile.rejection_reason && (
             <p role="alert" className="text-sm text-danger">
               {t("owner.rejectedBecause", { reason: profile.rejection_reason })}
             </p>
           )}
-          {(profile.verification_status === "verified" || profile.verification_status === "pending") && (
+          {(profile.verification_status === "verified" ||
+            profile.verification_status === "pending") && (
             <Link href="/owner/listings" className={buttonClasses("primary")}>
               {t("owner.goToListings")}
             </Link>
@@ -131,7 +149,10 @@ export function OwnerOnboarding({ profile }: { profile: Profile | null }) {
       )}
 
       {editable && (
-        <form onSubmit={save} className="flex flex-col gap-3">
+        <form
+          onSubmit={save}
+          className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5"
+        >
           {!profile && (
             <fieldset className="flex flex-col gap-2">
               <legend className="mb-1 text-sm font-medium text-ink">{t("owner.kind")}</legend>
@@ -139,8 +160,10 @@ export function OwnerOnboarding({ profile }: { profile: Profile | null }) {
                 {(["individual", "business"] as const).map((k) => (
                   <label
                     key={k}
-                    className={`flex h-12 cursor-pointer items-center gap-2 rounded-2xl border px-3 text-sm ${
-                      kind === k ? "border-brand-600 bg-brand-50 font-medium" : "border-line"
+                    className={`flex h-14 cursor-pointer items-center gap-2 rounded-2xl border-2 bg-surface px-4 text-sm transition-colors ${
+                      kind === k
+                        ? "border-brand-500 font-semibold text-brand-700"
+                        : "border-transparent hover:border-brand-200"
                     }`}
                   >
                     <input
@@ -156,11 +179,21 @@ export function OwnerOnboarding({ profile }: { profile: Profile | null }) {
               </div>
             </fieldset>
           )}
-          <Input label={t("owner.displayName")} hint={t("owner.displayNameHint")} required maxLength={200} {...field("display_name")} />
+          <Input
+            label={t("owner.displayName")}
+            hint={t("owner.displayNameHint")}
+            required
+            maxLength={200}
+            {...field("display_name")}
+          />
           {kind === "individual" ? (
             <Input
               label={t("owner.nida")}
-              hint={profile?.nida_number_masked ? t("owner.onFile", { masked: profile.nida_number_masked }) : t("owner.nidaHint")}
+              hint={
+                profile?.nida_number_masked
+                  ? t("owner.onFile", { masked: profile.nida_number_masked })
+                  : t("owner.nidaHint")
+              }
               required={!profile}
               inputMode="numeric"
               maxLength={40}
@@ -168,11 +201,25 @@ export function OwnerOnboarding({ profile }: { profile: Profile | null }) {
             />
           ) : (
             <>
-              <Input label={t("owner.businessName")} required={!profile} maxLength={200} {...field("business_name")} />
-              <Input label={t("owner.brela")} required={!profile} maxLength={40} {...field("brela_reg_no")} />
+              <Input
+                label={t("owner.businessName")}
+                required={!profile}
+                maxLength={200}
+                {...field("business_name")}
+              />
+              <Input
+                label={t("owner.brela")}
+                required={!profile}
+                maxLength={40}
+                {...field("brela_reg_no")}
+              />
               <Input
                 label={t("owner.tin")}
-                hint={profile?.tin_masked ? t("owner.onFile", { masked: profile.tin_masked }) : undefined}
+                hint={
+                  profile?.tin_masked
+                    ? t("owner.onFile", { masked: profile.tin_masked })
+                    : undefined
+                }
                 required={!profile}
                 inputMode="numeric"
                 maxLength={40}
@@ -180,18 +227,26 @@ export function OwnerOnboarding({ profile }: { profile: Profile | null }) {
               />
             </>
           )}
-          <Button type="submit" variant={profile ? "secondary" : "primary"} size="lg" full loading={busy}>
+          <Button
+            type="submit"
+            variant={profile ? "secondary" : "primary"}
+            size="lg"
+            full
+            loading={busy}
+          >
             {profile ? t("owner.save") : t("owner.create")}
           </Button>
         </form>
       )}
 
       {profile && editable && (
-        <section className="flex flex-col gap-3 border-t border-line pt-4">
-          <h2 className="text-base font-semibold text-ink">{t("owner.documents")}</h2>
+        <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
+          <h2 className="text-lg font-semibold text-ink">{t("owner.documents")}</h2>
           <p className="text-sm text-muted">{t("owner.documentsHint")}</p>
           {profile.documents.length > 0 && (
-            <p className="text-sm text-ink">{t("owner.documentCount", { count: profile.documents.length })}</p>
+            <p className="text-sm text-ink">
+              {t("owner.documentCount", { count: profile.documents.length })}
+            </p>
           )}
           <label className={`${buttonClasses("secondary")} cursor-pointer`}>
             {t("owner.addDocument")}

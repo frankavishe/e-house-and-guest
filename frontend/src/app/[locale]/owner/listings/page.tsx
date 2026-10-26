@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Icon } from "@/components/icons";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { ListingStatusBadge } from "@/components/ListingStatusBadge";
 import { Pagination } from "@/components/Pagination";
@@ -39,10 +40,9 @@ export default async function OwnerListingsPage({ params, searchParams }: Props)
   return (
     <div className="flex w-full flex-col gap-5">
       <header className="flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("ownerListings.title")}</h1>
-        <Link href="/owner/listings/new" className={buttonClasses("primary")}>
-          {t("ownerListings.new")}
-        </Link>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">
+          {t("ownerListings.title")}
+        </h1>
       </header>
       {user.owner_profile.verification_status !== "verified" && (
         <p className="rounded-2xl bg-warning-soft p-3 text-sm text-warning">
@@ -51,32 +51,59 @@ export default async function OwnerListingsPage({ params, searchParams }: Props)
       )}
 
       {items.length === 0 ? (
-        <p className="rounded-3xl bg-card p-4 text-muted">{t("ownerListings.empty")}</p>
+        <div className="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border-2 border-dashed border-line p-10 text-center">
+          <span className="flex size-12 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+            <Icon name="grid" />
+          </span>
+          <p className="text-muted">{t("ownerListings.empty")}</p>
+          <Link href="/owner/listings/new" className={buttonClasses("primary")}>
+            <Icon name="plus" className="size-4" />
+            {t("ownerListings.new")}
+          </Link>
+        </div>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {items.map((l) => (
             <li key={l.id}>
               <Link
                 href={`/owner/listings/${l.id}/edit`}
-                className="flex gap-3 rounded-3xl bg-card p-3 transition-colors hover:bg-brand-50"
+                className="group flex h-full flex-col rounded-[var(--radius-card)] bg-card p-2 transition-shadow hover:shadow-soft"
               >
-                <ImageWithFallback
-                  src={l.photos[0]?.url_320}
-                  alt={l.title_sw ?? l.title_en ?? ""}
-                  fallbackLabel={t("common.imageUnavailable")}
-                  className="size-20 shrink-0 rounded-2xl"
-                />
-                <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <p className="truncate font-medium text-ink">
+                <div className="relative">
+                  <ImageWithFallback
+                    src={l.photos[0]?.url_320}
+                    alt={l.title_sw ?? l.title_en ?? ""}
+                    fallbackLabel={t("common.imageUnavailable")}
+                    className="rounded-[1.1rem]"
+                  />
+                  <span className="absolute left-2 top-2 rounded-full bg-surface/95 p-0.5">
+                    <ListingStatusBadge listing={l} />
+                  </span>
+                </div>
+                <div className="flex flex-1 flex-col gap-1 px-2.5 pb-2 pt-3">
+                  <p className="truncate font-semibold text-ink group-hover:text-brand-700">
                     {(locale === "en" ? l.title_en || l.title_sw : l.title_sw || l.title_en) ||
                       t("ownerListings.untitled")}
                   </p>
-                  <p className="text-sm text-muted">
-                    {l.category.name}
-                    {l.base_price_tzs != null &&
-                      ` · ${formatTZS(l.base_price_tzs)} / ${t(`units.${l.category.default_unit}`)}`}
-                  </p>
-                  <ListingStatusBadge listing={l} />
+                  <p className="text-sm text-muted">{l.category.name}</p>
+                  <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+                    {l.base_price_tzs != null ? (
+                      <p className="text-sm">
+                        <span className="font-semibold text-ink">
+                          {formatTZS(l.base_price_tzs)}
+                        </span>
+                        <span className="text-muted">
+                          {" "}
+                          / {t(`units.${l.category.default_unit}`)}
+                        </span>
+                      </p>
+                    ) : (
+                      <span />
+                    )}
+                    <span className="flex size-8 items-center justify-center rounded-full bg-surface text-muted group-hover:bg-brand-600 group-hover:text-white">
+                      <Icon name="edit" className="size-4" />
+                    </span>
+                  </div>
                 </div>
               </Link>
             </li>

@@ -36,7 +36,10 @@ export function NewListingForm({ categories }: { categories: Option[] }) {
   }
 
   return (
-    <form onSubmit={create} className="flex flex-col gap-3">
+    <form
+      onSubmit={create}
+      className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5 sm:p-6"
+    >
       <Select
         label={t("ownerListings.category")}
         placeholder=""

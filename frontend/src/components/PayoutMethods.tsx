@@ -78,7 +78,10 @@ export function PayoutMethods({ methods }: { methods: PayoutMethod[] }) {
   }
 
   return (
-    <section aria-labelledby="payout-methods" className="flex flex-col gap-3">
+    <section
+      aria-labelledby="payout-methods"
+      className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5"
+    >
       <h2 id="payout-methods" className="text-lg font-semibold text-ink">
         {t("earnings.methods")}
       </h2>
@@ -91,7 +94,7 @@ export function PayoutMethods({ methods }: { methods: PayoutMethod[] }) {
         {methods.map((m) => (
           <li
             key={m.id}
-            className="flex items-center justify-between gap-3 rounded-3xl bg-card p-3"
+            className="flex items-center justify-between gap-3 rounded-2xl bg-surface p-4"
           >
             <div className="flex min-w-0 flex-col">
               <span className="flex items-center gap-2 font-medium text-ink">
@@ -114,7 +117,7 @@ export function PayoutMethods({ methods }: { methods: PayoutMethod[] }) {
         ))}
       </ul>
       {adding ? (
-        <form onSubmit={add} className="flex flex-col gap-3 rounded-3xl bg-card p-4">
+        <form onSubmit={add} className="flex flex-col gap-3 rounded-2xl bg-surface p-4">
           <Select
             label={t("earnings.kind")}
             value={kind}

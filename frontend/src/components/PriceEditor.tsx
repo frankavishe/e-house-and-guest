@@ -112,7 +112,7 @@ export function PriceEditor({
         <legend className="mb-1 text-sm font-medium text-ink">{t("wizard.seasons")}</legend>
         <p className="text-sm text-muted">{t("wizard.seasonsHint")}</p>
         {seasons.map((s, i) => (
-          <div key={i} className="grid grid-cols-2 gap-2 rounded-2xl border border-line bg-surface p-3">
+          <div key={i} className="grid grid-cols-2 gap-2 rounded-2xl bg-surface p-3">
             {units.length > 1 && (
               <div className="col-span-2">
                 <Select
@@ -123,8 +123,19 @@ export function PriceEditor({
                 />
               </div>
             )}
-            <Input label={t("wizard.seasonFrom")} type="date" value={s.start} onChange={(e) => setSeason(i, { start: e.target.value })} />
-            <Input label={t("wizard.seasonTo")} type="date" min={s.start} value={s.end} onChange={(e) => setSeason(i, { end: e.target.value })} />
+            <Input
+              label={t("wizard.seasonFrom")}
+              type="date"
+              value={s.start}
+              onChange={(e) => setSeason(i, { start: e.target.value })}
+            />
+            <Input
+              label={t("wizard.seasonTo")}
+              type="date"
+              min={s.start}
+              value={s.end}
+              onChange={(e) => setSeason(i, { end: e.target.value })}
+            />
             <div className="col-span-2">
               <Input
                 label={t("wizard.pricePer", { unit: unitLabel(s.unit) })}

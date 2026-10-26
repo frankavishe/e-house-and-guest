@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Money } from "@/components/Money";
 import { RequestActions } from "@/components/RequestActions";
+import { Icon } from "@/components/icons";
+import { Avatar } from "@/components/ui/Avatar";
 import { Link, redirect } from "@/i18n/navigation";
 import { listBookings } from "@/lib/api/bookings";
 import { getCurrentUser } from "@/lib/api/server";
@@ -38,44 +40,62 @@ export default async function OwnerRequestsPage({ params }: Props) {
     <div className="flex w-full flex-col gap-5">
       <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("requests.title")}</h1>
       {items.length === 0 ? (
-        <p className="rounded-3xl bg-card p-4 text-muted">{t("requests.empty")}</p>
+        <div className="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border-2 border-dashed border-line p-10 text-center">
+          <span className="flex size-12 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+            <Icon name="inbox" />
+          </span>
+          <p className="text-muted">{t("requests.empty")}</p>
+        </div>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid gap-4 xl:grid-cols-2">
           {items.map((b) => (
-            <li
-              key={b.id}
-              className="flex flex-col gap-3 rounded-3xl bg-card p-4"
-            >
-              <div className="flex flex-col gap-1">
-                <Link href={`/book/${b.id}`} className="font-medium text-brand-700 hover:underline">
-                  {b.listing.title}
-                </Link>
-                <p className="text-sm text-ink">
-                  {formatPeriod(b.period, b.listing.booking_mode, b.listing.base_price?.unit, locale)}
-                  {b.quantity > 1 ? ` · ×${b.quantity}` : ""}
-                </p>
-                <p className="flex justify-between text-sm">
-                  <span className="text-muted">{b.code}</span>
-                  <Money amount={b.total_tzs} className="font-medium text-ink" />
-                </p>
-                {b.counterpart_name && (
-                  <p className="text-sm text-ink">
-                    {t("requests.from", { name: b.counterpart_name })}
+            <li key={b.id} className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5">
+              <div className="flex items-center gap-3">
+                <Avatar name={b.counterpart_name} />
+                <div className="min-w-0 flex-1">
+                  {b.counterpart_name && (
+                    <p className="truncate font-semibold text-ink">
+                      {t("requests.from", { name: b.counterpart_name })}
+                    </p>
+                  )}
+                  <Link
+                    href={`/book/${b.id}`}
+                    className="block truncate text-sm text-brand-700 hover:underline"
+                  >
+                    {b.listing.title}
+                  </Link>
+                </div>
+                <Money amount={b.total_tzs} className="shrink-0 font-semibold text-ink" />
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="rounded-2xl bg-surface p-3">
+                  <p className="text-xs text-muted">{b.code}</p>
+                  <p className="font-medium text-ink">
+                    {formatPeriod(
+                      b.period,
+                      b.listing.booking_mode,
+                      b.listing.base_price?.unit,
+                      locale,
+                    )}
+                    {b.quantity > 1 ? ` · ×${b.quantity}` : ""}
                   </p>
-                )}
-                {b.request_message && (
-                  <blockquote className="whitespace-pre-line rounded-2xl bg-surface p-3 text-sm text-ink">
-                    {b.request_message}
-                  </blockquote>
-                )}
+                </div>
                 {b.request_expires_at && (
-                  <p className="text-xs text-muted">
-                    {t("requests.answerBy", {
-                      time: formatDateTime(b.request_expires_at, locale),
-                    })}
-                  </p>
+                  <div className="flex items-start gap-2 rounded-2xl bg-warning-soft p-3 text-warning">
+                    <Icon name="clock" className="mt-0.5 size-4 shrink-0" />
+                    <p className="text-xs font-medium">
+                      {t("requests.answerBy", {
+                        time: formatDateTime(b.request_expires_at, locale),
+                      })}
+                    </p>
+                  </div>
                 )}
               </div>
+              {b.request_message && (
+                <blockquote className="whitespace-pre-line rounded-2xl rounded-tl-md bg-surface p-3 text-sm text-ink">
+                  {b.request_message}
+                </blockquote>
+              )}
               <RequestActions bookingId={b.id} />
             </li>
           ))}

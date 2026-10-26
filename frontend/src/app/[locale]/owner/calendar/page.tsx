@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { addDays, weekdayLabels } from "@/components/ListingAvailability";
 import { BlockForm, RemoveBlockButton } from "@/components/OwnerCalendarActions";
+import { Icon } from "@/components/icons";
 import { Link, redirect } from "@/i18n/navigation";
 import { getOwnerCalendar, getOwnerListing } from "@/lib/api/owner";
 import { getCurrentUser } from "@/lib/api/server";
@@ -86,7 +87,7 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
                 aria-current={l.id === selected?.id ? "page" : undefined}
                 className={`max-w-48 shrink-0 truncate rounded-full px-3 py-1.5 text-sm ${
                   l.id === selected?.id
-                    ? "bg-ink text-white"
+                    ? "bg-ink text-surface"
                     : "bg-card text-ink hover:bg-brand-50"
                 }`}
               >
@@ -95,115 +96,120 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
             ))}
           </nav>
 
-          <section className="flex flex-col gap-2 rounded-3xl bg-card p-3">
-            <div className="flex items-center justify-between">
-              <Link
-                href={href(shiftMonth(month, -1))}
-                className="rounded-full px-2 py-1 text-brand-700 hover:bg-brand-50"
-                aria-label={t("calendar.previous")}
-              >
-                ←
-              </Link>
-              <h2 className="text-base font-semibold capitalize text-ink">{monthLabel}</h2>
-              <Link
-                href={href(shiftMonth(month, 1))}
-                className="rounded-full px-2 py-1 text-brand-700 hover:bg-brand-50"
-                aria-label={t("calendar.next")}
-              >
-                →
-              </Link>
-            </div>
-            <div aria-hidden className="grid grid-cols-7 gap-1 text-center text-xs text-muted">
-              {weekdayLabels(locale).map((w, i) => (
-                <span key={i}>{w}</span>
-              ))}
-            </div>
-            <ol className="grid grid-cols-7 gap-1 text-center text-sm">
-              {Array.from({ length: lead }, (_, i) => (
-                <li key={`lead-${i}`} aria-hidden />
-              ))}
-              {days.map((day) => {
-                const booked = bookings.some((b) => overlaps(b.period, day));
-                const blocked = blocks.some((b) => overlaps(b.period, day));
-                const state = booked ? "booked" : blocked ? "blocked" : "free";
-                return (
-                  <li
-                    key={day}
-                    title={`${formatDate(`${day}T12:00:00+03:00`, locale)}: ${t(`calendar.${state}`)}`}
-                    className={`rounded-full py-2 ${
-                      booked
-                        ? "bg-brand-600 font-medium text-white"
-                        : blocked
-                          ? "bg-line text-muted line-through"
-                          : "bg-surface text-ink"
-                    } ${day === today ? "ring-2 ring-brand-700" : ""}`}
-                  >
-                    {Number(day.slice(8))}
-                  </li>
-                );
-              })}
-            </ol>
-            <p className="flex flex-wrap gap-3 text-xs text-muted">
-              <span>
-                <span className="mr-1 inline-block size-3 rounded-sm bg-brand-600 align-middle" />
-                {t("calendar.booked")}
-              </span>
-              <span>
-                <span className="mr-1 inline-block size-3 rounded-sm bg-line align-middle" />
-                {t("calendar.blocked")}
-              </span>
-            </p>
-          </section>
-
-          {bookings.length > 0 && (
-            <section className="flex flex-col gap-2">
-              <h2 className="text-base font-semibold text-ink">{t("calendar.bookings")}</h2>
-              <ul className="flex flex-col gap-2 text-sm">
-                {bookings.map((b) => (
-                  <li key={b.id}>
-                    <Link
-                      href={`/book/${b.id}`}
-                      className="flex justify-between gap-2 rounded-2xl border border-line bg-surface p-3 transition-colors hover:bg-brand-50"
+          <div className="grid gap-4 xl:grid-cols-[1.4fr_1fr] xl:items-start">
+            <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-4 sm:p-5">
+              <div className="flex items-center justify-between">
+                <Link
+                  href={href(shiftMonth(month, -1))}
+                  className="flex size-10 items-center justify-center rounded-full bg-surface text-ink hover:bg-brand-50"
+                  aria-label={t("calendar.previous")}
+                >
+                  <Icon name="chevronLeft" />
+                </Link>
+                <h2 className="text-lg font-semibold capitalize text-ink">{monthLabel}</h2>
+                <Link
+                  href={href(shiftMonth(month, 1))}
+                  className="flex size-10 items-center justify-center rounded-full bg-surface text-ink hover:bg-brand-50"
+                  aria-label={t("calendar.next")}
+                >
+                  <Icon name="chevronRight" />
+                </Link>
+              </div>
+              <div aria-hidden className="grid grid-cols-7 gap-1 text-center text-xs text-muted">
+                {weekdayLabels(locale).map((w, i) => (
+                  <span key={i}>{w}</span>
+                ))}
+              </div>
+              <ol className="grid grid-cols-7 gap-1 text-center text-sm sm:gap-2">
+                {Array.from({ length: lead }, (_, i) => (
+                  <li key={`lead-${i}`} aria-hidden />
+                ))}
+                {days.map((day) => {
+                  const booked = bookings.some((b) => overlaps(b.period, day));
+                  const blocked = blocks.some((b) => overlaps(b.period, day));
+                  const state = booked ? "booked" : blocked ? "blocked" : "free";
+                  return (
+                    <li
+                      key={day}
+                      title={`${formatDate(`${day}T12:00:00+03:00`, locale)}: ${t(`calendar.${state}`)}`}
+                      className={`flex aspect-square items-center justify-center rounded-2xl sm:aspect-[4/3] ${
+                        booked
+                          ? "bg-brand-600 font-semibold text-white"
+                          : blocked
+                            ? "bg-line text-muted line-through"
+                            : "bg-surface text-ink"
+                      } ${day === today ? "ring-2 ring-brand-400 ring-offset-2 ring-offset-card" : ""}`}
                     >
-                      <span>
-                        {b.code} · {b.renter_name}
-                        {b.quantity > 1 ? ` · ×${b.quantity}` : ""}
-                      </span>
-                      <span className="text-muted">{t(`bookingStatus.${b.status}`)}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+                      {Number(day.slice(8))}
+                    </li>
+                  );
+                })}
+              </ol>
+              <p className="flex flex-wrap gap-3 text-xs text-muted">
+                <span>
+                  <span className="mr-1 inline-block size-3 rounded-full bg-brand-600 align-middle" />
+                  {t("calendar.booked")}
+                </span>
+                <span>
+                  <span className="mr-1 inline-block size-3 rounded-full bg-line align-middle" />
+                  {t("calendar.blocked")}
+                </span>
+              </p>
             </section>
-          )}
 
-          {selected && (
-            <BlockForm
-              listingId={selected.id}
-              stock={isStock ? (detail?.stock ?? 1) : null}
-              minDate={today}
-            />
-          )}
-          {blocks.length > 0 && selected && (
-            <section className="flex flex-col gap-2">
-              <h2 className="text-base font-semibold text-ink">{t("calendar.blocks")}</h2>
-              <ul className="flex flex-col gap-2 text-sm">
-                {blocks.map((b) => (
-                  <li
-                    key={b.id}
-                    className="flex items-center justify-between gap-2 rounded-2xl border border-line bg-surface p-3"
-                  >
-                    <span>
-                      {formatDate(b.period.start, locale)} – {formatDate(lastDay(b.period.end), locale)}
-                      {b.quantity > 1 ? ` · ×${b.quantity}` : ""}
-                      {b.note ? ` · ${b.note}` : ""}
-                    </span>
-                    <RemoveBlockButton listingId={selected.id} blockId={b.id} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+            <div className="flex flex-col gap-4">
+              {bookings.length > 0 && (
+                <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
+                  <h2 className="text-lg font-semibold text-ink">{t("calendar.bookings")}</h2>
+                  <ul className="flex flex-col gap-2 text-sm">
+                    {bookings.map((b) => (
+                      <li key={b.id}>
+                        <Link
+                          href={`/book/${b.id}`}
+                          className="flex justify-between gap-2 rounded-2xl bg-surface p-3 transition-colors hover:bg-brand-50"
+                        >
+                          <span>
+                            {b.code} · {b.renter_name}
+                            {b.quantity > 1 ? ` · ×${b.quantity}` : ""}
+                          </span>
+                          <span className="text-muted">{t(`bookingStatus.${b.status}`)}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              {selected && (
+                <BlockForm
+                  listingId={selected.id}
+                  stock={isStock ? (detail?.stock ?? 1) : null}
+                  minDate={today}
+                />
+              )}
+              {blocks.length > 0 && selected && (
+                <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
+                  <h2 className="text-lg font-semibold text-ink">{t("calendar.blocks")}</h2>
+                  <ul className="flex flex-col gap-2 text-sm">
+                    {blocks.map((b) => (
+                      <li
+                        key={b.id}
+                        className="flex items-center justify-between gap-2 rounded-2xl bg-surface p-3"
+                      >
+                        <span>
+                          {formatDate(b.period.start, locale)} –{" "}
+                          {formatDate(lastDay(b.period.end), locale)}
+                          {b.quantity > 1 ? ` · ×${b.quantity}` : ""}
+                          {b.note ? ` · ${b.note}` : ""}
+                        </span>
+                        <RemoveBlockButton listingId={selected.id} blockId={b.id} />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+            </div>
+          </div>
         </>
       )}
     </div>

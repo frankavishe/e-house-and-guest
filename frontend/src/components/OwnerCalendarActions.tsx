@@ -58,11 +58,24 @@ export function BlockForm({
   }
 
   return (
-    <form onSubmit={add} className="flex flex-col gap-3 rounded-3xl bg-card p-4">
-      <h2 className="text-base font-semibold text-ink">{t("calendar.blockTitle")}</h2>
+    <form onSubmit={add} className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
+      <h2 className="text-lg font-semibold text-ink">{t("calendar.blockTitle")}</h2>
       <div className="grid grid-cols-2 gap-2">
-        <Input label={t("calendar.from")} type="date" min={minDate} required value={start} onChange={(e) => setStart(e.target.value)} />
-        <Input label={t("calendar.to")} type="date" min={start || minDate} value={end} onChange={(e) => setEnd(e.target.value)} />
+        <Input
+          label={t("calendar.from")}
+          type="date"
+          min={minDate}
+          required
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
+        />
+        <Input
+          label={t("calendar.to")}
+          type="date"
+          min={start || minDate}
+          value={end}
+          onChange={(e) => setEnd(e.target.value)}
+        />
       </div>
       {stock != null && (
         <Input
@@ -75,7 +88,12 @@ export function BlockForm({
           onChange={(e) => setQuantity(e.target.value)}
         />
       )}
-      <Input label={t("calendar.note")} maxLength={200} value={note} onChange={(e) => setNote(e.target.value)} />
+      <Input
+        label={t("calendar.note")}
+        maxLength={200}
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+      />
       {error && (
         <p role="alert" className="text-sm text-danger">
           {error}
