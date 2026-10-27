@@ -42,8 +42,9 @@ Restart the worker after deploying new code; it does not reload.
 3. Roll out `web`. Regenerate the client (`npm run gen:api`) in CI, never in production.
 
 Seeds: `python -m app.seed --locations --categories` is safe on any database (it upserts).
-**Never run `--demo` or `--all` in staging or prod**: it creates demo users with known phone
-numbers, including an admin. `app.seed_perf` is for load tests only.
+**Never run `--demo`, `--all` or `--reset` in staging or prod**: `--demo` creates the starter
+accounts (including an admin) and `--reset` deletes all users, listings and activity.
+`app.seed_perf` is for load tests only.
 
 ## Environment variables
 

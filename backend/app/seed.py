@@ -2,6 +2,7 @@
 
     python -m app.seed --locations --categories --demo
     python -m app.seed --all
+    python -m app.seed --reset --demo   # wipe users/listings/activity, re-create starter users
 
 Every step upserts, so re-running updates rows instead of duplicating them.
 """
@@ -384,11 +385,39 @@ async def _upsert_listing(
     return listing
 
 
+# --- reset -------------------------------------------------------------------------------
+
+KEEP_TABLES = ("locations", "categories", "alembic_version")
+
+
+async def reset_data(session: AsyncSession) -> int:
+    """Empty every table except reference data (locations, categories)."""
+    tables = (
+        (
+            await session.execute(
+                text(
+                    "SELECT tablename FROM pg_tables"
+                    " WHERE schemaname = 'public' AND tablename <> ALL(:keep)"
+                ),
+                {"keep": list(KEEP_TABLES)},
+            )
+        )
+        .scalars()
+        .all()
+    )
+    if tables:
+        names = ", ".join(f'"{t}"' for t in tables)
+        await session.execute(text(f"TRUNCATE {names} RESTART IDENTITY CASCADE"))
+    return len(tables)
+
+
 # --- CLI ---------------------------------------------------------------------------------
 
 
-async def run(locations: bool, categories: bool, demo: bool) -> None:
+async def run(locations: bool, categories: bool, demo: bool, reset: bool = False) -> None:
     async with get_sessionmaker()() as session:
+        if reset:
+            print(f"reset: emptied {await reset_data(session)} tables")
         if locations:
             print(f"locations: {await seed_locations(session)} rows")
         if categories:
@@ -407,14 +436,20 @@ def main() -> None:
     parser.add_argument("--categories", action="store_true")
     parser.add_argument("--demo", action="store_true", help="demo users, owners and listings")
     parser.add_argument("--all", action="store_true")
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="first delete all users, listings and activity (keeps locations and categories)",
+    )
     args = parser.parse_args()
-    if not (args.locations or args.categories or args.demo or args.all):
-        parser.error("choose at least one of --locations --categories --demo --all")
+    if not (args.locations or args.categories or args.demo or args.all or args.reset):
+        parser.error("choose at least one of --locations --categories --demo --all --reset")
     asyncio.run(
         run(
             locations=args.locations or args.all,
             categories=args.categories or args.all,
             demo=args.demo or args.all,
+            reset=args.reset,
         )
     )
 

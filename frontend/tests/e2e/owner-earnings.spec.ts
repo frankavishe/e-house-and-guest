@@ -3,7 +3,7 @@
 import { expect, test } from "@playwright/test";
 import { NAV, newPhone, signIn } from "./helpers";
 
-const ADMIN_PHONE = "0700000009"; // seeded admin (backend/seed/demo.yaml)
+const ADMIN_PHONE = "0774861380"; // seeded admin (backend/seed/demo.yaml)
 
 test("owner sets a payout method on the earnings page; admin sees the payouts queue", async ({
   page,

@@ -20,8 +20,10 @@ docker compose exec api uv run python -m app.seed --all   # locations, 6 categor
 
 Open http://localhost:3000 (redirects to `/sw`). API docs: http://localhost:8000/api/v1/docs.
 
-Demo accounts (OTP codes appear in `docker compose logs api` via the console SMS provider):
-renter `+255700000001`, owner `+255700000002` (verified), admin `+255700000009`.
+Starter accounts (OTP codes appear in `docker compose logs api` via the console SMS provider):
+admin Frank Kavishe `0774861380`, owner Francis Kavishe `0793403553` (verified). There are no
+demo listings; `python -m app.seed --reset --demo` wipes users, listings and activity and
+re-creates these two accounts.
 
 ## Automated checks (gates before merge)
 

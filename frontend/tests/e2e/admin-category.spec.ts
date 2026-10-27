@@ -4,8 +4,8 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { NAV, signIn } from "./helpers";
 
-const ADMIN_PHONE = "0700000009"; // seeded admin (backend/seed/demo.yaml)
-const OWNER_PHONE = "0700000003"; // seeded verified business owner
+const ADMIN_PHONE = "0774861380"; // seeded admin (backend/seed/demo.yaml)
+const OWNER_PHONE = "0793403553"; // seeded verified owner
 
 const PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",

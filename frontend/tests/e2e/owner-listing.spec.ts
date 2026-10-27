@@ -4,7 +4,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { NAV, newPhone, signIn } from "./helpers";
 
-const ADMIN_PHONE = "0700000009"; // seeded admin (backend/seed/demo.yaml)
+const ADMIN_PHONE = "0774861380"; // seeded admin (backend/seed/demo.yaml)
 
 // 1×1 PNG: enough for the upload, confirm and image job.
 const PNG = Buffer.from(
