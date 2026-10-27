@@ -105,22 +105,21 @@ services:
     <<: *backend
     command: ["uv", "run", "--frozen", "python", "-m", "app.worker"]
 
+  # Production build (next build + standalone server): pages render in milliseconds instead of
+  # compiling on first visit. Rebuild after frontend changes (`docker compose up -d --build web`),
+  # or use docker-compose.dev.yml for hot reload while coding.
   web:
     build:
       context: ./frontend
-      target: dev
+      args:
+        API_INTERNAL_URL: http://api:8000
+        S3_PUBLIC_BASE_URL: ${S3_PUBLIC_BASE_URL:-http://localhost:9000/public}
+        NEXT_PUBLIC_TILE_URL: ${NEXT_PUBLIC_TILE_URL:-https://tile.openstreetmap.org/{z}/{x}/{y}.png}
     env_file: .env
     environment:
       API_INTERNAL_URL: http://api:8000
-      # `npm run gen:api` inside this container reads the spec from the api service.
-      OPENAPI_URL: http://api:8000/api/v1/openapi.json
-      WATCHPACK_POLLING: "true"
     ports:
       - "${WEB_PORT:-3000}:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
     depends_on:
       - api
 

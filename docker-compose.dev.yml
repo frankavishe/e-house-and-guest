@@ -1,0 +1,15 @@
+# Hot-reload frontend (next dev) for coding. Slow on first visit to each route (it compiles
+# on demand); docker-compose.yml alone serves the fast production build.
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build web
+services:
+  web:
+    build:
+      target: dev
+    environment:
+      # `npm run gen:api` inside this container reads the spec from the api service.
+      OPENAPI_URL: http://api:8000/api/v1/openapi.json
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next

@@ -20,12 +20,23 @@ docker compose exec api uv run python -m app.seed --all   # locations, 6 categor
 
 Open http://localhost:3000 (redirects to `/sw`). API docs: http://localhost:8000/api/v1/docs.
 
+`web` serves the optimized production build, so pages respond in well under a second. After
+changing frontend code, rebuild it with `docker compose up -d --build web`. For hot reload while
+coding, run the dev server instead (it compiles each page on first visit, which takes seconds):
+
+```powershell
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build web
+```
+
 Starter accounts (OTP codes appear in `docker compose logs api` via the console SMS provider):
 admin Frank Kavishe `0774861380`, owner Francis Kavishe `0793403553` (verified). There are no
 demo listings; `python -m app.seed --reset --demo` wipes users, listings and activity and
 re-creates these two accounts.
 
 ## Automated checks (gates before merge)
+
+The `docker compose exec web npm …` checks need the dev server (`docker-compose.dev.yml` above),
+or run them on the host from `frontend/`.
 
 ```powershell
 docker compose exec api uv run pytest                    # unit + integration + concurrency
