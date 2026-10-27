@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Money } from "@/components/Money";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { RequestActions } from "@/components/RequestActions";
 import { Icon } from "@/components/icons";
 import { Avatar } from "@/components/ui/Avatar";
@@ -39,7 +40,7 @@ export default async function OwnerRequestsPage({ params }: Props) {
 
   return (
     <div className="flex w-full flex-col gap-5">
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("requests.title")}</h1>
+      <PageHeader title={t("requests.title")} />
       {items.length === 0 ? (
         <EmptyState>{t("requests.empty")}</EmptyState>
       ) : (

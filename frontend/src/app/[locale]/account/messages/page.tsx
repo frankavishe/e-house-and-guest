@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { Pagination } from "@/components/Pagination";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Link, redirect } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/api/server";
 import { getInbox } from "@/lib/api/social";
@@ -36,16 +38,16 @@ export default async function InboxPage({ params, searchParams }: Props) {
 
   return (
     <div className="flex w-full flex-col gap-5">
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("messages.title")}</h1>
+      <PageHeader title={t("messages.title")} />
       {items.length === 0 ? (
-        <p className="text-sm text-muted">{t("messages.empty")}</p>
+        <EmptyState icon="message">{t("messages.empty")}</EmptyState>
       ) : (
-        <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-3xl bg-card">
+        <ul className="flex flex-col gap-1 rounded-[var(--radius-card)] bg-card p-2">
           {items.map((c) => (
             <li key={c.id}>
               <Link
                 href={`/account/messages/${c.id}`}
-                className="flex items-center gap-3 p-3 hover:bg-brand-50"
+                className="flex items-center gap-3 rounded-2xl p-3 transition-colors hover:bg-surface"
               >
                 <ImageWithFallback
                   src={c.listing.photo_url}
@@ -56,10 +58,15 @@ export default async function InboxPage({ params, searchParams }: Props) {
                 />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-baseline justify-between gap-2">
-                    <span
-                      className={`truncate text-sm ${c.unread_count ? "font-semibold" : "font-medium"} text-ink`}
-                    >
-                      {c.counterpart.name}
+                    <span className="flex min-w-0 items-center gap-2">
+                      {c.unread_count > 0 && (
+                        <span aria-hidden className="size-2 shrink-0 rounded-full bg-brand-600" />
+                      )}
+                      <span
+                        className={`truncate text-sm ${c.unread_count ? "font-semibold" : "font-medium"} text-ink`}
+                      >
+                        {c.counterpart.name}
+                      </span>
                     </span>
                     {c.last_message_at && (
                       <span className="shrink-0 text-xs text-muted">
@@ -73,7 +80,11 @@ export default async function InboxPage({ params, searchParams }: Props) {
                     })}
                   </p>
                   <p className="flex items-center justify-between gap-2">
-                    <span className="truncate text-sm text-muted">{c.last_message}</span>
+                    <span
+                      className={`truncate text-sm ${c.unread_count ? "text-ink" : "text-muted"}`}
+                    >
+                      {c.last_message}
+                    </span>
                     {c.unread_count > 0 && (
                       <span className="shrink-0 rounded-full bg-brand-600 px-2 text-xs font-semibold leading-5 text-white">
                         {c.unread_count}

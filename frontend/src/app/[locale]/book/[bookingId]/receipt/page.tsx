@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { QuoteBreakdown } from "@/components/BookingWidget";
 import { BookingStatusBadge } from "@/components/BookingStatusBadge";
 import { PrintButton } from "@/components/PrintButton";
+import { Icon } from "@/components/icons";
+import { InfoTiles } from "@/components/ui/InfoTiles";
 import { Link, redirect } from "@/i18n/navigation";
 import { getBooking, getReceipt } from "@/lib/api/bookings";
 import { getCurrentUser } from "@/lib/api/server";
@@ -44,41 +46,50 @@ export default async function ReceiptPage({ params }: Props) {
     getTranslations("networks"),
   ]);
   const network = (n: string) => (networks.has(n) ? networks(n) : n);
-  const row = (label: string, value: string) => (
-    <div className="contents">
-      <dt className="text-muted">{label}</dt>
-      <dd className="font-medium text-ink">{value}</dd>
-    </div>
-  );
-
   return (
     <article className="mx-auto flex w-full max-w-xl flex-col gap-5 print:max-w-none">
-      <header className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("title")}</h1>
-          <p className="text-sm text-muted">
-            {t("issued", { date: formatDateTime(receipt.issued_at, locale) })}
-          </p>
+      <header className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-hero p-6 text-white print:border print:border-line print:bg-none print:text-ink">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+            <p className="text-sm text-white/80 print:text-muted">
+              {t("issued", { date: formatDateTime(receipt.issued_at, locale) })}
+            </p>
+          </div>
+          <BookingStatusBadge status={receipt.status} />
         </div>
-        <BookingStatusBadge status={receipt.status} />
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <p className="font-mono text-sm text-white/80 print:text-muted">{receipt.code}</p>
+          <div className="text-right">
+            <p className="text-xs text-white/80 print:text-muted">{t("paid")}</p>
+            <p className="text-3xl font-semibold tabular-nums tracking-tight">
+              {formatTZS(receipt.paid_tzs)}
+            </p>
+          </div>
+        </div>
       </header>
 
-      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 rounded-[var(--radius-card)] bg-card p-5 text-sm">
-        {row(t("code"), receipt.code)}
-        {row(t("listing"), receipt.listing_title)}
-        {row(t("owner"), receipt.owner_name)}
-        {row(t("renter"), receipt.renter_name)}
-        {row(
-          t("period"),
-          formatPeriod(
-            receipt.period,
-            booking.listing.booking_mode,
-            booking.listing.base_price?.unit,
-            locale,
-          ),
-        )}
-        {receipt.quantity > 1 && row(t("quantity"), String(receipt.quantity))}
-      </dl>
+      <section className="rounded-[var(--radius-card)] bg-card p-5">
+        <InfoTiles
+          tiles={[
+            { label: t("code"), value: receipt.code, mono: true },
+            { label: t("listing"), value: receipt.listing_title, wide: true },
+            { label: t("owner"), value: receipt.owner_name },
+            { label: t("renter"), value: receipt.renter_name },
+            {
+              label: t("period"),
+              value: formatPeriod(
+                receipt.period,
+                booking.listing.booking_mode,
+                booking.listing.base_price?.unit,
+                locale,
+              ),
+              wide: true,
+            },
+            receipt.quantity > 1 && { label: t("quantity"), value: String(receipt.quantity) },
+          ]}
+        />
+      </section>
 
       <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
         <QuoteBreakdown quote={receipt.quote} />
@@ -88,24 +99,29 @@ export default async function ReceiptPage({ params }: Props) {
         <h2 className="text-lg font-semibold text-ink">{t("payments")}</h2>
         <ul className="flex flex-col gap-2 text-sm">
           {receipt.payments.map((p) => (
-            <li key={p.id} className="flex justify-between gap-2">
-              <span className="flex flex-col">
-                <span className="text-ink">
-                  {network(p.network)}
-                  {p.confirmed_at ? ` · ${formatDateTime(p.confirmed_at, locale)}` : ""}
-                </span>
-                {p.provider_txn_id && (
-                  <span className="text-xs text-muted">
-                    {t("reference", { ref: p.provider_txn_id })}
-                  </span>
-                )}
+            <li key={p.id} className="flex items-center gap-3 rounded-2xl bg-surface p-3">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-surface print:hidden">
+                <Icon name="wallet" className="size-5" />
               </span>
-              <span className="tabular-nums text-ink">{formatTZS(p.amount_tzs)}</span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="font-medium text-ink">{network(p.network)}</span>
+                <span className="truncate text-xs text-muted">
+                  {[
+                    p.confirmed_at && formatDateTime(p.confirmed_at, locale),
+                    p.provider_txn_id && t("reference", { ref: p.provider_txn_id }),
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </span>
+              </span>
+              <span className="shrink-0 font-semibold tabular-nums text-ink">
+                {formatTZS(p.amount_tzs)}
+              </span>
             </li>
           ))}
         </ul>
-        <dl className="flex flex-col gap-1 border-t border-line pt-2 text-sm">
-          <div className="flex justify-between font-semibold">
+        <dl className="flex flex-col gap-1 border-t border-line pt-3 text-sm">
+          <div className="flex justify-between font-semibold text-ink">
             <dt>{t("paid")}</dt>
             <dd className="tabular-nums">{formatTZS(receipt.paid_tzs)}</dd>
           </div>
@@ -118,13 +134,14 @@ export default async function ReceiptPage({ params }: Props) {
         </dl>
       </section>
 
-      <div className="flex flex-wrap gap-2 print:hidden">
+      <div className="flex flex-wrap items-center gap-3 print:hidden">
         <PrintButton label={t("print")} />
         <Link
           href={`/book/${bookingId}`}
-          className="self-center text-sm text-brand-700 hover:underline"
+          className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline"
         >
           {t("booking")}
+          <Icon name="chevronRight" className="size-4" />
         </Link>
       </div>
     </article>

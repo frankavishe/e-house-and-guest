@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { addDays, weekdayLabels } from "@/components/ListingAvailability";
 import { BlockForm, RemoveBlockButton } from "@/components/OwnerCalendarActions";
 import { Icon } from "@/components/icons";
@@ -71,9 +73,9 @@ export default async function OwnerCalendarPage({ params, searchParams }: Props)
 
   return (
     <div className="flex w-full flex-col gap-5">
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("calendar.title")}</h1>
+      <PageHeader title={t("calendar.title")} />
       {listings.length === 0 ? (
-        <p className="rounded-3xl bg-card p-4 text-muted">{t("calendar.noListings")}</p>
+        <EmptyState icon="calendar">{t("calendar.noListings")}</EmptyState>
       ) : (
         <>
           <nav

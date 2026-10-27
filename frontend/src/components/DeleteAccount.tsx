@@ -34,7 +34,7 @@ export function DeleteAccount() {
   }
 
   return (
-    <details className="rounded-3xl bg-card p-4">
+    <details className="rounded-[var(--radius-card)] bg-card p-4">
       <summary className="cursor-pointer text-sm font-medium text-danger">{t("title")}</summary>
       <div className="mt-3 flex flex-col gap-3 text-sm text-ink">
         <p>{t("explain")}</p>

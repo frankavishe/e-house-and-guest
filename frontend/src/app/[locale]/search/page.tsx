@@ -212,7 +212,7 @@ export default async function SearchPage({ params, searchParams }: Props) {
       )}
 
       {page && items.length === 0 && !error && (
-        <div className="rounded-3xl border-2 border-dashed border-line p-6 text-center">
+        <div className="rounded-[var(--radius-card)] border-2 border-dashed border-line p-6 text-center">
           <p className="font-medium text-ink">{t("search.noResults")}</p>
           <p className="mt-1 text-sm text-muted">{t("search.noResultsHint")}</p>
         </div>

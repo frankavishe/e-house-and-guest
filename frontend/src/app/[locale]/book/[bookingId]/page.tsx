@@ -153,7 +153,7 @@ export default async function BookingPage({ params }: Props) {
         </div>
       )}
       {booking.status === "cancelled" && (
-        <div className="flex flex-col gap-2 rounded-3xl bg-card p-4 text-sm">
+        <div className="flex flex-col gap-2 rounded-[var(--radius-card)] bg-card p-4 text-sm">
           <p className="text-danger">
             {booking.cancelled_by
               ? t(

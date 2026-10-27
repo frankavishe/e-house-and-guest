@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Icon } from "@/components/icons";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { ListingStatusBadge } from "@/components/ListingStatusBadge";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Pagination } from "@/components/Pagination";
 import { buttonClasses } from "@/components/ui/Button";
 import { Link, redirect } from "@/i18n/navigation";
@@ -39,11 +40,7 @@ export default async function OwnerListingsPage({ params, searchParams }: Props)
 
   return (
     <div className="flex w-full flex-col gap-5">
-      <header className="flex items-center justify-between gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight text-ink">
-          {t("ownerListings.title")}
-        </h1>
-      </header>
+      <PageHeader title={t("ownerListings.title")} />
       {user.owner_profile.verification_status !== "verified" && (
         <p className="rounded-2xl bg-warning-soft p-3 text-sm text-warning">
           {t("ownerListings.notVerified")}

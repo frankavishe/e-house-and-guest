@@ -4,7 +4,11 @@ import { BookingStatusBadge } from "@/components/BookingStatusBadge";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { Money } from "@/components/Money";
 import { Pagination } from "@/components/Pagination";
+import { Icon } from "@/components/icons";
 import { buttonClasses } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { FilterPills } from "@/components/ui/FilterPills";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Link, redirect } from "@/i18n/navigation";
 import { listBookings } from "@/lib/api/bookings";
 import { getCurrentUser } from "@/lib/api/server";
@@ -40,69 +44,73 @@ export default async function MyBookingsPage({ params, searchParams }: Props) {
   const isOwner = user.roles.includes("owner");
   const pairs: Pair[] = role === "owner" ? [["role", "owner"]] : [];
 
-  const tab = (value: "renter" | "owner", label: string) => (
-    <Link
-      href={value === "owner" ? "/account/bookings?role=owner" : "/account/bookings"}
-      aria-current={role === value ? "page" : undefined}
-      className={`rounded-full px-3 py-1.5 text-sm font-medium ${
-        role === value ? "bg-brand-600 text-white" : "bg-card text-ink hover:bg-brand-50"
-      }`}
-    >
-      {label}
-    </Link>
-  );
-
   return (
     <div className="flex w-full flex-col gap-5">
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("myBookings.title")}</h1>
+      <PageHeader title={t("myBookings.title")} />
       {(isOwner || role === "owner") && (
-        <nav className="flex gap-2">
-          {tab("renter", t("myBookings.asRenter"))}
-          {tab("owner", t("myBookings.asOwner"))}
-        </nav>
+        <FilterPills
+          label={t("myBookings.title")}
+          pills={[
+            {
+              href: "/account/bookings",
+              label: t("myBookings.asRenter"),
+              current: role === "renter",
+            },
+            {
+              href: "/account/bookings?role=owner",
+              label: t("myBookings.asOwner"),
+              current: role === "owner",
+            },
+          ]}
+        />
       )}
 
       {items.length === 0 ? (
-        <div className="flex flex-col items-start gap-3 rounded-3xl bg-card p-4">
-          <p className="text-muted">
-            {role === "owner" ? t("myBookings.emptyOwner") : t("myBookings.empty")}
-          </p>
-          {role === "renter" && (
-            <Link href="/search" className={buttonClasses("primary")}>
-              {t("myBookings.find")}
-            </Link>
-          )}
-        </div>
+        <EmptyState
+          icon="calendar"
+          action={
+            role === "renter" && (
+              <Link href="/search" className={buttonClasses("primary")}>
+                {t("myBookings.find")}
+              </Link>
+            )
+          }
+        >
+          {role === "owner" ? t("myBookings.emptyOwner") : t("myBookings.empty")}
+        </EmptyState>
       ) : (
-        <ul className="grid gap-3 xl:grid-cols-2">
+        <ul className="grid gap-4 xl:grid-cols-2">
           {items.map((b) => (
             <li key={b.id}>
               <Link
                 href={`/book/${b.id}`}
-                className="flex gap-3 rounded-3xl bg-card p-3 transition-colors hover:bg-brand-50"
+                className="flex h-full gap-4 rounded-[var(--radius-card)] bg-card p-4 transition-colors hover:bg-brand-50"
               >
                 <ImageWithFallback
                   src={b.listing.cover_photo?.url_320}
                   alt={b.listing.cover_photo?.alt ?? b.listing.title}
                   fallbackLabel={t("common.imageUnavailable")}
-                  className="size-20 shrink-0 rounded-2xl"
+                  className="size-24 shrink-0 rounded-2xl"
                 />
-                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="truncate font-medium text-ink">{b.listing.title}</p>
+                    <p className="truncate font-semibold text-ink">{b.listing.title}</p>
                     <BookingStatusBadge status={b.status} />
                   </div>
-                  <p className="text-sm text-muted">
-                    {formatPeriod(
-                      b.period,
-                      b.listing.booking_mode,
-                      b.listing.base_price?.unit,
-                      locale,
-                    )}
+                  <p className="flex items-center gap-1.5 text-sm text-muted">
+                    <Icon name="calendar" className="size-4 shrink-0" />
+                    <span className="truncate">
+                      {formatPeriod(
+                        b.period,
+                        b.listing.booking_mode,
+                        b.listing.base_price?.unit,
+                        locale,
+                      )}
+                    </span>
                   </p>
-                  <p className="flex justify-between text-sm">
-                    <span className="text-muted">{b.code}</span>
-                    <Money amount={b.total_tzs} className="font-medium text-ink" />
+                  <p className="mt-auto flex items-center justify-between gap-2 rounded-2xl bg-surface px-3 py-2 text-sm">
+                    <span className="font-mono text-xs text-muted">{b.code}</span>
+                    <Money amount={b.total_tzs} className="font-semibold text-ink" />
                   </p>
                 </div>
               </Link>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { NewListingForm } from "@/components/NewListingForm";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { redirect } from "@/i18n/navigation";
 import { getCategories, type CategoryNode } from "@/lib/api/queries";
 import { getCurrentUser } from "@/lib/api/server";
@@ -34,14 +35,16 @@ export default async function NewListingPage({ params }: Props) {
   setRequestLocale(locale);
   const user = await getCurrentUser();
   if (!user?.owner_profile) {
-    redirect({ href: user ? "/owner/onboarding" : "/account/sign-in?returnTo=/owner/listings/new", locale });
+    redirect({
+      href: user ? "/owner/onboarding" : "/account/sign-in?returnTo=/owner/listings/new",
+      locale,
+    });
     return null;
   }
   const [t, categories] = await Promise.all([getTranslations("ownerListings"), getCategories()]);
   return (
     <div className="flex w-full max-w-3xl flex-col gap-5">
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("new")}</h1>
-      <p className="text-sm text-muted">{t("newHint")}</p>
+      <PageHeader title={t("new")} subtitle={t("newHint")} />
       <NewListingForm categories={leaves(categories, locale === "en" ? "en" : "sw")} />
     </div>
   );

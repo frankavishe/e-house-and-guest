@@ -35,7 +35,7 @@ export default function LocationPinMap({ value, onChange, tileUrl, attribution }
       center={value ? [value.lat, value.lng] : undefined}
       zoom={value ? 14 : undefined}
       scrollWheelZoom={false}
-      className="h-64 w-full rounded-3xl bg-card"
+      className="h-64 w-full rounded-[var(--radius-card)] bg-card"
     >
       <TileLayer url={tileUrl} attribution={attribution} />
       <ClickToPlace onChange={onChange} />
