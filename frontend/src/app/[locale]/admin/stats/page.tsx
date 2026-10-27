@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Button, buttonClasses } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Input } from "@/components/ui/Input";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Select } from "@/components/ui/Select";
+import { StatCard } from "@/components/ui/StatCard";
 import { getStats, type StatsGroup } from "@/lib/api/admin";
 import { formatTZS } from "@/lib/format";
 import { cleanParams, getParam, type RawParams } from "@/lib/search";
@@ -33,6 +36,10 @@ export default async function AdminStatsPage({ params, searchParams }: Props) {
     year: "numeric",
     timeZone: "UTC",
   });
+  const shortMonth = new Intl.DateTimeFormat(raw === "en" ? "en-GB" : "sw-TZ", {
+    month: "short",
+    timeZone: "UTC",
+  });
   const monthLabel = (label: string) =>
     /^\d{4}-\d{2}$/.test(label) ? monthFormat.format(new Date(`${label}-01T12:00:00Z`)) : label;
   const [t, stats] = await Promise.all([
@@ -52,10 +59,38 @@ export default async function AdminStatsPage({ params, searchParams }: Props) {
       })}`
     : null;
 
+  const months =
+    stats && groupBy === "month"
+      ? stats.rows.slice(-6).map((row) => ({
+          label: shortMonth.format(new Date(`${row.label}-01T12:00:00Z`)),
+          value: row.gbv_tzs,
+        }))
+      : [];
+  const tiles = stats
+    ? ([
+        ["commission_tzs", "wallet"],
+        ["refunds_tzs", "scale"],
+        ["payouts_tzs", "checkCircle"],
+      ] as const)
+    : [];
+
   return (
-    <>
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("admin.stats")}</h1>
-      <form method="get" className="grid gap-3 sm:grid-cols-4 sm:items-end">
+    <div className="flex w-full flex-col gap-5">
+      <PageHeader
+        title={t("admin.stats")}
+        subtitle={t("admin.sub_stats")}
+        actions={
+          csv && (
+            <a href={csv} download className={buttonClasses("secondary")}>
+              {t("adminStats.csv")}
+            </a>
+          )
+        }
+      />
+      <form
+        method="get"
+        className="grid gap-3 rounded-[var(--radius-card)] bg-card p-4 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end"
+      >
         <Input label={t("adminStats.from")} type="date" name="from" defaultValue={stats?.from} />
         <Input label={t("adminStats.to")} type="date" name="to" defaultValue={stats?.to} />
         <Select
@@ -67,74 +102,111 @@ export default async function AdminStatsPage({ params, searchParams }: Props) {
         <Button type="submit">{t("adminStats.show")}</Button>
       </form>
       {!stats ? (
-        <p className="rounded-3xl bg-card p-4 text-muted">{t("errors.generic")}</p>
+        <EmptyState icon="alert">{t("errors.generic")}</EmptyState>
       ) : (
         <>
-          <div className="-mx-4 overflow-x-auto px-4">
-            <table className="w-full min-w-[40rem] text-sm">
-              <caption className="sr-only">{t("adminStats.caption")}</caption>
-              <thead>
-                <tr className="border-b border-line text-left text-muted">
-                  <th scope="col" className="py-2 pr-3 font-medium">
-                    {t(`adminStats.group_${groupBy}`)}
-                  </th>
-                  <th scope="col" className="py-2 pr-3 text-right font-medium">
-                    {t("adminStats.bookings")}
-                  </th>
-                  {MONEY.map((m) => (
-                    <th key={m} scope="col" className="py-2 pr-3 text-right font-medium">
-                      {t(`adminStats.${m}`)}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {stats.rows.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="py-3 text-muted">
-                      {t("adminStats.empty")}
-                    </td>
-                  </tr>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-hero p-5 text-white">
+              <p className="text-sm font-medium text-white/85">{t("adminStats.gbv_tzs")}</p>
+              <div className="mt-3 flex items-end justify-between gap-3">
+                <p className="truncate text-3xl font-semibold tabular-nums tracking-tight">
+                  {formatTZS(stats.totals.gbv_tzs)}
+                </p>
+                {months.length > 1 && (
+                  <div aria-hidden className="flex items-end gap-1.5">
+                    {months.map((m, i) => (
+                      <div key={`${m.label}${i}`} className="flex flex-col items-center gap-1">
+                        <div className="flex h-12 w-3.5 items-end">
+                          <div
+                            className={`w-full rounded-full ${i === months.length - 1 ? "bg-white" : "bg-white/40"}`}
+                            style={{
+                              height: `${Math.max(8, (m.value / Math.max(1, ...months.map((x) => x.value))) * 100)}%`,
+                            }}
+                          />
+                        </div>
+                        <span className="text-[9px] leading-none text-white/75">{m.label}</span>
+                      </div>
+                    ))}
+                  </div>
                 )}
-                {stats.rows.map((row) => (
-                  <tr key={row.key} className="border-b border-line">
-                    <th scope="row" className="py-2 pr-3 text-left font-normal text-ink">
-                      {groupBy === "month" ? monthLabel(row.label) : row.label}
+              </div>
+              <p className="mt-2 text-xs text-white/75">
+                {t("adminStats.bookings")}: {stats.totals.bookings}
+              </p>
+            </div>
+            {tiles.map(([key, icon]) => (
+              <StatCard
+                key={key}
+                label={t(`adminStats.${key}`)}
+                icon={icon}
+                value={<span className="text-2xl">{formatTZS(stats.totals[key])}</span>}
+              />
+            ))}
+          </div>
+
+          <section className="rounded-[var(--radius-card)] bg-card p-5">
+            <div className="-mx-5 overflow-x-auto px-5">
+              <table className="w-full min-w-[40rem] text-sm">
+                <caption className="sr-only">{t("adminStats.caption")}</caption>
+                <thead>
+                  <tr className="text-left text-xs uppercase tracking-wide text-muted">
+                    <th scope="col" className="pb-3 pr-3 font-medium">
+                      {t(`adminStats.group_${groupBy}`)}
                     </th>
-                    <td className="py-2 pr-3 text-right tabular-nums">{row.bookings}</td>
+                    <th scope="col" className="pb-3 pr-3 text-right font-medium">
+                      {t("adminStats.bookings")}
+                    </th>
                     {MONEY.map((m) => (
-                      <td key={m} className="py-2 pr-3 text-right tabular-nums">
-                        {formatTZS(row[m])}
+                      <th key={m} scope="col" className="pb-3 pr-3 text-right font-medium">
+                        {t(`adminStats.${m}`)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.rows.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="py-6 text-center text-muted">
+                        {t("adminStats.empty")}
+                      </td>
+                    </tr>
+                  )}
+                  {stats.rows.map((row) => (
+                    <tr key={row.key} className="border-t border-line">
+                      <th scope="row" className="py-3 pr-3 text-left font-medium text-ink">
+                        {groupBy === "month" ? monthLabel(row.label) : row.label}
+                      </th>
+                      <td className="py-3 pr-3 text-right tabular-nums">{row.bookings}</td>
+                      {MONEY.map((m) => (
+                        <td key={m} className="py-3 pr-3 text-right tabular-nums">
+                          {formatTZS(row[m])}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="bg-surface font-semibold text-ink">
+                    <th scope="row" className="rounded-l-2xl px-3 py-3 text-left">
+                      {t("adminStats.total")}
+                    </th>
+                    <td className="py-3 pr-3 text-right tabular-nums">{stats.totals.bookings}</td>
+                    {MONEY.map((m, i) => (
+                      <td
+                        key={m}
+                        className={`py-3 pr-3 text-right tabular-nums ${i === MONEY.length - 1 ? "rounded-r-2xl" : ""}`}
+                      >
+                        {formatTZS(stats.totals[m])}
                       </td>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className="font-semibold text-ink">
-                  <th scope="row" className="py-2 pr-3 text-left">
-                    {t("adminStats.total")}
-                  </th>
-                  <td className="py-2 pr-3 text-right tabular-nums">{stats.totals.bookings}</td>
-                  {MONEY.map((m) => (
-                    <td key={m} className="py-2 pr-3 text-right tabular-nums">
-                      {formatTZS(stats.totals[m])}
-                    </td>
-                  ))}
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-          <p className="text-xs text-muted">{t("adminStats.definitions")}</p>
-          {csv && (
-            <div>
-              <a href={csv} download className={buttonClasses("secondary")}>
-                {t("adminStats.csv")}
-              </a>
+                </tfoot>
+              </table>
             </div>
-          )}
+            <p className="mt-4 text-xs text-muted">{t("adminStats.definitions")}</p>
+          </section>
         </>
       )}
-    </>
+    </div>
   );
 }

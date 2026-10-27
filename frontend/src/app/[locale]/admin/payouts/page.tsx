@@ -3,7 +3,12 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Money } from "@/components/Money";
 import { PayoutActions } from "@/components/PayoutActions";
 import { PayoutStatusBadge } from "@/components/PayoutStatusBadge";
-import { Link } from "@/i18n/navigation";
+import { Icon } from "@/components/icons";
+import { Avatar } from "@/components/ui/Avatar";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { FilterPills } from "@/components/ui/FilterPills";
+import { InfoTiles } from "@/components/ui/InfoTiles";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { getAdminPayouts, type PayoutStatus } from "@/lib/api/owner";
 import { formatDateTime, formatPhone } from "@/lib/format";
 
@@ -32,45 +37,40 @@ export default async function AdminPayoutsPage({ params, searchParams }: Props) 
   const items = page?.items ?? [];
 
   return (
-    <>
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("admin.payouts")}</h1>
-      <nav
-        aria-label={t("adminPayouts.filter")}
-        className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
-      >
-        {STATUSES.map((s) => (
-          <Link
-            key={s}
-            href={`/admin/payouts?status=${s}`}
-            aria-current={s === status ? "page" : undefined}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium ${
-              s === status ? "bg-brand-600 text-white" : "bg-card text-ink hover:bg-brand-50"
-            }`}
-          >
-            {t(`payoutStatus.${s}`)}
-          </Link>
-        ))}
-      </nav>
+    <div className="flex w-full flex-col gap-5">
+      <PageHeader title={t("admin.payouts")} subtitle={t("admin.sub_payouts")} />
+      <FilterPills
+        label={t("adminPayouts.filter")}
+        pills={STATUSES.map((s) => ({
+          href: `/admin/payouts?status=${s}`,
+          label: t(`payoutStatus.${s}`),
+          current: s === status,
+        }))}
+      />
       {items.length === 0 ? (
-        <p className="rounded-3xl bg-card p-4 text-muted">{t("adminPayouts.empty")}</p>
+        <EmptyState icon="wallet">{t("adminPayouts.empty")}</EmptyState>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid gap-4 xl:grid-cols-2">
           {items.map((p) => (
-            <li
-              key={p.id}
-              className="flex flex-col gap-3 rounded-3xl bg-card p-4"
-            >
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-medium text-ink">{p.owner.display_name}</p>
-                  <PayoutStatusBadge status={p.status} />
+            <li key={p.id} className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5">
+              <div className="flex items-center gap-3">
+                <Avatar name={p.owner.display_name} />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-semibold text-ink">{p.owner.display_name}</p>
+                  <p className="truncate text-sm text-muted">{formatPhone(p.owner.phone)}</p>
                 </div>
-                <Money amount={p.amount_tzs} className="text-lg font-semibold text-ink" />
-                <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-                  <dt className="text-muted">{t("adminPayouts.owner")}</dt>
-                  <dd>{formatPhone(p.owner.phone)}</dd>
-                  <dt className="text-muted">{t("adminPayouts.destination")}</dt>
-                  <dd>
+                <PayoutStatusBadge status={p.status} />
+              </div>
+              <div className="flex items-center gap-3 rounded-2xl bg-surface p-4">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-surface">
+                  <Icon name="wallet" className="size-5" />
+                </span>
+                <div className="min-w-0">
+                  <Money
+                    amount={p.amount_tzs}
+                    className="text-2xl font-semibold tracking-tight text-ink"
+                  />
+                  <p className="truncate text-sm text-muted">
                     {p.destination
                       ? [
                           p.destination.network
@@ -84,30 +84,33 @@ export default async function AdminPayoutsPage({ params, searchParams }: Props) 
                           .filter(Boolean)
                           .join(" · ")
                       : t("adminPayouts.noDestination")}
-                  </dd>
-                  <dt className="text-muted">{t("adminPayouts.created")}</dt>
-                  <dd>{formatDateTime(p.created_at, locale)}</dd>
-                  {p.provider_ref && (
-                    <>
-                      <dt className="text-muted">{t("adminPayouts.reference")}</dt>
-                      <dd className="font-mono">{p.provider_ref}</dd>
-                    </>
-                  )}
-                  {p.failure_reason && (
-                    <>
-                      <dt className="text-muted">{t("adminPayouts.failure")}</dt>
-                      <dd className="text-danger">{p.failure_reason}</dd>
-                    </>
-                  )}
-                  <dt className="text-muted">{t("adminPayouts.bookings")}</dt>
-                  <dd>{p.items.map((i) => i.booking_code).join(", ")}</dd>
-                </dl>
+                  </p>
+                </div>
               </div>
+              <InfoTiles
+                tiles={[
+                  { label: t("adminPayouts.created"), value: formatDateTime(p.created_at, locale) },
+                  p.provider_ref && {
+                    label: t("adminPayouts.reference"),
+                    value: p.provider_ref,
+                    mono: true,
+                  },
+                  {
+                    label: t("adminPayouts.bookings"),
+                    value: p.items.map((i) => i.booking_code).join(", "),
+                  },
+                  p.failure_reason && {
+                    label: t("adminPayouts.failure"),
+                    value: <span className="text-danger">{p.failure_reason}</span>,
+                    wide: true,
+                  },
+                ]}
+              />
               <PayoutActions id={p.id} status={p.status} />
             </li>
           ))}
         </ul>
       )}
-    </>
+    </div>
   );
 }

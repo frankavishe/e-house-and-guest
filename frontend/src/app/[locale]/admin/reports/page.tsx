@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ReportDecisionActions } from "@/components/ReportDecisionActions";
+import { Icon } from "@/components/icons";
 import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { FilterPills } from "@/components/ui/FilterPills";
+import { InfoTiles } from "@/components/ui/InfoTiles";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Link } from "@/i18n/navigation";
 import { getAbuseReports, type ReportStatus } from "@/lib/api/admin";
 import { formatDateTime, formatPhone } from "@/lib/format";
@@ -30,74 +35,64 @@ export default async function AdminReportsPage({ params, searchParams }: Props) 
   const items = page?.items ?? [];
 
   return (
-    <>
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("admin.reports")}</h1>
-      <nav
-        aria-label={t("adminReports.filter")}
-        className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
-      >
-        {STATUSES.map((s) => (
-          <Link
-            key={s}
-            href={`/admin/reports?status=${s}`}
-            aria-current={s === status ? "page" : undefined}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium ${
-              s === status ? "bg-brand-600 text-white" : "bg-card text-ink hover:bg-brand-50"
-            }`}
-          >
-            {t(`adminReports.status_${s}`)}
-          </Link>
-        ))}
-      </nav>
+    <div className="flex w-full flex-col gap-5">
+      <PageHeader title={t("admin.reports")} subtitle={t("admin.sub_reports")} />
+      <FilterPills
+        label={t("adminReports.filter")}
+        pills={STATUSES.map((s) => ({
+          href: `/admin/reports?status=${s}`,
+          label: t(`adminReports.status_${s}`),
+          current: s === status,
+        }))}
+      />
       {items.length === 0 ? (
-        <p className="rounded-3xl bg-card p-4 text-muted">{t("adminReports.empty")}</p>
+        <EmptyState icon="flag">{t("adminReports.empty")}</EmptyState>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid gap-4 xl:grid-cols-2">
           {items.map((r) => (
-            <li
-              key={r.id}
-              className="flex flex-col gap-3 rounded-3xl bg-card p-4"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="font-medium text-ink">
-                  {t(`adminReports.kind_${r.target_kind}`)} ·{" "}
-                  {r.target_kind === "listing" ? (
-                    <Link href={`/l/${r.target_id}`} className="text-brand-700 hover:underline">
-                      {r.target_label}
-                    </Link>
-                  ) : (
-                    <Link href={`/u/${r.target_id}`} className="text-brand-700 hover:underline">
-                      {r.target_label}
-                    </Link>
-                  )}
+            <li key={r.id} className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5">
+              <div className="flex items-center gap-3">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-surface">
+                  <Icon name={r.target_kind === "listing" ? "grid" : "user"} className="size-5" />
                 </span>
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={r.target_kind === "listing" ? `/l/${r.target_id}` : `/u/${r.target_id}`}
+                    className="block truncate font-semibold text-brand-700 hover:underline"
+                  >
+                    {r.target_label}
+                  </Link>
+                  <p className="text-sm text-muted">{t(`adminReports.kind_${r.target_kind}`)}</p>
+                </div>
                 <Badge tone={r.target_status === "suspended" ? "danger" : "neutral"}>
                   {r.target_kind === "listing"
                     ? t(`listingStatus.${r.target_status}`)
                     : t(`adminUsers.status_${r.target_status}`)}
                 </Badge>
               </div>
-              <p className="whitespace-pre-line text-sm text-ink">{r.reason}</p>
-              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-                <dt className="text-muted">{t("adminReports.reporter")}</dt>
-                <dd>
-                  {r.reporter.name} · {formatPhone(r.reporter.phone)}
-                </dd>
-                <dt className="text-muted">{t("adminReports.reported")}</dt>
-                <dd>{formatDateTime(r.created_at, locale)}</dd>
-                {r.open_reports_on_target > 1 && (
-                  <>
-                    <dt className="text-muted">{t("adminReports.openOnTarget")}</dt>
-                    <dd>{r.open_reports_on_target}</dd>
-                  </>
-                )}
-                {r.handled_at && (
-                  <>
-                    <dt className="text-muted">{t("adminReports.handled")}</dt>
-                    <dd>{formatDateTime(r.handled_at, locale)}</dd>
-                  </>
-                )}
-              </dl>
+              <blockquote className="whitespace-pre-line rounded-2xl rounded-tl-md bg-surface p-3 text-sm text-ink">
+                {r.reason}
+              </blockquote>
+              <InfoTiles
+                tiles={[
+                  {
+                    label: t("adminReports.reporter"),
+                    value: `${r.reporter.name} · ${formatPhone(r.reporter.phone)}`,
+                  },
+                  {
+                    label: t("adminReports.reported"),
+                    value: formatDateTime(r.created_at, locale),
+                  },
+                  r.open_reports_on_target > 1 && {
+                    label: t("adminReports.openOnTarget"),
+                    value: <span className="text-warning">{r.open_reports_on_target}</span>,
+                  },
+                  r.handled_at && {
+                    label: t("adminReports.handled"),
+                    value: formatDateTime(r.handled_at, locale),
+                  },
+                ]}
+              />
               {r.status === "open" && (
                 <ReportDecisionActions id={r.id} canSuspend={r.target_status === "active"} />
               )}
@@ -105,6 +100,6 @@ export default async function AdminReportsPage({ params, searchParams }: Props) 
           ))}
         </ul>
       )}
-    </>
+    </div>
   );
 }

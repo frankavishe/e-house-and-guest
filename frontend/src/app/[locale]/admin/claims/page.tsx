@@ -3,8 +3,14 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BookingStatusBadge } from "@/components/BookingStatusBadge";
 import { ClaimResolveActions } from "@/components/ClaimResolveActions";
 import { Money } from "@/components/Money";
+import { Icon } from "@/components/icons";
+import { Avatar } from "@/components/ui/Avatar";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { FilterPills } from "@/components/ui/FilterPills";
+import { InfoTiles } from "@/components/ui/InfoTiles";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Link } from "@/i18n/navigation";
-import { getAdminClaims, type ClaimStatus } from "@/lib/api/bookings";
+import { getAdminClaims, type AdminClaim, type ClaimStatus } from "@/lib/api/bookings";
 import { formatDateTime, formatPhone, formatTZS } from "@/lib/format";
 
 type Props = {
@@ -31,110 +37,108 @@ export default async function AdminClaimsPage({ params, searchParams }: Props) {
   const [t, page] = await Promise.all([getTranslations(), getAdminClaims(status, 1)]);
   const items = page?.items ?? [];
 
+  const party = (label: string, person: AdminClaim["renter"]) => (
+    <div className="flex min-w-0 items-center gap-2 rounded-2xl bg-surface p-3">
+      <Avatar name={person.name} size="sm" />
+      <div className="min-w-0">
+        <p className="text-xs text-muted">{label}</p>
+        <p className="truncate font-medium text-ink">
+          {person.name} · {formatPhone(person.phone)}
+        </p>
+      </div>
+    </div>
+  );
+
   return (
-    <>
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("admin.claims")}</h1>
-      <nav
-        aria-label={t("adminClaims.filter")}
-        className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1"
-      >
-        {STATUSES.map((s) => (
-          <Link
-            key={s}
-            href={`/admin/claims?status=${s}`}
-            aria-current={s === status ? "page" : undefined}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium ${
-              s === status ? "bg-brand-600 text-white" : "bg-card text-ink hover:bg-brand-50"
-            }`}
-          >
-            {t(`claim.status_${s}`)}
-          </Link>
-        ))}
-      </nav>
+    <div className="flex w-full flex-col gap-5">
+      <PageHeader title={t("admin.claims")} subtitle={t("admin.sub_claims")} />
+      <FilterPills
+        label={t("adminClaims.filter")}
+        pills={STATUSES.map((s) => ({
+          href: `/admin/claims?status=${s}`,
+          label: t(`claim.status_${s}`),
+          current: s === status,
+        }))}
+      />
       {items.length === 0 ? (
-        <p className="rounded-3xl bg-card p-4 text-muted">{t("adminClaims.empty")}</p>
+        <EmptyState icon="scale">{t("adminClaims.empty")}</EmptyState>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid gap-4 xl:grid-cols-2">
           {items.map((c) => (
-            <li
-              key={c.id}
-              className="flex flex-col gap-3 rounded-3xl bg-card p-4"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <Link
-                  href={`/book/${c.booking_id}`}
-                  className="font-medium text-brand-700 hover:underline"
-                >
-                  {c.booking_code}
-                </Link>
+            <li key={c.id} className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5">
+              <div className="flex items-center gap-3">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-surface">
+                  <Icon name="scale" className="size-5" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={`/book/${c.booking_id}`}
+                    className="font-semibold text-brand-700 hover:underline"
+                  >
+                    {c.booking_code}
+                  </Link>
+                  <p className="truncate text-sm text-muted">
+                    {t(`claim.kind_${c.kind}`)} · {t(`claim.openedBy_${c.opened_by}`)}
+                  </p>
+                </div>
                 <BookingStatusBadge status={c.booking_status} />
               </div>
-              <p className="text-sm font-medium text-ink">
-                {t(`claim.kind_${c.kind}`)} · {t(`claim.openedBy_${c.opened_by}`)}
-              </p>
-              <p className="whitespace-pre-line text-sm text-ink">{c.description}</p>
-              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-                <dt className="text-muted">{t("adminClaims.opened")}</dt>
-                <dd>{formatDateTime(c.created_at, locale)}</dd>
-                {c.amount_claimed_tzs != null && (
-                  <>
-                    <dt className="text-muted">{t("adminClaims.claimed")}</dt>
-                    <dd className="tabular-nums">{formatTZS(c.amount_claimed_tzs)}</dd>
-                  </>
-                )}
-                <dt className="text-muted">{t("adminClaims.deposit")}</dt>
-                <dd>
-                  <Money amount={c.deposit_tzs} />
-                </dd>
-                <dt className="text-muted">{t("checkout.renter")}</dt>
-                <dd>
-                  {c.renter.name} · {formatPhone(c.renter.phone)}
-                </dd>
-                <dt className="text-muted">{t("checkout.owner")}</dt>
-                <dd>
-                  {c.owner.name} · {formatPhone(c.owner.phone)}
-                </dd>
-                {c.evidence.length > 0 && (
-                  <>
-                    <dt className="text-muted">{t("adminClaims.evidence")}</dt>
-                    <dd className="flex flex-wrap gap-x-3">
-                      {c.evidence.map((e, i) => (
+              <blockquote className="whitespace-pre-line rounded-2xl rounded-tl-md bg-surface p-3 text-sm text-ink">
+                {c.description}
+              </blockquote>
+              <InfoTiles
+                tiles={[
+                  c.amount_claimed_tzs != null && {
+                    label: t("adminClaims.claimed"),
+                    value: <span className="tabular-nums">{formatTZS(c.amount_claimed_tzs)}</span>,
+                  },
+                  { label: t("adminClaims.deposit"), value: <Money amount={c.deposit_tzs} /> },
+                  { label: t("adminClaims.opened"), value: formatDateTime(c.created_at, locale) },
+                  c.resolution && {
+                    label: t("adminClaims.resolution"),
+                    value: `${t(`claim.resolution_${c.resolution}`)}${
+                      c.amount_awarded_tzs
+                        ? ` · ${t("claim.awarded", { amount: formatTZS(c.amount_awarded_tzs) })}`
+                        : ""
+                    }`,
+                    wide: true,
+                  },
+                  c.resolution_note && {
+                    label: t("adminClaims.note"),
+                    value: c.resolution_note,
+                    wide: true,
+                  },
+                ]}
+              />
+              <div className="grid gap-2 text-sm sm:grid-cols-2">
+                {party(t("checkout.renter"), c.renter)}
+                {party(t("checkout.owner"), c.owner)}
+              </div>
+              {c.evidence.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs font-medium text-muted">{t("adminClaims.evidence")}</p>
+                  <ul className="flex flex-wrap gap-2 text-sm">
+                    {c.evidence.map((e, i) => (
+                      <li key={e.key}>
                         <a
-                          key={e.key}
                           href={e.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-brand-700 hover:underline"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 font-medium text-brand-700 hover:bg-brand-50"
                         >
+                          <Icon name="box" className="size-4" />
                           {t("adminClaims.file", { n: i + 1 })}
                         </a>
-                      ))}
-                    </dd>
-                  </>
-                )}
-                {c.resolution && (
-                  <>
-                    <dt className="text-muted">{t("adminClaims.resolution")}</dt>
-                    <dd>
-                      {t(`claim.resolution_${c.resolution}`)}
-                      {c.amount_awarded_tzs
-                        ? ` · ${t("claim.awarded", { amount: formatTZS(c.amount_awarded_tzs) })}`
-                        : ""}
-                    </dd>
-                  </>
-                )}
-                {c.resolution_note && (
-                  <>
-                    <dt className="text-muted">{t("adminClaims.note")}</dt>
-                    <dd>{c.resolution_note}</dd>
-                  </>
-                )}
-              </dl>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               {c.status === "open" && <ClaimResolveActions id={c.id} deposit={c.deposit_tzs} />}
             </li>
           ))}
         </ul>
       )}
-    </>
+    </div>
   );
 }

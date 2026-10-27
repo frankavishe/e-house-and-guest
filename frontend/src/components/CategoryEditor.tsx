@@ -235,7 +235,7 @@ export function CategoryEditor({ locale, category, groups }: Props) {
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="flex flex-col gap-3 rounded-3xl bg-card p-4">
+      <section className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
         <h2 className="font-semibold text-ink">{t("basics")}</h2>
         <Input
           label={t("slug")}
@@ -365,11 +365,11 @@ export function CategoryEditor({ locale, category, groups }: Props) {
 
       {isLeaf && schema.length > 0 && (
         <section className="grid gap-4 sm:grid-cols-2">
-          <div className="flex flex-col gap-3 rounded-3xl border-2 border-dashed border-line p-4">
+          <div className="flex flex-col gap-3 rounded-[var(--radius-card)] border-2 border-dashed border-line p-4">
             <h2 className="font-semibold text-ink">{t("previewForm")}</h2>
             <AttributeForm schema={schema} values={preview} onChange={setPreview} locale={locale} />
           </div>
-          <div className="flex flex-col gap-3 rounded-3xl border-2 border-dashed border-line p-4">
+          <div className="flex flex-col gap-3 rounded-[var(--radius-card)] border-2 border-dashed border-line p-4">
             <h2 className="font-semibold text-ink">{t("previewFilters")}</h2>
             {filterable.length === 0 ? (
               <p className="text-sm text-muted">{t("noFilters")}</p>
@@ -439,7 +439,7 @@ function FieldEditor({
     onChange({ options: f.options.map((o, j) => (j === i ? { ...o, ...patch } : o)) });
 
   return (
-    <fieldset className="flex flex-col gap-3 rounded-3xl bg-card p-4">
+    <fieldset className="flex flex-col gap-3 rounded-[var(--radius-card)] bg-card p-5">
       <legend className="px-1 text-sm font-medium text-muted">
         {t("fieldN", { n: index + 1 })}
       </legend>

@@ -520,7 +520,17 @@
     "users": "Users",
     "reports": "Reports",
     "bookings": "Bookings",
-    "stats": "Stats"
+    "stats": "Stats",
+    "sub_stats": "Bookings and money moved across the marketplace",
+    "sub_verifications": "Owners waiting for a decision, oldest first",
+    "sub_listings": "New listings and changes to live ones",
+    "sub_bookings": "Find a booking by code or phone",
+    "sub_claims": "Damage claims and disputes over held deposits",
+    "sub_payouts": "Money owed to owners, by status",
+    "sub_reports": "Abuse reports on listings and users",
+    "sub_users": "Find, suspend or reinstate accounts",
+    "sub_categories": "The category tree and its listing fields",
+    "documents": "Documents"
   },
   "payoutStatus": {
     "upcoming": "Not yet payable",

@@ -4,6 +4,7 @@ import { Money } from "@/components/Money";
 import { RequestActions } from "@/components/RequestActions";
 import { Icon } from "@/components/icons";
 import { Avatar } from "@/components/ui/Avatar";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Link, redirect } from "@/i18n/navigation";
 import { listBookings } from "@/lib/api/bookings";
 import { getCurrentUser } from "@/lib/api/server";
@@ -40,12 +41,7 @@ export default async function OwnerRequestsPage({ params }: Props) {
     <div className="flex w-full flex-col gap-5">
       <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("requests.title")}</h1>
       {items.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-[var(--radius-card)] border-2 border-dashed border-line p-10 text-center">
-          <span className="flex size-12 items-center justify-center rounded-full bg-brand-100 text-brand-700">
-            <Icon name="inbox" />
-          </span>
-          <p className="text-muted">{t("requests.empty")}</p>
-        </div>
+        <EmptyState>{t("requests.empty")}</EmptyState>
       ) : (
         <ul className="grid gap-4 xl:grid-cols-2">
           {items.map((b) => (

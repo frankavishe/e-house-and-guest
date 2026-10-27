@@ -520,7 +520,17 @@
     "users": "Watumiaji",
     "reports": "Malalamiko",
     "bookings": "Uhifadhi",
-    "stats": "Takwimu"
+    "stats": "Takwimu",
+    "sub_stats": "Uhifadhi na pesa zilizohamishwa sokoni",
+    "sub_verifications": "Wamiliki wanaosubiri uamuzi, wa zamani kwanza",
+    "sub_listings": "Matangazo mapya na mabadiliko ya yaliyo hewani",
+    "sub_bookings": "Tafuta uhifadhi kwa namba au simu",
+    "sub_claims": "Madai ya uharibifu na migogoro ya amana",
+    "sub_payouts": "Pesa wanazodai wamiliki, kwa hali",
+    "sub_reports": "Malalamiko kuhusu matangazo na watumiaji",
+    "sub_users": "Tafuta, zuia au rudisha akaunti",
+    "sub_categories": "Mti wa makundi na sehemu za matangazo",
+    "documents": "Nyaraka"
   },
   "payoutStatus": {
     "upcoming": "Bado hayajaiva",

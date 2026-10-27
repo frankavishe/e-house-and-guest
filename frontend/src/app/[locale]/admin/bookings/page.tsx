@@ -3,9 +3,13 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BookingStatusBadge } from "@/components/BookingStatusBadge";
 import { Money } from "@/components/Money";
 import { Pagination } from "@/components/Pagination";
+import { Icon } from "@/components/icons";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { InfoTiles } from "@/components/ui/InfoTiles";
 import { Input } from "@/components/ui/Input";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Select } from "@/components/ui/Select";
 import { Link } from "@/i18n/navigation";
 import { getAdminBookings, type AdminBooking } from "@/lib/api/admin";
@@ -48,9 +52,13 @@ export default async function AdminBookingsPage({ params, searchParams }: Props)
   const items = data?.items ?? [];
 
   return (
-    <>
-      <h1 className="text-2xl font-semibold tracking-tight text-ink">{t("admin.bookings")}</h1>
-      <form method="get" className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+    <div className="flex w-full flex-col gap-5">
+      <PageHeader title={t("admin.bookings")} subtitle={t("admin.sub_bookings")} />
+      <form
+        method="get"
+        role="search"
+        className="grid gap-3 rounded-[var(--radius-card)] bg-card p-4 sm:grid-cols-[1fr_auto] sm:items-end lg:grid-cols-[1fr_auto_auto_auto]"
+      >
         <Input label={t("adminBookings.search")} name="q" defaultValue={q ?? ""} maxLength={50} />
         <Select
           label={t("adminBookings.status")}
@@ -61,50 +69,61 @@ export default async function AdminBookingsPage({ params, searchParams }: Props)
             ...STATUSES.map((s) => ({ value: s, label: t(`bookingStatus.${s}`) })),
           ]}
         />
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="attention" value="true" defaultChecked={attention} />
+        <label className="flex items-center gap-2 rounded-full bg-surface px-4 py-2.5 text-sm font-medium">
+          <input
+            type="checkbox"
+            name="attention"
+            value="true"
+            defaultChecked={attention}
+            className="size-4 accent-brand-600"
+          />
           {t("adminBookings.attentionOnly")}
         </label>
         <Button type="submit">{t("adminBookings.find")}</Button>
       </form>
       {items.length === 0 ? (
-        <p className="rounded-3xl bg-card p-4 text-muted">{t("adminBookings.empty")}</p>
+        <EmptyState icon="calendar">{t("adminBookings.empty")}</EmptyState>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid gap-4 xl:grid-cols-2">
           {items.map((b) => (
-            <li
-              key={b.id}
-              className="flex flex-col gap-2 rounded-3xl bg-card p-4"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <Link href={`/book/${b.id}`} className="font-medium text-brand-700 hover:underline">
-                  {b.code}
-                </Link>
-                <span className="flex flex-wrap gap-1">
-                  {b.attention && <Badge tone="danger">{t("adminBookings.attention")}</Badge>}
-                  {b.open_claim && <Badge tone="warning">{t("adminBookings.openClaim")}</Badge>}
-                  <BookingStatusBadge status={b.status} />
+            <li key={b.id} className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-card p-5">
+              <div className="flex items-start gap-3">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-surface">
+                  <Icon name="calendar" className="size-5" />
                 </span>
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={`/book/${b.id}`}
+                    className="font-semibold text-brand-700 hover:underline"
+                  >
+                    {b.code}
+                  </Link>
+                  <p className="truncate text-sm text-muted">{b.listing_title}</p>
+                </div>
+                <Money amount={b.total_tzs} className="shrink-0 font-semibold text-ink" />
               </div>
-              <p className="text-sm text-ink">{b.listing_title}</p>
-              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-                <dt className="text-muted">{t("adminBookings.dates")}</dt>
-                <dd>
-                  {formatDate(b.period.start, locale)} – {formatDate(b.period.end, locale)}
-                </dd>
-                <dt className="text-muted">{t("checkout.renter")}</dt>
-                <dd>
-                  {b.renter.name} · {formatPhone(b.renter.phone)}
-                </dd>
-                <dt className="text-muted">{t("checkout.owner")}</dt>
-                <dd>
-                  {b.owner.name} · {formatPhone(b.owner.phone)}
-                </dd>
-                <dt className="text-muted">{t("adminBookings.total")}</dt>
-                <dd>
-                  <Money amount={b.total_tzs} />
-                </dd>
-              </dl>
+              <div className="flex flex-wrap gap-1">
+                <BookingStatusBadge status={b.status} />
+                {b.attention && <Badge tone="danger">{t("adminBookings.attention")}</Badge>}
+                {b.open_claim && <Badge tone="warning">{t("adminBookings.openClaim")}</Badge>}
+              </div>
+              <InfoTiles
+                tiles={[
+                  {
+                    label: t("adminBookings.dates"),
+                    value: `${formatDate(b.period.start, locale)} – ${formatDate(b.period.end, locale)}`,
+                    wide: true,
+                  },
+                  {
+                    label: t("checkout.renter"),
+                    value: `${b.renter.name} · ${formatPhone(b.renter.phone)}`,
+                  },
+                  {
+                    label: t("checkout.owner"),
+                    value: `${b.owner.name} · ${formatPhone(b.owner.phone)}`,
+                  },
+                ]}
+              />
             </li>
           ))}
         </ul>
@@ -118,6 +137,6 @@ export default async function AdminBookingsPage({ params, searchParams }: Props)
           path="/admin/bookings"
         />
       )}
-    </>
+    </div>
   );
 }
