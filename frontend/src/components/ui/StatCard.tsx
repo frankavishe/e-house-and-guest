@@ -20,7 +20,7 @@ export function StatCard({ label, value, icon, note, chart, className = "" }: Pr
       <div className="mt-3 flex items-end justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           {icon && (
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-ink text-surface">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-inverse text-on-inverse">
               <Icon name={icon} className="size-5" />
             </span>
           )}

@@ -22,6 +22,10 @@
   --color-surface: #ffffff;
   --color-card: #f4f4f8;
   --color-canvas: #e9e7f5;
+  --color-card-line: #ebeaf2;
+  /* Deliberately dark panels (owner CTA, icon chips) that must stay dark in both themes. */
+  --color-inverse: #17161f;
+  --color-on-inverse: #ffffff;
   --color-danger: #c0262d;
   --color-danger-soft: #fdeceb;
   --color-warning: #95560b;
@@ -51,6 +55,9 @@
   --color-surface: #17161f;
   --color-card: #211f2c;
   --color-canvas: #0e0d15;
+  --color-card-line: #2c2a3a;
+  --color-inverse: #2a2540;
+  --color-on-inverse: #f1f0f8;
   --color-danger: #f2777b;
   --color-danger-soft: #3a1d22;
   --color-warning: #f2b55c;
@@ -64,9 +71,16 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* Violet hero gradient; the same in both themes so white text on it always reads. */
+/* Violet hero gradient; deeper in dark mode so it doesn't glow against the canvas. White text
+ * reads on both. */
 @utility bg-hero {
-  background-image: linear-gradient(135deg, #9b8df8 0%, #6a57e3 55%, #4b3bbd 100%);
+  background-image: var(--hero-gradient);
+}
+:root {
+  --hero-gradient: linear-gradient(135deg, #9b8df8 0%, #6a57e3 55%, #4b3bbd 100%);
+}
+[data-theme="dark"] {
+  --hero-gradient: linear-gradient(135deg, #5a49c9 0%, #3a2d99 55%, #2a2070 100%);
 }
 
 body {

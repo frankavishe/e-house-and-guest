@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/api/server";
 import { Icon } from "./icons";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { NotificationBell } from "./NotificationBell";
+import { ThemeIconButton } from "./ThemeToggle";
 import { Logo } from "./shell/Logo";
 import { Avatar } from "./ui/Avatar";
 import { buttonClasses } from "./ui/Button";
@@ -14,7 +15,7 @@ export async function SiteHeader() {
   const iconButton =
     "flex size-10 items-center justify-center rounded-full bg-card text-ink hover:bg-brand-50";
   return (
-    <header className="sticky top-0 z-10 bg-surface/90 backdrop-blur sm:rounded-t-[var(--radius-shell)]">
+    <header className="sticky top-0 z-10 bg-surface/95 backdrop-blur-md sm:rounded-t-[var(--radius-shell)]">
       <div className="flex h-16 items-center justify-between gap-2 px-4 sm:h-20 sm:px-6 lg:px-8">
         <Logo name={t("common.appName")} className="min-w-0" />
         <nav className="flex items-center gap-2">
@@ -29,6 +30,7 @@ export async function SiteHeader() {
           >
             <Icon name="search" />
           </Link>
+          <ThemeIconButton className={`${iconButton} max-sm:hidden`} />
           {user ? (
             <>
               <Link
