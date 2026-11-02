@@ -19,6 +19,26 @@ docker compose up --build
 
 Web: http://localhost:3000 · API docs: http://localhost:8000/api/v1/docs · MinIO console: http://localhost:9001
 
+## CI/CD flow
+
+```
+feature/* ──PR──▶ development ──auto──▶ staging ──auto PR──▶ main
+                  unit tests            integration tests    e2e (required check)
+```
+
+| Branch | Workflow | Runs | On success |
+|---|---|---|---|
+| `development` | `development.yml` | lint, typecheck, backend `tests/unit`, vitest, build, size budget (also on every PR into development) | fast-forwards `staging` |
+| `staging` | `staging.yml` | migrations + backend `tests/integration` and `tests/contract` on Postgres, API client staleness check | opens the `staging → main` PR with auto-merge |
+| `main` | `main.yml` | Playwright e2e on the compose stack; `source-branch` rejects PRs not from `staging` | PR merges automatically |
+
+Open feature PRs against `development`; never push to `staging` or `main` directly.
+
+One-time setup: create a fine-grained personal access token for this repo only (Contents,
+Pull requests and Workflows: read & write) and save it as the `PROMOTION_TOKEN` secret
+(`gh secret set PROMOTION_TOKEN`). Promotion has to use it because pushes and PRs made
+with the default `GITHUB_TOKEN` don't trigger other workflows.
+
 ## Design documents
 
 [spec](specs/001-rental-marketplace-mvp/spec.md) ·

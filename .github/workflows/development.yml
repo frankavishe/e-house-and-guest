@@ -1,0 +1,77 @@
+name: Development (unit)
+
+# Stage 1 of the promotion pipeline: development → staging → main.
+# Unit tests gate every feature PR; a green push to development fast-forwards staging.
+
+on:
+  pull_request:
+    branches: [development]
+  push:
+    branches: [development]
+
+concurrency:
+  group: development-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  backend-unit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      ENV: test
+      JWT_SECRET: ci-only-jwt-secret-at-least-32-bytes-long
+      OTP_HMAC_KEY: ci-otp-hmac-key
+      FERNET_KEY: ZGV2LW9ubHktY2hhbmdlLW1lLWZlcm5ldC1rZXktMzI=
+      PAYMENT_PROVIDER: mock
+      PAYMENT_CALLBACK_SECRET: ci-callback-secret
+      SMS_PROVIDER: console
+      STORAGE_PROVIDER: local
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.6"
+          enable-cache: true
+      - run: uv sync --frozen
+      - name: Ruff
+        run: uv run ruff check . && uv run ruff format --check .
+      - name: Mypy (strict on app/)
+        run: uv run mypy
+      - name: Pytest (unit)
+        run: uv run pytest tests/unit
+
+  frontend-unit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm install -g npm@11.12.1
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test
+      - run: npm run build
+      - name: JS size budget (≤ 300 KB gz per route)
+        run: npm run size
+
+  promote-to-staging:
+    # A PAT push (not GITHUB_TOKEN) so the push to staging triggers staging.yml.
+    needs: [backend-unit, frontend-unit]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PROMOTION_TOKEN }}
+      - name: Fast-forward staging to this commit
+        run: git push origin "${GITHUB_SHA}:refs/heads/staging"

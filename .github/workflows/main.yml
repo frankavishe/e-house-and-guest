@@ -1,0 +1,55 @@
+name: Main (e2e gate)
+
+# Stage 3: every PR into main must come from staging and pass Playwright e2e against the
+# full compose stack. Both jobs are required checks in main's branch protection.
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: main-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Only staging may merge into main
+        if: github.event_name == 'pull_request' && github.head_ref != 'staging'
+        run: |
+          echo "::error::PRs into main must come from staging (got '${{ github.head_ref }}'). Merge into development instead."
+          exit 1
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: cp .env.example .env
+      - name: Start stack
+        run: |
+          docker compose up -d --build --wait db minio api worker web
+          docker compose exec -T api uv run alembic upgrade head
+          docker compose exec -T api uv run python -m app.seed --all
+      - run: npm install -g npm@11.12.1 && npm ci && npx playwright install --with-deps chromium
+        working-directory: frontend
+      - name: Playwright smoke @ 360x640
+        run: npm run e2e
+        working-directory: frontend
+        env:
+          CI: "true"
+          E2E_BASE_URL: http://localhost:3000
+      - if: failure()
+        run: docker compose logs --no-color > compose.log
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-debug
+          path: |
+            compose.log
+            frontend/playwright-report/
+            frontend/test-results/

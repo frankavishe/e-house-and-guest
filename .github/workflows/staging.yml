@@ -1,0 +1,101 @@
+name: Staging (integration)
+
+# Stage 2: integration + contract tests against real Postgres. When green, opens (or reuses)
+# the staging → main release PR with auto-merge; main.yml's e2e check decides the merge.
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+concurrency:
+  group: staging
+  cancel-in-progress: false
+
+jobs:
+  backend-integration:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: rental
+          POSTGRES_PASSWORD: rental
+          POSTGRES_DB: rental_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U rental -d rental_test"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      ENV: test
+      DATABASE_URL: postgresql+asyncpg://rental:rental@localhost:5432/rental_test
+      TEST_DATABASE_URL: postgresql+asyncpg://rental:rental@localhost:5432/rental_test
+      JWT_SECRET: ci-only-jwt-secret-at-least-32-bytes-long
+      OTP_HMAC_KEY: ci-otp-hmac-key
+      FERNET_KEY: ZGV2LW9ubHktY2hhbmdlLW1lLWZlcm5ldC1rZXktMzI=
+      PAYMENT_PROVIDER: mock
+      PAYMENT_CALLBACK_SECRET: ci-callback-secret
+      SMS_PROVIDER: console
+      STORAGE_PROVIDER: local
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.6"
+          enable-cache: true
+      - run: uv sync --frozen
+      - name: Migrations on an empty DB
+        run: uv run alembic upgrade head
+      - name: Pytest (integration, contract incl. schemathesis)
+        run: uv run pytest tests/integration tests/contract
+
+  api-client:
+    # Regenerates the typed client from the live OpenAPI and fails if the committed copy is stale.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.6"
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install -g npm@11.12.1
+      - run: uv sync --frozen
+        working-directory: backend
+      - run: npm ci
+        working-directory: frontend
+      - name: Start API
+        working-directory: backend
+        env:
+          ENV: test
+          JWT_SECRET: ci-only-jwt-secret-at-least-32-bytes-long
+          OTP_HMAC_KEY: ci-otp-hmac-key
+          FERNET_KEY: ZGV2LW9ubHktY2hhbmdlLW1lLWZlcm5ldC1rZXktMzI=
+        run: |
+          uv run uvicorn app.main:app --port 8000 &
+          for i in $(seq 1 30); do curl -sf http://localhost:8000/api/v1/openapi.json >/dev/null && break; sleep 1; done
+      - run: npm run gen:api -- --check
+        working-directory: frontend
+
+  open-release-pr:
+    # PAT, so the PR's pull_request event triggers main.yml (GITHUB_TOKEN events don't).
+    needs: [backend-integration, api-client]
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Open or reuse the staging → main PR
+        run: |
+          pr=$(gh pr list --base main --head staging --state open --json number --jq '.[0].number')
+          if [ -z "$pr" ]; then
+            gh pr create --base main --head staging \
+              --title "Release: staging → main" \
+              --body "Automated release. Unit tests passed on development and integration tests passed on staging (${GITHUB_SHA}). Merges automatically once the e2e check passes."
+          fi
+      - name: Enable auto-merge
+        run: gh pr merge staging --auto --merge
