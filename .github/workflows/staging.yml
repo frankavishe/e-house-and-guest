@@ -89,7 +89,11 @@ jobs:
       GH_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
       GH_REPO: ${{ github.repository }}
     steps:
+      - name: Check staging is ahead of main
+        id: ahead
+        run: echo "count=$(gh api "repos/${GH_REPO}/compare/main...${GITHUB_SHA}" --jq .ahead_by)" >> "$GITHUB_OUTPUT"
       - name: Open or reuse the staging → main PR
+        if: steps.ahead.outputs.count != '0'
         run: |
           pr=$(gh pr list --base main --head staging --state open --json number --jq '.[0].number')
           if [ -z "$pr" ]; then
@@ -98,4 +102,5 @@ jobs:
               --body "Automated release. Unit tests passed on development and integration tests passed on staging (${GITHUB_SHA}). Merges automatically once the e2e check passes."
           fi
       - name: Enable auto-merge
+        if: steps.ahead.outputs.count != '0'
         run: gh pr merge staging --auto --merge
