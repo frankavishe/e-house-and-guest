@@ -1,0 +1,192 @@
+{
+  "errors": {
+    "ACTIVE_BOOKINGS": "Maliza au ghairi nafasi zako zinazoendelea kabla ya kufuta akaunti yako.",
+    "PAYOUT_IN_PROGRESS": "Malipo kwako bado yanaendelea. Jaribu tena yakishalipwa.",
+    "VALIDATION_ERROR": "Taarifa ulizoweka si sahihi.",
+    "UNAUTHENTICATED": "Tafadhali ingia kwanza.",
+    "FORBIDDEN": "Huna ruhusa ya kufanya hivi.",
+    "NOT_FOUND": "Hakijapatikana.",
+    "CONFLICT": "Ombi linakinzana na hali ya sasa.",
+    "SLOT_TAKEN": "Muda huu tayari umeshachukuliwa.",
+    "INSUFFICIENT_STOCK": "Idadi iliyopo haitoshi. Zilizopo: {available}.",
+    "INVALID_TRANSITION": "Hatua hii hairuhusiwi kwa sasa.",
+    "OTP_INVALID": "Msimbo si sahihi au umeisha muda wake.",
+    "OTP_TOO_MANY_ATTEMPTS": "Umejaribu mara nyingi mno. Omba msimbo mpya.",
+    "INVALID_PHONE": "Namba ya simu si sahihi. Tumia namba ya Tanzania, mfano 0712 345 678.",
+    "RATE_LIMITED": "Maombi ni mengi mno. Jaribu tena baadaye.",
+    "OWN_LISTING": "Huwezi kukodisha tangazo lako mwenyewe.",
+    "OUTSIDE_DELIVERY_AREA": "Eneo hili haliko kwenye eneo la usafirishaji.",
+    "IDEMPOTENCY_KEY_REUSED": "Ufunguo huu umeshatumika kwa ombi tofauti.",
+    "ACCOUNT_SUSPENDED": "Akaunti yako imesimamishwa.",
+    "INTERNAL_ERROR": "Hitilafu imetokea. Jaribu tena.",
+    "EMAIL_TAKEN": "Barua pepe hii tayari inatumiwa na akaunti nyingine.",
+    "OWNER_NOT_VERIFIED": "Akaunti yako ya mmiliki bado haijathibitishwa.",
+    "METHOD_NOT_ALLOWED": "Njia hii haikubali ombi la aina hii.",
+    "INVALID_PERIOD": "Angalia tarehe au muda uliochagua.",
+    "DURATION_OUT_OF_RANGE": "Tangazo hili haliruhusu muda huo wa kukodi.",
+    "PRICE_UNAVAILABLE": "Tangazo hili halina bei kwa kipindi hicho.",
+    "DELIVERY_NOT_OFFERED": "Tangazo hili halitoi huduma ya usafirishaji.",
+    "PAYMENT_PENDING": "Malipo mengine bado yanasubiri. Kamilisha au subiri yaishe kwanza.",
+    "INSTALLMENT_NOT_DUE": "Awamu hii bado haijafika wakati wa kulipwa.",
+    "BOOKING_NOT_PAID": "Risiti inapatikana baada ya malipo kuthibitishwa.",
+    "INVALID_ATTRIBUTES": "Baadhi ya maelezo si sahihi kwa kundi hili. Angalia sehemu zilizoonyeshwa.",
+    "LISTING_INCOMPLETE": "Tangazo bado halijakamilika. Ongeza maelezo yanayokosekana kabla ya kuwasilisha.",
+    "OWNER_NOT_SUBMITTED": "Wasilisha uthibitisho wako wa mmiliki kabla ya kuwasilisha matangazo.",
+    "PRICE_UNIT_NOT_ALLOWED": "Kipimo hicho cha bei hakitumiki katika kundi hili.",
+    "SEASON_OVERLAP": "Bei za msimu za kipimo kimoja haziwezi kuingiliana.",
+    "LISTING_HAS_BOOKINGS": "Tangazo hili lina uhifadhi uliothibitishwa unaokuja, hivyo haliwezi kufutwa. Lisimamishe badala yake.",
+    "FILE_TOO_LARGE": "Faili ni kubwa mno. Kikomo ni MB {max_mb}.",
+    "PHOTO_NOT_UPLOADED": "Picha haijamaliza kupakiwa. Jaribu tena.",
+    "CLAIM_OPEN": "Uhifadhi huu tayari una dai lililo wazi.",
+    "CLAIM_WINDOW_CLOSED": "Dai linaweza kufunguliwa wakati wa ukodishaji au hadi saa 48 baada ya kumalizika.",
+    "INVALID_AWARD": "Kiasi kilichotolewa hakilingani na uamuzi au amana iliyoshikiliwa.",
+    "REFUND_EXCEEDS_BALANCE": "Marejesho ni makubwa kuliko kilichobaki kurejeshwa kwa uhifadhi huu.",
+    "REVIEW_NOT_ALLOWED": "Unaweza kutoa tathmini baada ya uhifadhi kukamilika tu.",
+    "ALREADY_REVIEWED": "Tayari umetoa tathmini kwa uhifadhi huu.",
+    "ALREADY_REPORTED": "Tayari umeripoti hili. Timu yetu inalipitia.",
+    "INVALID_SCHEMA": "Maelezo ya sehemu si sahihi. Angalia matatizo yaliyoorodheshwa.",
+    "INVALID_CATEGORY": "Mipangilio hii ya kundi hailingani. Angalia vipimo vya bei na sehemu.",
+    "SLUG_TAKEN": "Kundi lingine tayari linatumia slug hii.",
+    "SCHEMA_FIELD_IN_USE": "Matangazo bado yanatumia sehemu au chaguo hili, kwa hiyo haliwezi kubadilishwa au kuondolewa.",
+    "PRICE_UNIT_IN_USE": "Matangazo bado yana bei kwa kipimo hiki, kwa hiyo hakiwezi kuondolewa."
+  },
+  "sms": {
+    "otp": "Msimbo wako wa kuingia ni {code}. Unaisha baada ya dakika 5. Usimpe mtu yeyote."
+  },
+  "labels": {
+    "yes": "Ndiyo",
+    "no": "Hapana"
+  },
+  "notifications": {
+    "booking": {
+      "requested": {
+        "sms": "Ombi jipya {code} la \"{title}\". Kubali au kataa ndani ya saa 24."
+      },
+      "awaiting_payment": {
+        "sms": "Oda {code}: lipa {amount} kabla ya {due} kuthibitisha \"{title}\"."
+      },
+      "confirmed": {
+        "sms": "Oda {code} imethibitishwa: \"{title}\". Asante! Risiti iko kwenye akaunti yako."
+      },
+      "confirmed_owner": {
+        "sms": "Oda {code} ya \"{title}\" imelipwa na kuthibitishwa."
+      },
+      "declined": {
+        "sms": "Samahani, ombi {code} la \"{title}\" limekataliwa. Tafuta chaguo jingine."
+      },
+      "expired": {
+        "sms": "Oda {code} ya \"{title}\" imefutwa kwa sababu muda wa malipo umeisha."
+      },
+      "cancelled_by_renter": {
+        "sms": "Mkodishaji ameghairi uhifadhi {code} wa \"{title}\". Tarehe ziko wazi tena."
+      },
+      "cancelled_by_owner": {
+        "sms": "Mmiliki ameghairi uhifadhi {code} wa \"{title}\". Utarejeshewa pesa zote."
+      },
+      "cancelled_by_admin": {
+        "sms": "Uhifadhi {code} wa \"{title}\" umeghairiwa na timu yetu. Marejesho yoyote yanakuja."
+      }
+    },
+    "payment": {
+      "failed": {
+        "sms": "Malipo ya oda {code} hayakufanikiwa. Jaribu tena au tumia mtandao mwingine."
+      },
+      "refunded": {
+        "sms": "Malipo yako ya {amount} kwa oda {code} yamerudishwa kwa sababu tarehe hazipatikani tena."
+      }
+    },
+    "lease": {
+      "installment_due": {
+        "sms": "Kodi ya mwezi {seq} ya \"{title}\" ({code}): {amount}, inadaiwa {due}."
+      },
+      "installment_reminder": {
+        "sms": "Kumbusho: kodi ya mwezi {seq} ({code}) ya {amount} inadaiwa {due}."
+      },
+      "installment_overdue": {
+        "sms": "Kodi ya mwezi {seq} ya \"{title}\" ({code}) imechelewa kwa siku 7."
+      },
+      "installment_overdue_admin": {
+        "sms": "Kodi iliyochelewa: oda {code}, mwezi {seq}, {amount} (ilidaiwa {due})."
+      },
+      "installment_paid": {
+        "sms": "Tumepokea kodi ya mwezi {seq} ({amount}) kwa oda {code}. Asante!"
+      }
+    },
+    "owner": {
+      "verified": {
+        "sms": "Akaunti yako ya mmiliki imethibitishwa. Matangazo yako yaliyoidhinishwa sasa yanaonekana kwa wakodishaji."
+      },
+      "rejected": {
+        "sms": "Uthibitisho wako wa mmiliki haukuidhinishwa: {reason}. Rekebisha kwenye akaunti yako na uwasilishe tena."
+      }
+    },
+    "listing": {
+      "approved": {
+        "sms": "Tangazo lako \"{title}\" limeidhinishwa na liko hewani."
+      },
+      "rejected": {
+        "sms": "Tangazo lako \"{title}\" halikuidhinishwa: {reason}. Lirekebishe na uwasilishe tena."
+      },
+      "changes_approved": {
+        "sms": "Mabadiliko yako kwenye \"{title}\" yameidhinishwa na yako hewani."
+      },
+      "changes_rejected": {
+        "sms": "Mabadiliko yako kwenye \"{title}\" hayakuidhinishwa: {reason}. Tangazo linabaki kama lilivyokuwa."
+      },
+      "suspended": {
+        "sms": "Tangazo lako \"{title}\" limesimamishwa: {reason}. Wasiliana na huduma kwa wateja."
+      },
+      "unsuspended": {
+        "sms": "Tangazo lako \"{title}\" liko hewani tena."
+      }
+    },
+    "payout": {
+      "paid": {
+        "sms": "Malipo yako ya {amount} yametumwa. Kumbukumbu: {ref}."
+      },
+      "failed": {
+        "sms": "Hatukuweza kutuma malipo yako ya {amount}. Hakikisha njia yako ya kupokea malipo ni sahihi kwenye akaunti yako."
+      }
+    },
+    "refund": {
+      "sent": {
+        "sms": "Marejesho yako ya {amount} kwa uhifadhi {code} yametumwa."
+      },
+      "deposit_sent": {
+        "sms": "Amana yako ya {amount} kwa uhifadhi {code} imerejeshwa."
+      },
+      "failed_admin": {
+        "sms": "Marejesho ya {amount} kwa uhifadhi {code} yameshindikana. Yatume kwa mkono na uyaweke kuwa yametumwa."
+      }
+    },
+    "claim": {
+      "opened": {
+        "sms": "Dai limefunguliwa kwa uhifadhi {code} wa \"{title}\". Timu yetu italipitia na kuwasiliana nawe."
+      },
+      "opened_admin": {
+        "sms": "Dai jipya kwa uhifadhi {code} (\"{title}\") linahitaji kupitiwa."
+      },
+      "resolved": {
+        "sms": "Dai la uhifadhi {code} limeamuliwa. Amana aliyopewa mmiliki: {award}."
+      }
+    },
+    "message": {
+      "received": {
+        "in_app": "Ujumbe mpya kutoka kwa {name} kuhusu \"{title}\"."
+      }
+    },
+    "review": {
+      "received": {
+        "sms": "Umepokea tathmini ya nyota {rating} kwa uhifadhi {code} (\"{title}\")."
+      }
+    },
+    "account": {
+      "suspended": {
+        "sms": "Akaunti yako imesimamishwa: {reason}. Wasiliana na huduma kwa wateja kwa msaada."
+      },
+      "unsuspended": {
+        "sms": "Akaunti yako inatumika tena. Karibu tena."
+      }
+    }
+  }
+}

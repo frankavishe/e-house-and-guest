@@ -1,0 +1,192 @@
+{
+  "errors": {
+    "ACTIVE_BOOKINGS": "Finish or cancel your current bookings before deleting your account.",
+    "PAYOUT_IN_PROGRESS": "A payout to you is still in progress. Try again once it is paid.",
+    "VALIDATION_ERROR": "Some of the details you entered are not valid.",
+    "UNAUTHENTICATED": "Please sign in first.",
+    "FORBIDDEN": "You are not allowed to do this.",
+    "NOT_FOUND": "Not found.",
+    "CONFLICT": "The request conflicts with the current state.",
+    "SLOT_TAKEN": "This time has already been taken.",
+    "INSUFFICIENT_STOCK": "Not enough available. Available: {available}.",
+    "INVALID_TRANSITION": "This action is not allowed right now.",
+    "OTP_INVALID": "The code is wrong or has expired.",
+    "OTP_TOO_MANY_ATTEMPTS": "Too many attempts. Request a new code.",
+    "INVALID_PHONE": "Invalid phone number. Use a Tanzanian number, e.g. 0712 345 678.",
+    "RATE_LIMITED": "Too many requests. Try again later.",
+    "OWN_LISTING": "You cannot rent your own listing.",
+    "OUTSIDE_DELIVERY_AREA": "This location is outside the delivery area.",
+    "IDEMPOTENCY_KEY_REUSED": "This key was already used for a different request.",
+    "ACCOUNT_SUSPENDED": "Your account has been suspended.",
+    "INTERNAL_ERROR": "Something went wrong. Please try again.",
+    "EMAIL_TAKEN": "This email is already used by another account.",
+    "OWNER_NOT_VERIFIED": "Your owner account has not been verified yet.",
+    "METHOD_NOT_ALLOWED": "This method is not allowed here.",
+    "INVALID_PERIOD": "Check the dates or times you chose.",
+    "DURATION_OUT_OF_RANGE": "This listing does not allow that length of booking.",
+    "PRICE_UNAVAILABLE": "This listing has no price for that period.",
+    "DELIVERY_NOT_OFFERED": "This listing does not offer delivery.",
+    "PAYMENT_PENDING": "Another payment is still pending. Complete it or wait for it to finish first.",
+    "INSTALLMENT_NOT_DUE": "This installment is not due for payment yet.",
+    "BOOKING_NOT_PAID": "The receipt is available once payment is confirmed.",
+    "INVALID_ATTRIBUTES": "Some details are not valid for this category. Check the highlighted fields.",
+    "LISTING_INCOMPLETE": "The listing is not complete yet. Add the missing details before submitting.",
+    "OWNER_NOT_SUBMITTED": "Submit your owner verification before submitting listings.",
+    "PRICE_UNIT_NOT_ALLOWED": "That price unit is not used in this category.",
+    "SEASON_OVERLAP": "Seasonal prices for the same unit cannot overlap.",
+    "LISTING_HAS_BOOKINGS": "This listing has upcoming confirmed bookings, so it cannot be deleted. Pause it instead.",
+    "FILE_TOO_LARGE": "The file is too large. The limit is {max_mb} MB.",
+    "PHOTO_NOT_UPLOADED": "The photo has not finished uploading. Try again.",
+    "CLAIM_OPEN": "This booking already has an open claim.",
+    "CLAIM_WINDOW_CLOSED": "Claims can only be opened during the rental or up to 48 hours after it ends.",
+    "INVALID_AWARD": "The award does not fit the resolution or the deposit held.",
+    "REFUND_EXCEEDS_BALANCE": "The refund is larger than what is left to refund for this booking.",
+    "REVIEW_NOT_ALLOWED": "You can review only after a completed booking.",
+    "ALREADY_REVIEWED": "You have already reviewed this booking.",
+    "ALREADY_REPORTED": "You have already reported this. Our team is reviewing it.",
+    "INVALID_SCHEMA": "The field definitions are not valid. Check the listed problems.",
+    "INVALID_CATEGORY": "These category settings do not fit together. Check the price units and fields.",
+    "SLUG_TAKEN": "Another category already uses this slug.",
+    "SCHEMA_FIELD_IN_USE": "Listings still use this field or option, so it cannot be changed or removed.",
+    "PRICE_UNIT_IN_USE": "Listings still have prices in this unit, so it cannot be removed."
+  },
+  "sms": {
+    "otp": "Your sign-in code is {code}. It expires in 5 minutes. Do not share it."
+  },
+  "labels": {
+    "yes": "Yes",
+    "no": "No"
+  },
+  "notifications": {
+    "booking": {
+      "requested": {
+        "sms": "New booking request {code} for \"{title}\". Accept or decline within 24 hours."
+      },
+      "awaiting_payment": {
+        "sms": "Booking {code}: pay {amount} by {due} to confirm \"{title}\"."
+      },
+      "confirmed": {
+        "sms": "Booking {code} is confirmed: \"{title}\". Thank you! Your receipt is in your account."
+      },
+      "confirmed_owner": {
+        "sms": "Booking {code} for \"{title}\" is paid and confirmed."
+      },
+      "declined": {
+        "sms": "Sorry, request {code} for \"{title}\" was declined. Try another listing."
+      },
+      "expired": {
+        "sms": "Booking {code} for \"{title}\" was cancelled because the time to pay ran out."
+      },
+      "cancelled_by_renter": {
+        "sms": "The renter cancelled booking {code} for \"{title}\". The dates are free again."
+      },
+      "cancelled_by_owner": {
+        "sms": "The owner cancelled booking {code} for \"{title}\". You will get a full refund."
+      },
+      "cancelled_by_admin": {
+        "sms": "Booking {code} for \"{title}\" was cancelled by our support team. Any refund due is on its way."
+      }
+    },
+    "payment": {
+      "failed": {
+        "sms": "Payment for booking {code} failed. Try again or use another network."
+      },
+      "refunded": {
+        "sms": "Your payment of {amount} for booking {code} was refunded because the dates are no longer available."
+      }
+    },
+    "lease": {
+      "installment_due": {
+        "sms": "Rent for month {seq} of \"{title}\" ({code}): {amount}, due {due}."
+      },
+      "installment_reminder": {
+        "sms": "Reminder: rent for month {seq} ({code}) of {amount} is due {due}."
+      },
+      "installment_overdue": {
+        "sms": "Rent for month {seq} of \"{title}\" ({code}) is 7 days overdue."
+      },
+      "installment_overdue_admin": {
+        "sms": "Overdue rent: booking {code}, month {seq}, {amount} (due {due})."
+      },
+      "installment_paid": {
+        "sms": "We received rent for month {seq} ({amount}) for booking {code}. Thank you!"
+      }
+    },
+    "owner": {
+      "verified": {
+        "sms": "Your owner account is verified. Your approved listings are now visible to renters."
+      },
+      "rejected": {
+        "sms": "Your owner verification was not approved: {reason}. Fix it in your account and submit again."
+      }
+    },
+    "listing": {
+      "approved": {
+        "sms": "Your listing \"{title}\" is approved and live."
+      },
+      "rejected": {
+        "sms": "Your listing \"{title}\" was not approved: {reason}. Edit it and submit again."
+      },
+      "changes_approved": {
+        "sms": "Your changes to \"{title}\" are approved and live."
+      },
+      "changes_rejected": {
+        "sms": "Your changes to \"{title}\" were not approved: {reason}. The listing stays live as before."
+      },
+      "suspended": {
+        "sms": "Your listing \"{title}\" was suspended: {reason}. Contact support for help."
+      },
+      "unsuspended": {
+        "sms": "Your listing \"{title}\" is live again."
+      }
+    },
+    "payout": {
+      "paid": {
+        "sms": "Your payout of {amount} has been sent. Reference: {ref}."
+      },
+      "failed": {
+        "sms": "We could not send your payout of {amount}. Check your payout method in your account."
+      }
+    },
+    "refund": {
+      "sent": {
+        "sms": "Your refund of {amount} for booking {code} has been sent."
+      },
+      "deposit_sent": {
+        "sms": "Your deposit of {amount} for booking {code} has been returned."
+      },
+      "failed_admin": {
+        "sms": "Refund of {amount} for booking {code} failed. Send it by hand and mark it sent."
+      }
+    },
+    "claim": {
+      "opened": {
+        "sms": "A claim was opened on booking {code} for \"{title}\". Our team will review it and contact you."
+      },
+      "opened_admin": {
+        "sms": "New claim on booking {code} (\"{title}\") needs review."
+      },
+      "resolved": {
+        "sms": "The claim on booking {code} is resolved. Deposit awarded to the owner: {award}."
+      }
+    },
+    "message": {
+      "received": {
+        "in_app": "New message from {name} about \"{title}\"."
+      }
+    },
+    "review": {
+      "received": {
+        "sms": "You received a {rating}-star review for booking {code} (\"{title}\")."
+      }
+    },
+    "account": {
+      "suspended": {
+        "sms": "Your account has been suspended: {reason}. Contact support for help."
+      },
+      "unsuspended": {
+        "sms": "Your account is active again. Welcome back."
+      }
+    }
+  }
+}

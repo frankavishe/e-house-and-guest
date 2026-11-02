@@ -1,11 +1,14 @@
 <!--
 Sync Impact Report
-- Version change: (template) → 1.0.0
-- Modified principles: n/a (initial ratification)
-- Added sections: Core Principles I–VII, Technology & Platform Constraints,
-  Development Workflow & Quality Gates, Governance
+- Version change: 1.0.0 → 1.0.1 (PATCH, clarification)
+- Modified principles: III. Mobile-Money Payments Done Safely — webhook rule now reads
+  "authenticated (signature where offered, otherwise shared secret) + confirmed through the
+  provider's status API + idempotent" instead of "verify signatures", because the first
+  aggregator (AzamPay) may not sign callbacks. Intent unchanged.
+- Added sections: none
 - Removed sections: none
-- Templates requiring updates: none (plan/spec/tasks templates read this file at runtime)
+- Templates requiring updates: none; specs/001-rental-marketplace-mvp/plan.md Constitution
+  Check row III updated
 - Follow-up TODOs: none
 -->
 
@@ -48,8 +51,10 @@ Rationale: the market is Tanzania; the product must feel local, not translated.
 - Payments go through a `PaymentProvider` interface; the first provider is an aggregator
   covering M-Pesa, Mixx by Yas (Tigo Pesa), Airtel Money and HaloPesa. A mock provider MUST
   exist for development and tests.
-- Payment webhooks MUST verify signatures and be idempotent; a repeated callback MUST NOT
-  change state twice.
+- Payment webhooks MUST be authenticated (provider signature where offered, otherwise a
+  shared secret) and MUST NOT change state until the result is confirmed through the
+  provider's status API. Webhooks MUST be idempotent; a repeated callback MUST NOT change
+  state twice.
 - A booking becomes `confirmed` only after a verified successful payment (or an explicit
   owner-approved offline-payment flow defined in a spec).
 - Every money movement (payment, refund, deposit, commission, payout) MUST be recorded as an
@@ -125,4 +130,4 @@ a principle or section, PATCH for clarifications. Every plan and code review MUS
 compliance; any deviation MUST be recorded and justified in the plan's Complexity Tracking
 section.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-10-15
+**Version**: 1.0.1 | **Ratified**: 2026-10-15 | **Last Amended**: 2026-10-16

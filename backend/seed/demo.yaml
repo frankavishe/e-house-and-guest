@@ -1,0 +1,17 @@
+# Starter accounts for local development.
+# `python -m app.seed --demo` upserts them; add `--reset` first to wipe users, listings and
+# activity (locations and categories are kept). No demo listings: owners create their own.
+
+users:
+  - {phone: "+255774861380", name: Frank Kavishe, language: sw, is_admin: true}
+  - {phone: "+255793403553", name: Francis Kavishe, language: sw}             # owner (individual)
+
+owners:
+  - phone: "+255793403553"
+    kind: individual
+    display_name: Francis Kavishe
+    payout: {kind: mobile_money, network: mpesa, msisdn: "+255793403553", account_name: Francis Kavishe}
+
+# Launch cities and per-leaf listings (see git history for the old demo catalogue).
+cities: {}
+listings: {}
